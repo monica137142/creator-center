@@ -180,16 +180,6 @@
         color: var(--text);
       }
 
-      .theme-toggle {
-        width: 40px;
-        height: 40px;
-        border: 1px solid transparent;
-      }
-
-      .theme-toggle:active {
-        transform: translateY(1px);
-      }
-
       .theme-icon {
         width: 20px;
         height: 20px;
@@ -4561,7 +4551,7 @@
           </div>
         </div>
         <div class="theme-switch">
-          <button class="icon-button theme-toggle" type="button" aria-label="Switch to light mode" title="Switch to light mode" data-theme-toggle>
+          <button class="icon-button theme-toggle" type="button" aria-label="Switch to light mode" data-theme-toggle>
             <svg class="icon theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true" data-theme-toggle-icon>
               <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8Z" />
             </svg>
@@ -5541,6 +5531,7 @@
 
       const trigger = document.querySelector(".language-trigger");
       const languageSwitch = document.querySelector(".language-switch");
+      const themeSwitch = document.querySelector(".theme-switch");
       const menu = document.querySelector(".language-menu");
       const options = document.querySelectorAll(".language-option");
       const accountEntry = document.querySelector(".account-entry");
@@ -5829,7 +5820,6 @@
         if (themeToggle) {
           const label = nextTheme === "dark" ? t("switchToLightMode") : t("switchToDarkMode");
           themeToggle.setAttribute("aria-label", label);
-          themeToggle.title = label;
           if (themeTooltip) {
             themeTooltip.textContent = label;
           }
@@ -5847,6 +5837,7 @@
       }
 
       themeToggle?.addEventListener("click", () => {
+        themeSwitch?.classList.add("suppress-tooltip");
         const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
         setTheme(nextTheme);
       });
@@ -6020,7 +6011,7 @@
         }
       }
 
-      [languageSwitch, accountEntry].forEach((container) => {
+      [languageSwitch, themeSwitch, accountEntry].forEach((container) => {
         container.addEventListener("pointerleave", () => {
           container.classList.remove("suppress-tooltip");
         });
