@@ -142,14 +142,14 @@ Studio 是面向内容运营和创作者工作流的静态原型，当前由 `in
 
 - Content 页是内容运营列表页，左侧全局导航中 `Content` 为当前项。
 - 顶部内容工具栏 `.content-toolbar-frame` sticky 到工作区顶部，保持类型 tab 和筛选区可见。
-- Content menu 高度 `48px`，横向展示 `All`、`Short`、`Comic Drama`、`Mid-length Drama`、`Long-form Drama`、`Movie`。
+- Content menu 高度 `48px`，横向展示 `All`、`Short`、`ComicDrama`、`Movie`、`Drama`、`Anime`；中文对应 `全部`、`短剧`、`漫剧`、`电影`、`电视剧`、`动漫`。
 - Content menu 选中项通过品牌绿色 `2px` 下划线表达，未选中项使用辅助文字。
 - 筛选区包含 Free/Paid、Publication、Search。下拉浮层相对筛选按钮定位，默认收起。
 - 发布状态 filter 的按钮本身中，选中 `Online / Offline / Draft` 后，状态值区域最小宽度 `64px`，状态 pill 在值区域内水平居中。
 - 搜索框宽度 `300px`，在筛选区靠右；有内容时显示清除按钮。
 - 内容列表使用独立 card，表头 sticky，列表横向滚动时首列 sticky。
 - 列表列结构为内容名称、免费/付费状态、发布状态、更新时间、操作。
-- 内容缩略图尺寸 `128px`，比例 `16:9`；Short、Comic Drama、Mid-length Drama、Long-form Drama、Movie 使用不同渐变占位。
+- 内容缩略图尺寸 `128px`，比例 `16:9`；Short、ComicDrama、Movie、Drama、Anime 使用不同渐变占位。
 - 草稿内容的缩略图上层遮罩为 `rgba(0, 0, 0, 0.8)`。
 - Draft 行的 Free/Paid Status 显示 `-`，发布状态显示 Draft pill。
 - 行级操作包括 `Edit` 和删除图标按钮；Edit 链接进入 `edit.html` 或后续详情页。
@@ -211,10 +211,10 @@ Studio 是面向内容运营和创作者工作流的静态原型，当前由 `in
 内容类型 tag：
 
 - Short：浅色 `#e8f8ef / #00a846`，深色 `rgba(0, 209, 87, 0.16) / #73f2a0`。
-- Comic Drama：浅色紫色系，深色 `rgba(178, 123, 209, 0.18) / #d9b2ef`。
-- Mid-length Drama：浅色橙色系，深色 `rgba(245, 158, 11, 0.15) / #f3b95f`。
-- Long-form Drama：浅色蓝灰系，深色 `rgba(148, 163, 184, 0.16) / #c5ced9`。
+- ComicDrama：浅色紫色系，深色 `rgba(178, 123, 209, 0.18) / #d9b2ef`。
 - Movie：浅色蓝色系，深色 `rgba(96, 165, 250, 0.16) / #a9d0ff`。
+- Drama：浅色橙色系，深色 `rgba(245, 158, 11, 0.15) / #f3b95f`。
+- Anime：浅色蓝灰系，深色 `rgba(148, 163, 184, 0.16) / #c5ced9`。
 
 发布状态 pill：
 

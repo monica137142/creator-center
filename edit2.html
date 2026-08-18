@@ -215,15 +215,15 @@
       }
 
       .language-switch:hover .language-tooltip,
-      .language-switch:focus-within .language-tooltip,
-      .theme-switch:hover .theme-tooltip,
-      .theme-switch:focus-within .theme-tooltip {
+      .theme-switch:hover .theme-tooltip {
         opacity: 1;
         transform: translate(-50%, 0);
       }
 
       .language-switch.is-open .language-tooltip,
       .language-switch.suppress-tooltip .language-tooltip,
+      .language-switch.tooltip-muted .language-tooltip,
+      .theme-switch.tooltip-muted .theme-tooltip,
       .theme-switch.suppress-tooltip .theme-tooltip {
         opacity: 0;
         transform: translate(-50%, -2px);
@@ -253,13 +253,13 @@
         transition: opacity 120ms ease 250ms, transform 120ms ease 250ms;
       }
 
-      .account-entry:hover .account-tooltip,
-      .account-entry:focus-within .account-tooltip {
+      .account-entry:hover .account-tooltip {
         opacity: 1;
         transform: translate(-50%, 0);
       }
 
       .account-entry.is-open .account-tooltip,
+      .account-entry.tooltip-muted .account-tooltip,
       .account-entry.suppress-tooltip .account-tooltip {
         opacity: 0;
         transform: translate(-50%, -2px);
@@ -1063,11 +1063,11 @@
         background: linear-gradient(135deg, #2f243f, #8f679f 52%, #ead7ef);
       }
 
-      .video-thumb.mid-length-drama {
+      .video-thumb.drama {
         background: linear-gradient(135deg, #3b2d1f, #9a7045 52%, #f0ddc6);
       }
 
-      .video-thumb.long-form-drama {
+      .video-thumb.anime {
         background: linear-gradient(135deg, #293241, #5f6f89 52%, #dde3ee);
       }
 
@@ -1165,12 +1165,12 @@
         color: #7e3f98;
       }
 
-      .type-tag.mid-length-drama {
+      .type-tag.drama {
         background: #fff3e6;
         color: #9a4d0f;
       }
 
-      .type-tag.long-form-drama {
+      .type-tag.anime {
         background: #edf1f7;
         color: #475569;
       }
@@ -3919,13 +3919,13 @@
         color: #d9b2ef;
       }
 
-      html[data-theme="dark"] .type-tag.mid-length-drama,
+      html[data-theme="dark"] .type-tag.drama,
       html[data-theme="dark"] .generated-badge.modified {
         background: rgba(245, 158, 11, 0.15);
         color: #f3b95f;
       }
 
-      html[data-theme="dark"] .type-tag.long-form-drama {
+      html[data-theme="dark"] .type-tag.anime {
         background: rgba(148, 163, 184, 0.16);
         color: #c5ced9;
       }
@@ -4709,7 +4709,7 @@
           <div class="edit-heading-row">
             <div class="edit-title-group">
               <h1 class="edit-title" data-edit-page-title>Edit Episode 01 details</h1>
-              <span class="edit-category-tag type-tag comic-drama" data-edit-category>Comic Drama</span>
+              <span class="edit-category-tag type-tag comic-drama" data-edit-category>ComicDrama</span>
             </div>
             <div class="edit-actions" aria-label="Edit actions">
               <button class="edit-action" type="button" data-reset-action>
@@ -5037,10 +5037,10 @@
               <ul class="content-menu" role="tablist">
                 <li><button class="content-menu-link" type="button" role="tab" id="tab-all" data-content-tab="all" data-i18n="all" aria-selected="true" aria-controls="content-panel">All</button></li>
                 <li><button class="content-menu-link" type="button" role="tab" id="tab-short" data-content-tab="short" data-i18n="short" aria-selected="false" aria-controls="content-panel">Short</button></li>
-                <li><button class="content-menu-link" type="button" role="tab" id="tab-comic-drama" data-content-tab="comic-drama" data-i18n="comicDrama" aria-selected="false" aria-controls="content-panel">Comic Drama</button></li>
-                <li><button class="content-menu-link" type="button" role="tab" id="tab-mid-length-drama" data-content-tab="mid-length-drama" data-i18n="midLengthDrama" aria-selected="false" aria-controls="content-panel">Mid-length Drama</button></li>
-                <li><button class="content-menu-link" type="button" role="tab" id="tab-long-form-drama" data-content-tab="long-form-drama" data-i18n="longFormDrama" aria-selected="false" aria-controls="content-panel">Long-form Drama</button></li>
+                <li><button class="content-menu-link" type="button" role="tab" id="tab-comic-drama" data-content-tab="comic-drama" data-i18n="comicDrama" aria-selected="false" aria-controls="content-panel">ComicDrama</button></li>
                 <li><button class="content-menu-link" type="button" role="tab" id="tab-movie" data-content-tab="movie" data-i18n="movie" aria-selected="false" aria-controls="content-panel">Movie</button></li>
+                <li><button class="content-menu-link" type="button" role="tab" id="tab-drama" data-content-tab="drama" data-i18n="drama" aria-selected="false" aria-controls="content-panel">Drama</button></li>
+                <li><button class="content-menu-link" type="button" role="tab" id="tab-anime" data-content-tab="anime" data-i18n="anime" aria-selected="false" aria-controls="content-panel">Anime</button></li>
               </ul>
             </nav>
             <div class="content-filters" aria-label="Content filters" data-i18n-aria-label="contentFiltersAria">
@@ -5247,10 +5247,10 @@
           contentFiltersAria: "Content filters",
           all: "All",
           short: "Short",
-          comicDrama: "Comic Drama",
-          midLengthDrama: "Mid-length Drama",
-          longFormDrama: "Long-form Drama",
+          comicDrama: "ComicDrama",
           movie: "Movie",
+          drama: "Drama",
+          anime: "Anime",
           freePaid: "Free/Paid",
           publication: "Publication",
           visibility: "Visibility",
@@ -5397,11 +5397,11 @@
           contentMenuAria: "内容菜单",
           contentFiltersAria: "内容筛选",
           all: "全部",
-          short: "短视频",
-          comicDrama: "喜剧短剧",
-          midLengthDrama: "中篇剧集",
-          longFormDrama: "长篇剧集",
+          short: "短剧",
+          comicDrama: "漫剧",
           movie: "电影",
+          drama: "电视剧",
+          anime: "动漫",
           freePaid: "免费/付费",
           publication: "发布状态",
           visibility: "可见性",
@@ -5667,7 +5667,7 @@
           updated: "Aug 8, 2026"
         },
         {
-          type: "mid-length-drama",
+          type: "drama",
           title: "Character Moment",
           id: "VID-2408-0158",
           duration: "02:06",
@@ -5679,7 +5679,7 @@
           updated: "Aug 9, 2026"
         },
         {
-          type: "mid-length-drama",
+          type: "drama",
           title: "Second Chance",
           id: "VID-2408-0151",
           duration: "07:36",
@@ -5691,7 +5691,7 @@
           updated: "Aug 7, 2026"
         },
         {
-          type: "mid-length-drama",
+          type: "drama",
           title: "Evidence Board",
           id: "VID-2408-0136",
           duration: "09:12",
@@ -5703,7 +5703,7 @@
           updated: "Aug 4, 2026"
         },
         {
-          type: "mid-length-drama",
+          type: "drama",
           title: "Rainy Street",
           id: "VID-2408-0124",
           duration: "08:48",
@@ -5715,7 +5715,7 @@
           updated: "Aug 2, 2026"
         },
         {
-          type: "long-form-drama",
+          type: "anime",
           title: "Harbor Lights",
           id: "VID-2408-0181",
           duration: "28:14",
@@ -5727,7 +5727,7 @@
           updated: "Aug 11, 2026"
         },
         {
-          type: "long-form-drama",
+          type: "anime",
           title: "Silent Witness",
           id: "VID-2408-0162",
           duration: "31:08",
@@ -5739,7 +5739,7 @@
           updated: "Aug 6, 2026"
         },
         {
-          type: "long-form-drama",
+          type: "anime",
           title: "Northern Promise",
           id: "VID-2408-0144",
           duration: "26:52",
@@ -5751,7 +5751,7 @@
           updated: "Aug 3, 2026"
         },
         {
-          type: "long-form-drama",
+          type: "anime",
           title: "Glass City",
           id: "VID-2408-0121",
           duration: "33:19",
@@ -5838,17 +5838,19 @@
 
       themeToggle?.addEventListener("click", () => {
         themeSwitch?.classList.add("suppress-tooltip");
+        if (themeSwitch) setActiveTooltipContainer(themeSwitch);
         const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
         setTheme(nextTheme);
+        themeToggle.blur();
       });
 
       function getTypeLabel(type) {
         const typeKeys = {
           short: "short",
           "comic-drama": "comicDrama",
-          "mid-length-drama": "midLengthDrama",
-          "long-form-drama": "longFormDrama",
-          movie: "movie"
+          movie: "movie",
+          drama: "drama",
+          anime: "anime"
         };
         return t(typeKeys[type] || type);
       }
@@ -6011,13 +6013,39 @@
         }
       }
 
-      [languageSwitch, themeSwitch, accountEntry].forEach((container) => {
+      const tooltipContainers = [languageSwitch, themeSwitch, accountEntry].filter(Boolean);
+
+      function setActiveTooltipContainer(activeContainer) {
+        tooltipContainers.forEach((container) => {
+          container.classList.toggle("tooltip-muted", container !== activeContainer);
+        });
+      }
+
+      function clearTooltipContainerMutes() {
+        tooltipContainers.forEach((container) => {
+          container.classList.remove("tooltip-muted");
+        });
+      }
+
+      tooltipContainers.forEach((container) => {
+        container.addEventListener("pointerenter", () => {
+          setActiveTooltipContainer(container);
+        });
+        container.addEventListener("focusin", () => {
+          setActiveTooltipContainer(container);
+        });
         container.addEventListener("pointerleave", () => {
           container.classList.remove("suppress-tooltip");
+          if (!tooltipContainers.some((item) => item.matches(":hover"))) {
+            clearTooltipContainerMutes();
+          }
         });
         container.addEventListener("focusout", (event) => {
           if (!container.contains(event.relatedTarget)) {
             container.classList.remove("suppress-tooltip");
+            if (!tooltipContainers.some((item) => item.contains(event.relatedTarget))) {
+              clearTooltipContainerMutes();
+            }
           }
         });
       });
@@ -6089,6 +6117,8 @@
       trigger.addEventListener("click", (event) => {
         event.stopPropagation();
         const isOpen = !menu.hidden;
+        languageSwitch.classList.add("suppress-tooltip");
+        setActiveTooltipContainer(languageSwitch);
         if (!isOpen) {
           suppressTooltipIfHidden(languageSwitch, ".language-tooltip");
         }
@@ -6103,10 +6133,13 @@
 
       options.forEach((option) => {
         option.addEventListener("click", () => {
+          languageSwitch.classList.add("suppress-tooltip");
           setLanguage(option.dataset.lang);
           menu.hidden = true;
           languageSwitch.classList.remove("is-open");
           trigger.setAttribute("aria-expanded", "false");
+          trigger.blur();
+          option.blur();
         });
       });
 
@@ -6129,6 +6162,8 @@
       accountTrigger.addEventListener("click", (event) => {
         event.stopPropagation();
         const isOpen = !accountMenu.hidden;
+        accountEntry.classList.add("suppress-tooltip");
+        setActiveTooltipContainer(accountEntry);
         if (!isOpen) {
           suppressTooltipIfHidden(accountEntry, ".account-tooltip");
         }

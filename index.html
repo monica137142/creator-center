@@ -214,7 +214,6 @@
       }
 
       .language-switch:hover .language-tooltip,
-      .language-switch:focus-within .language-tooltip,
       .theme-switch:hover .theme-tooltip {
         opacity: 1;
         transform: translate(-50%, 0);
@@ -222,6 +221,8 @@
 
       .language-switch.is-open .language-tooltip,
       .language-switch.suppress-tooltip .language-tooltip,
+      .language-switch.tooltip-muted .language-tooltip,
+      .theme-switch.tooltip-muted .theme-tooltip,
       .theme-switch.suppress-tooltip .theme-tooltip {
         opacity: 0;
         transform: translate(-50%, -2px);
@@ -251,13 +252,13 @@
         transition: opacity 120ms ease 250ms, transform 120ms ease 250ms;
       }
 
-      .account-entry:hover .account-tooltip,
-      .account-entry:focus-within .account-tooltip {
+      .account-entry:hover .account-tooltip {
         opacity: 1;
         transform: translate(-50%, 0);
       }
 
       .account-entry.is-open .account-tooltip,
+      .account-entry.tooltip-muted .account-tooltip,
       .account-entry.suppress-tooltip .account-tooltip {
         opacity: 0;
         transform: translate(-50%, -2px);
@@ -559,22 +560,6 @@
         transform: translateY(1px);
       }
 
-      .sidebar-footer {
-        margin-top: auto;
-        padding-top: 12px;
-      }
-
-      .settings-link {
-        min-height: 40px;
-        color: var(--muted);
-        font-weight: 500;
-      }
-
-      .settings-link:hover {
-        background: #f6f7f8;
-        color: #3f3f46;
-      }
-
       .icon {
         width: 20px;
         height: 20px;
@@ -646,8 +631,7 @@
       html[data-theme="dark"] .icon-button,
       html[data-theme="dark"] .nav-link,
       html[data-theme="dark"] .language-option,
-      html[data-theme="dark"] .account-option,
-      html[data-theme="dark"] .settings-link {
+      html[data-theme="dark"] .account-option {
         color: var(--color-text-secondary);
       }
 
@@ -655,8 +639,7 @@
       html[data-theme="dark"] .account-profile:hover,
       html[data-theme="dark"] .account-option:hover,
       html[data-theme="dark"] .language-option:hover,
-      html[data-theme="dark"] .nav-link:hover,
-      html[data-theme="dark"] .settings-link:hover {
+      html[data-theme="dark"] .nav-link:hover {
         background: var(--color-bg-subtle);
         color: var(--color-text-primary);
       }
@@ -731,11 +714,6 @@
           grid-auto-columns: max-content;
           overflow-x: auto;
           padding-bottom: 4px;
-        }
-
-        .sidebar-footer {
-          margin-top: 0;
-          padding-top: 0;
         }
 
         .shell {
@@ -909,15 +887,6 @@
         </ul>
       </nav>
 
-      <div class="sidebar-footer">
-        <a class="nav-link settings-link" href="#">
-          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
-            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 0 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 0 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.6-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1A2 2 0 0 1 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1A2 2 0 0 1 19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1a2 2 0 0 1 0 4H21a1.7 1.7 0 0 0-1.6 1Z" />
-          </svg>
-          <span data-i18n="settings">Settings</span>
-        </a>
-      </div>
     </aside>
 
     <main class="shell">
@@ -1021,6 +990,7 @@
 
       themeToggle?.addEventListener("click", () => {
         themeSwitch?.classList.add("suppress-tooltip");
+        if (themeSwitch) setActiveTooltipContainer(themeSwitch);
         const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
         setTheme(nextTheme);
         themeToggle.blur();
@@ -1059,13 +1029,39 @@
         }
       }
 
-      [languageSwitch, themeSwitch, accountEntry].forEach((container) => {
+      const tooltipContainers = [languageSwitch, themeSwitch, accountEntry].filter(Boolean);
+
+      function setActiveTooltipContainer(activeContainer) {
+        tooltipContainers.forEach((container) => {
+          container.classList.toggle("tooltip-muted", container !== activeContainer);
+        });
+      }
+
+      function clearTooltipContainerMutes() {
+        tooltipContainers.forEach((container) => {
+          container.classList.remove("tooltip-muted");
+        });
+      }
+
+      tooltipContainers.forEach((container) => {
+        container.addEventListener("pointerenter", () => {
+          setActiveTooltipContainer(container);
+        });
+        container.addEventListener("focusin", () => {
+          setActiveTooltipContainer(container);
+        });
         container.addEventListener("pointerleave", () => {
           container.classList.remove("suppress-tooltip");
+          if (!tooltipContainers.some((item) => item.matches(":hover"))) {
+            clearTooltipContainerMutes();
+          }
         });
         container.addEventListener("focusout", (event) => {
           if (!container.contains(event.relatedTarget)) {
             container.classList.remove("suppress-tooltip");
+            if (!tooltipContainers.some((item) => item.contains(event.relatedTarget))) {
+              clearTooltipContainerMutes();
+            }
           }
         });
       });
@@ -1073,6 +1069,8 @@
       trigger.addEventListener("click", (event) => {
         event.stopPropagation();
         const isOpen = !menu.hidden;
+        languageSwitch.classList.add("suppress-tooltip");
+        setActiveTooltipContainer(languageSwitch);
         if (!isOpen) {
           suppressTooltipIfHidden(languageSwitch, ".language-tooltip");
         }
@@ -1086,10 +1084,13 @@
 
       options.forEach((option) => {
         option.addEventListener("click", () => {
+          languageSwitch.classList.add("suppress-tooltip");
           setLanguage(option.dataset.lang);
           menu.hidden = true;
           languageSwitch.classList.remove("is-open");
           trigger.setAttribute("aria-expanded", "false");
+          trigger.blur();
+          option.blur();
         });
       });
 
@@ -1109,6 +1110,8 @@
       accountTrigger.addEventListener("click", (event) => {
         event.stopPropagation();
         const isOpen = !accountMenu.hidden;
+        accountEntry.classList.add("suppress-tooltip");
+        setActiveTooltipContainer(accountEntry);
         if (!isOpen) {
           suppressTooltipIfHidden(accountEntry, ".account-tooltip");
         }
