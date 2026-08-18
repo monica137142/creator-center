@@ -32,7 +32,7 @@ Design System 服务于企业应用平台的组件规范、交互示例和视觉
 
 ### 夜间模式
 
-夜间模式通过 Design Token / CSS Variables 实现，默认浅色主题。页面根节点使用 `data-theme` 控制主题状态：浅色为 `<html data-theme="light">`，深色为 `<html data-theme="dark">`。组件不得复制两套 DOM 或页面，也不得通过 `filter`、`invert`、整体透明度等方式反转图片、视频、Logo 或头像。
+夜间模式通过 Design Token / CSS Variables 实现，默认深色主题。页面根节点使用 `data-theme` 控制主题状态：浅色为 `<html data-theme="light">`，深色为 `<html data-theme="dark">`。组件不得复制两套 DOM 或页面，也不得通过 `filter`、`invert`、整体透明度等方式反转图片、视频、Logo 或头像。
 
 主题颜色必须优先使用语义变量，组件内部避免大量硬编码颜色。当前页面级语义变量包括：
 
@@ -71,7 +71,7 @@ Design System 服务于企业应用平台的组件规范、交互示例和视觉
 - 可横向滚动的导航、Episode 标签栏和封面列表在深色模式下不得出现默认粗滚动条；需要隐藏滚动条时仍应保留滚动能力。
 - 夜间模式不得新增页面级横向滚动，不改变组件尺寸、布局位置和既有响应式断点。
 
-主题切换入口位于顶部导航右上角，语言入口左侧。按钮最小点击区域为 `40px × 40px`，浅色模式显示月亮图标，深色模式显示太阳图标；必须提供 `aria-label`、`title`、hover、active 和 keyboard focus 样式。首次访问优先读取 `prefers-color-scheme: dark`，用户手动切换后写入 `localStorage`，刷新后恢复选择，并通过首屏内联初始化避免先闪浅色再切深色。
+主题切换入口位于顶部导航右上角，语言入口左侧。按钮最小点击区域为 `40px × 40px`，浅色模式显示月亮图标，深色模式显示太阳图标；必须提供 `aria-label`、`title`、hover、active 和 keyboard focus 样式。首次访问默认使用深色主题，用户手动切换后写入 `localStorage`，刷新后恢复选择，并通过首屏内联初始化避免先闪浅色再切深色。
 
 ### 布局
 

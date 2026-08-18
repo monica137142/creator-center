@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,13 +10,13 @@
         const root = document.documentElement;
         try {
           const savedTheme = localStorage.getItem(storageKey);
-          const systemTheme = window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-          const theme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : systemTheme;
+          const defaultTheme = "dark";
+          const theme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : defaultTheme;
           root.dataset.theme = theme;
           root.style.colorScheme = theme;
         } catch (error) {
-          root.dataset.theme = "light";
-          root.style.colorScheme = "light";
+          root.dataset.theme = "dark";
+          root.style.colorScheme = "dark";
         }
       })();
     </script>
@@ -4148,7 +4148,7 @@
           </div>
         </div>
         <div class="theme-switch">
-          <button class="icon-button theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode" data-theme-toggle>
+          <button class="icon-button theme-toggle" type="button" aria-label="Switch to light mode" title="Switch to light mode" data-theme-toggle>
             <svg class="icon theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true" data-theme-toggle-icon>
               <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8Z" />
             </svg>
@@ -4164,7 +4164,7 @@
               <path d="m19.07 4.93-1.41 1.41" />
             </svg>
           </button>
-          <span class="theme-tooltip" role="tooltip" data-theme-tooltip>Dark mode</span>
+          <span class="theme-tooltip" role="tooltip" data-theme-tooltip>Light mode</span>
         </div>
         <div class="account-entry">
           <button class="avatar-button account-trigger" type="button" aria-label="Account" data-i18n-aria-label="accountTooltip" aria-haspopup="menu" aria-expanded="false">
@@ -5291,13 +5291,6 @@
       themeToggle?.addEventListener("click", () => {
         const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
         setTheme(nextTheme);
-      });
-
-      window.matchMedia?.("(prefers-color-scheme: dark)").addEventListener?.("change", (event) => {
-        try {
-          if (localStorage.getItem("studio-theme")) return;
-        } catch (error) {}
-        setTheme(event.matches ? "dark" : "light", false);
       });
 
       function getTypeLabel(type) {
