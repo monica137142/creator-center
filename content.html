@@ -1,0 +1,3005 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Content - Studio</title>
+    <script>
+      (() => {
+        const storageKey = "studio-theme";
+        const root = document.documentElement;
+        try {
+          const savedTheme = localStorage.getItem(storageKey);
+          const systemTheme = window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          const theme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : systemTheme;
+          root.dataset.theme = theme;
+          root.style.colorScheme = theme;
+        } catch (error) {
+          root.dataset.theme = "light";
+          root.style.colorScheme = "light";
+        }
+      })();
+    </script>
+    <style>
+      :root {
+        color-scheme: light;
+        --color-bg-page: #fafbfc;
+        --color-bg-header: #ffffff;
+        --color-bg-surface: #ffffff;
+        --color-bg-elevated: #ffffff;
+        --color-bg-subtle: #f6f7f8;
+        --color-bg-selected: #e8ebee;
+        --color-text-primary: #0b0d0f;
+        --color-text-secondary: #71717a;
+        --color-text-muted: #52525b;
+        --color-text-disabled: #a1a1aa;
+        --color-text-inverse: #ffffff;
+        --color-border-default: #edf0f2;
+        --color-border-subtle: #d4d7dc;
+        --color-brand-primary: #00d157;
+        --color-brand-hover: #00bd4f;
+        --color-brand-active: #00a846;
+        --color-status-success-bg: #eef8f2;
+        --color-mask: rgba(11, 13, 15, 0.72);
+        --color-shadow: rgba(20, 23, 26, 0.08);
+        --brand: var(--color-brand-primary);
+        --brand-600: var(--color-brand-active);
+        --text: var(--color-text-primary);
+        --muted: var(--color-text-secondary);
+        --line: var(--color-border-default);
+        --surface: var(--color-bg-surface);
+        --page: var(--color-bg-page);
+        --nav-hover: var(--color-bg-subtle);
+        --nav-active: var(--color-bg-selected);
+        --focus: none;
+        --radius: 6px;
+        --content-toolbar-height: 136px;
+        --workspace-x: 28px;
+      }
+
+      html[data-theme="dark"] {
+        color-scheme: dark;
+        --color-bg-page: #111417;
+        --color-bg-header: #171b1f;
+        --color-bg-surface: #1c2228;
+        --color-bg-elevated: #20272e;
+        --color-bg-subtle: #252d35;
+        --color-bg-selected: #2a353f;
+        --color-text-primary: #f4f7f8;
+        --color-text-secondary: #aab4bf;
+        --color-text-muted: #c7d0d8;
+        --color-text-disabled: #68737f;
+        --color-text-inverse: #08110d;
+        --color-border-default: #2d3741;
+        --color-border-subtle: #3a4652;
+        --color-brand-primary: #00d157;
+        --color-brand-hover: #12e06b;
+        --color-brand-active: #73f2a0;
+        --color-status-success-bg: rgba(0, 209, 87, 0.14);
+        --color-mask: rgba(0, 0, 0, 0.66);
+        --color-shadow: rgba(0, 0, 0, 0.34);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: var(--page);
+        color: var(--text);
+        font-family: "Inter var", "Inter", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      }
+
+      button,
+      a {
+        font: inherit;
+      }
+
+      .topbar {
+        position: fixed;
+        inset: 0 0 auto 0;
+        z-index: 100;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 0 24px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .brand-logo-link {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 4px;
+      }
+
+      .brand-logo-link:focus-visible {
+        outline: none;
+      }
+
+      .brand-logo {
+        display: block;
+        width: auto;
+        height: 20px;
+        object-fit: contain;
+        object-position: left center;
+      }
+
+      .brand-title {
+        transform: translateY(2.5px);
+        font-size: 20px;
+        line-height: 28px;
+        font-weight: 500;
+        letter-spacing: 0;
+        white-space: nowrap;
+      }
+
+      .topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .language-switch,
+      .theme-switch {
+        position: relative;
+        display: inline-flex;
+      }
+
+      .icon-button {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: 0;
+        border-radius: var(--radius);
+        background: transparent;
+        color: #60646c;
+        cursor: pointer;
+      }
+
+      .icon-button:hover {
+        background: #f6f7f8;
+        color: var(--text);
+      }
+
+      .theme-toggle {
+        width: 40px;
+        height: 40px;
+        border: 1px solid transparent;
+      }
+
+      .theme-toggle:active {
+        transform: translateY(1px);
+      }
+
+      .theme-icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      html[data-theme="light"] .theme-icon-sun,
+      html[data-theme="dark"] .theme-icon-moon {
+        display: none;
+      }
+
+      .language-trigger:focus-visible,
+      .language-switch.is-open .language-trigger {
+        border-color: var(--brand);
+      }
+
+      .language-tooltip,
+      .theme-tooltip {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 50%;
+        z-index: 30;
+        padding: 5px 8px;
+        border-radius: 4px;
+        background: rgba(11, 13, 15, 0.72);
+        color: #ffffff;
+        font-size: 12px;
+        line-height: 16px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -2px);
+        transition: opacity 120ms ease 250ms, transform 120ms ease 250ms;
+      }
+
+      .language-switch:hover .language-tooltip,
+      .language-switch:focus-within .language-tooltip,
+      .theme-switch:hover .theme-tooltip,
+      .theme-switch:focus-within .theme-tooltip {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
+      .language-switch.is-open .language-tooltip,
+      .language-switch.suppress-tooltip .language-tooltip,
+      .theme-switch.suppress-tooltip .theme-tooltip {
+        opacity: 0;
+        transform: translate(-50%, -2px);
+        transition-delay: 0ms;
+      }
+
+      .account-entry {
+        position: relative;
+        display: inline-flex;
+      }
+
+      .account-tooltip {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 50%;
+        z-index: 30;
+        padding: 5px 8px;
+        border-radius: 4px;
+        background: rgba(11, 13, 15, 0.72);
+        color: #ffffff;
+        font-size: 12px;
+        line-height: 16px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -2px);
+        transition: opacity 120ms ease 250ms, transform 120ms ease 250ms;
+      }
+
+      .account-entry:hover .account-tooltip,
+      .account-entry:focus-within .account-tooltip {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
+      .account-entry.is-open .account-tooltip,
+      .account-entry.suppress-tooltip .account-tooltip {
+        opacity: 0;
+        transform: translate(-50%, -2px);
+        transition-delay: 0ms;
+      }
+
+      .account-menu {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        z-index: 40;
+        min-width: 224px;
+        padding: 6px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        box-shadow: 0 8px 20px rgba(20, 23, 26, 0.08);
+      }
+
+      .account-menu[hidden] {
+        display: none;
+      }
+
+      .account-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 10px 10px;
+        border-radius: 4px;
+      }
+
+      .account-profile-avatar-wrap {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        flex: 0 0 auto;
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      .account-profile-avatar {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+      }
+
+      .account-profile-avatar-overlay {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: rgba(11, 13, 15, 0.64);
+        color: #ffffff;
+        opacity: 0;
+        transition: opacity 120ms ease;
+      }
+
+      .account-profile-avatar-overlay .icon {
+        width: 18px;
+        height: 18px;
+        stroke-width: 2;
+      }
+
+      .account-profile:hover {
+        background: #f6f7f8;
+      }
+
+      .account-profile:focus-within {
+        background: var(--surface);
+      }
+
+      .account-profile:hover .account-profile-avatar-overlay,
+      .account-profile:focus-within .account-profile-avatar-overlay {
+        opacity: 1;
+      }
+
+      .account-profile-copy {
+        min-width: 0;
+      }
+
+      .account-profile-name {
+        margin: 0;
+        color: var(--text);
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+      }
+
+      .account-profile-id {
+        margin: 0;
+        color: var(--text);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 500;
+      }
+
+      .account-menu-divider {
+        height: 1px;
+        margin: 6px 0;
+        background: var(--line);
+      }
+
+      .account-option {
+        width: 100%;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 10px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background: transparent;
+        color: var(--text);
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+        text-align: left;
+      }
+
+      .account-option .icon {
+        width: 18px;
+        height: 18px;
+        stroke-width: 2;
+      }
+
+      .account-option:hover {
+        background: #f6f7f8;
+        color: var(--text);
+      }
+
+      .account-option.sign-out {
+        color: var(--text);
+      }
+
+      .language-menu {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        z-index: 40;
+        min-width: 132px;
+        padding: 6px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        box-shadow: 0 8px 20px rgba(20, 23, 26, 0.08);
+      }
+
+      .language-menu[hidden] {
+        display: none;
+      }
+
+      .language-option {
+        width: 100%;
+        min-height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 10px;
+        border: 0;
+        border-radius: 4px;
+        background: transparent;
+        color: #3f3f46;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+        text-align: left;
+      }
+
+      .language-option:hover {
+        background: #f6f7f8;
+        color: var(--text);
+      }
+
+      .language-option[aria-selected="true"] {
+        background: #eef8f2;
+        color: var(--brand-600);
+        font-weight: 500;
+      }
+
+      .language-option[aria-selected="true"]:hover {
+        background: #e4f6eb;
+        color: var(--brand-600);
+      }
+
+      .avatar-button {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: 1px solid #edf0f2;
+        border-radius: 999px;
+        background: var(--surface);
+        cursor: pointer;
+      }
+
+      .avatar-button:focus-visible,
+      .icon-button:focus-visible,
+      .upload-button:focus-visible,
+      .nav-link:focus-visible {
+        outline: none;
+      }
+
+      .avatar-button:focus-visible,
+      .icon-button:focus-visible,
+      .upload-button:focus-visible {
+        border-color: var(--brand);
+      }
+
+      .avatar {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 999px;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 64px;
+        bottom: 0;
+        left: 0;
+        z-index: 90;
+        width: 240px;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        padding: 20px 16px;
+        background: var(--surface);
+        border-right: 1px solid var(--line);
+      }
+
+      .upload-button {
+        width: 100%;
+        min-height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border: 0;
+        border-radius: var(--radius);
+        background: var(--brand);
+        color: #ffffff;
+        font-size: 15px;
+        line-height: 20px;
+        font-weight: 500;
+        cursor: pointer;
+        margin-bottom: 24px;
+        transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+      }
+
+      .upload-button:hover {
+        background: #00bd4f;
+        box-shadow: 0 10px 22px rgba(0, 209, 87, 0.24);
+      }
+
+      .upload-button:active {
+        transform: translateY(1px);
+      }
+
+      .nav-list {
+        display: grid;
+        row-gap: 0;
+        column-gap: 0;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .nav-list::-webkit-scrollbar {
+        display: none;
+      }
+
+      .nav-link {
+        min-height: 42px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0 12px;
+        border-radius: var(--radius);
+        color: rgb(113, 113, 122);
+        text-decoration: none;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+        transition: background 120ms ease, color 120ms ease, transform 120ms ease;
+      }
+
+      .nav-link:hover {
+        background: var(--nav-hover);
+        color: var(--text);
+      }
+
+      .nav-link:active {
+        background: var(--nav-active);
+        color: #14171a;
+        transform: translateY(1px);
+      }
+
+      .nav-link[aria-current="page"] {
+        background: var(--nav-active);
+        color: #14171a;
+        font-weight: 500;
+      }
+
+      .icon {
+        width: 20px;
+        height: 20px;
+        flex: 0 0 auto;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+      }
+
+      .shell {
+        height: 100%;
+        padding: 64px 0 0 240px;
+      }
+
+      .workspace {
+        height: 100%;
+        overflow: auto;
+        padding: 20px var(--workspace-x) 28px;
+      }
+
+      .workspace-inner {
+        min-height: 460px;
+        display: grid;
+        align-content: start;
+        row-gap: 0;
+        column-gap: 0;
+        padding: 0;
+      }
+
+      .content-toolbar-frame {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        display: grid;
+        row-gap: 20px;
+        column-gap: 20px;
+        margin: 0 calc(var(--workspace-x) * -1);
+        padding: 16px var(--workspace-x);
+        background: var(--page);
+      }
+
+      .content-menu {
+        position: relative;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .content-menu::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 1px;
+        background: var(--line);
+      }
+
+      .content-menu-link {
+        position: relative;
+        height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: #71717a;
+        cursor: pointer;
+        text-decoration: none;
+        font-size: 16px;
+        line-height: 24px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .content-menu-link:hover {
+        color: var(--text);
+      }
+
+      .content-menu-link[aria-selected="true"] {
+        color: #14171a;
+        font-weight: 500;
+      }
+
+      .content-menu-link[aria-selected="true"]::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1;
+        height: 2px;
+        border-radius: 999px;
+        background: var(--brand);
+      }
+
+      .content-menu-link:focus-visible {
+        outline: none;
+      }
+
+      .content-view {
+        min-width: 0;
+        display: grid;
+        gap: 16px;
+        margin-top: 20px;
+        padding-bottom: 120px;
+      }
+
+      .content-panel[hidden] {
+        display: none;
+      }
+
+      .content-filters {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .filter-group {
+        position: relative;
+        display: inline-flex;
+      }
+
+      .filter-control,
+      .search-control {
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        color: #3f3f46;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+      }
+
+      .filter-control {
+        gap: 6px;
+        padding: 0 10px;
+        cursor: pointer;
+      }
+
+      .filter-control .icon {
+        width: 16px;
+        height: 16px;
+        color: var(--muted);
+      }
+
+      .filter-control:hover {
+        background: #f6f7f8;
+      }
+
+      .filter-control:focus-visible,
+      .search-control:focus-within,
+      .row-action:focus-visible {
+        outline: none;
+      }
+
+      .filter-control:focus-visible,
+      .filter-control[aria-expanded="true"],
+      .search-control:focus-within,
+      .row-action:focus-visible {
+        border-color: var(--brand);
+      }
+
+      .filter-label {
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .filter-value {
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      .filter-menu {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        z-index: 50;
+        min-width: 156px;
+        padding: 6px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        box-shadow: 0 8px 20px rgba(20, 23, 26, 0.08);
+      }
+
+      .filter-menu[hidden] {
+        display: none;
+      }
+
+      .filter-option {
+        width: 100%;
+        min-height: 34px;
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+        border: 0;
+        border-radius: 4px;
+        background: transparent;
+        color: rgb(113, 113, 122);
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+        text-align: left;
+      }
+
+      .filter-option:hover {
+        background: #f6f7f8;
+        color: var(--text);
+      }
+
+      .filter-option[aria-selected="true"] {
+        color: #14171a;
+      }
+
+      .search-control {
+        flex: 0 0 300px;
+        margin-left: auto;
+        width: 300px;
+        max-width: 100%;
+        padding: 0 10px;
+      }
+
+      .search-control:hover {
+        background: #f6f7f8;
+      }
+
+      .search-control:focus-within {
+        background: var(--surface);
+      }
+
+      .search-control .icon {
+        width: 16px;
+        height: 16px;
+        color: var(--muted);
+      }
+
+      .search-input {
+        width: 100%;
+        min-width: 0;
+        border: 0;
+        outline: none;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        font-weight: 500;
+      }
+
+      .search-input::placeholder {
+        color: #a1a1aa;
+        font-weight: 500;
+      }
+
+      .search-input::-webkit-search-cancel-button {
+        display: none;
+      }
+
+      .search-clear {
+        width: 24px;
+        height: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        padding: 0;
+        border: 0;
+        border-radius: 4px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+      }
+
+      .search-clear:hover {
+        background: #f6f7f8;
+        color: var(--text);
+      }
+
+      .search-clear:focus-visible {
+        outline: none;
+        color: var(--text);
+      }
+
+      .search-clear[hidden] {
+        display: none;
+      }
+
+      .search-clear .icon {
+        width: 16px;
+        height: 16px;
+        stroke-width: 2;
+      }
+
+      .video-list-card {
+        min-width: 0;
+        overflow: visible;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        box-shadow: 0 1px 2px rgba(20, 23, 26, 0.04);
+      }
+
+      .video-list-header-scroll {
+        position: sticky;
+        top: var(--content-toolbar-height);
+        z-index: 29;
+        box-sizing: border-box;
+        width: calc(100% + 2px);
+        margin: -1px -1px 0;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius) var(--radius) 0 0;
+        background: var(--surface);
+        box-shadow: 0 -24px 0 0 var(--page);
+      }
+
+      .video-list-scroll {
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: thin;
+      }
+
+      .video-list-table,
+      .video-list-header {
+        min-width: 1020px;
+      }
+
+      .video-list-header,
+      .video-row {
+        display: grid;
+        grid-template-columns: minmax(312px, 1.5fr) 144px 168px 136px 150px;
+        column-gap: 20px;
+        align-items: center;
+      }
+
+      .video-list-header {
+        min-height: 42px;
+        padding: 0 16px;
+        background: var(--surface);
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 500;
+      }
+
+      .video-list-header > :nth-child(n + 2) {
+        justify-self: center;
+        text-align: center;
+      }
+
+      .video-row > :nth-child(n + 2) {
+        justify-self: stretch;
+        width: 100%;
+        text-align: center;
+      }
+
+      .video-row {
+        min-height: 104px;
+        padding: 16px;
+        border-top: 1px solid var(--line);
+      }
+
+      .video-row:hover {
+        background: #f6f7f8;
+      }
+
+      .video-list-body .video-row:first-child {
+        border-top: 0;
+      }
+
+      .video-empty-state {
+        min-height: 240px;
+        display: grid;
+        place-items: center;
+        padding: 48px 16px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+        text-align: center;
+      }
+
+      .video-list-header > :first-child,
+      .video-main {
+        position: sticky;
+        left: 16px;
+        z-index: 2;
+        background: var(--surface);
+        box-shadow: none;
+      }
+
+      .video-row:hover .video-main {
+        background: var(--color-bg-subtle);
+      }
+
+      .video-list-header > :first-child {
+        z-index: 21;
+      }
+
+      .video-list-card.is-scrolled-x .video-list-header > :first-child,
+      .video-list-card.is-scrolled-x .video-main {
+        box-shadow: 1px 0 0 rgba(237, 240, 242, 0.92), 10px 0 14px -14px rgba(20, 23, 26, 0.22);
+      }
+
+      .video-main {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .video-thumb {
+        position: relative;
+        width: 128px;
+        aspect-ratio: 16 / 9;
+        flex: 0 0 auto;
+        overflow: hidden;
+        border-radius: 4px;
+        background: linear-gradient(135deg, #20242a, #626d78 48%, #d7dde3);
+      }
+
+      .video-thumb.short {
+        background: linear-gradient(135deg, #0f3b2a, #2f8f62 52%, #d2f5e2);
+      }
+
+      .video-thumb.comic-drama {
+        background: linear-gradient(135deg, #2f243f, #8f679f 52%, #ead7ef);
+      }
+
+      .video-thumb.mid-length-drama {
+        background: linear-gradient(135deg, #3b2d1f, #9a7045 52%, #f0ddc6);
+      }
+
+      .video-thumb.long-form-drama {
+        background: linear-gradient(135deg, #293241, #5f6f89 52%, #dde3ee);
+      }
+
+      .video-thumb.movie {
+        background: linear-gradient(135deg, #1f2d44, #4e7aa6 52%, #d6e4f0);
+      }
+
+      .video-thumb.draft::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        background: rgba(255, 255, 255, 0.74);
+      }
+
+      .video-duration {
+        position: absolute;
+        right: 6px;
+        bottom: 6px;
+        z-index: 2;
+        padding: 2px 5px;
+        border-radius: 3px;
+        background: rgba(11, 13, 15, 0.74);
+        color: #ffffff;
+        font-size: 11px;
+        line-height: 14px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .video-copy {
+        width: 168px;
+        min-width: 0;
+        flex: 0 1 168px;
+      }
+
+      .video-title {
+        margin: 0;
+        overflow: hidden;
+        color: var(--text);
+        font-size: 15px;
+        line-height: 22px;
+        font-weight: 500;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .video-subtitle {
+        margin: 7px 0 0;
+        overflow: hidden;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 18px;
+        font-weight: 500;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .video-tags,
+      .row-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .video-tags {
+        margin-top: 10px;
+      }
+
+      .type-tag,
+      .status-pill {
+        min-height: 24px;
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 500;
+      }
+
+      .type-tag {
+        padding: 0 9px;
+        background: #f2f4f7;
+        color: #52525b;
+      }
+
+      .type-tag.short {
+        background: #e8f8ef;
+        color: var(--brand-600);
+      }
+
+      .type-tag.comic-drama {
+        background: #f4eafa;
+        color: #7e3f98;
+      }
+
+      .type-tag.mid-length-drama {
+        background: #fff3e6;
+        color: #9a4d0f;
+      }
+
+      .type-tag.long-form-drama {
+        background: #edf1f7;
+        color: #475569;
+      }
+
+      .type-tag.movie {
+        background: #eaf3fb;
+        color: #245f91;
+      }
+
+      .status-pill {
+        min-height: 16px;
+        justify-content: center;
+        column-gap: 4px;
+        width: fit-content;
+        padding: 0;
+        background: transparent;
+        color: var(--brand-600);
+        font-size: 12px;
+        line-height: 16px;
+        text-align: center;
+        white-space: nowrap;
+      }
+
+      .status-pill .icon {
+        width: 16px;
+        height: 16px;
+        stroke-width: 2;
+      }
+
+      .video-row > .status-pill {
+        justify-self: stretch;
+        width: 100%;
+      }
+
+      .filter-value .status-pill,
+      .filter-option .status-pill {
+        min-height: 20px;
+        font-size: 14px;
+        line-height: 20px;
+      }
+
+      .status-pill.draft {
+        background: transparent;
+        color: #52525b;
+      }
+
+      .status-pill.publish {
+        background: transparent;
+        color: var(--brand-600);
+      }
+
+      .status-pill.offline {
+        background: transparent;
+        color: #9a4d0f;
+      }
+
+      .status-text,
+      .updated-time {
+        margin: 2px 0 0;
+        color: var(--text);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 500;
+        text-align: center;
+      }
+
+      .video-row > .row-actions {
+        justify-content: center;
+      }
+
+      .row-action {
+        min-height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        color: #3f3f46;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+        text-decoration: none;
+      }
+
+      .row-action:hover {
+        background: #f6f7f8;
+        color: var(--text);
+      }
+
+      .row-action.icon-only {
+        width: 34px;
+        padding: 0;
+        background: transparent;
+        color: var(--muted);
+      }
+
+      .row-action.icon-only .icon {
+        width: 18px;
+        height: 18px;
+      }
+
+      .row-action.icon-only:hover {
+        background: #f6f7f8;
+        color: #3f3f46;
+      }
+
+      .pagination {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 8px;
+        padding: 0;
+        color: var(--text);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 500;
+      }
+
+      .pagination-range {
+        color: #3f3f46;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .page-size-select {
+        position: relative;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        margin-left: 4px;
+      }
+
+      .page-size-trigger {
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        color: #3f3f46;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+
+      .page-size-trigger:hover {
+        background: #f6f7f8;
+        color: var(--text);
+      }
+
+      .page-size-select.open .page-size-trigger {
+        background: var(--surface);
+        color: var(--text);
+      }
+
+      .page-size-trigger:focus-visible,
+      .page-size-select.open .page-size-trigger {
+        border-color: var(--brand);
+      }
+
+      .page-size-trigger .icon {
+        width: 16px;
+        height: 16px;
+        stroke-width: 2;
+        transition: transform 160ms ease;
+      }
+
+      .page-size-select.open .page-size-trigger .icon {
+        transform: rotate(180deg);
+      }
+
+      .page-size-trigger:focus-visible,
+      .pagination-button:focus-visible {
+        outline: none;
+        border-color: var(--brand);
+      }
+
+      .page-size-menu {
+        position: absolute;
+        right: 0;
+        bottom: calc(100% + 6px);
+        z-index: 50;
+        min-width: 132px;
+        padding: 6px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        box-shadow: 0 8px 20px rgba(20, 23, 26, 0.08);
+      }
+
+      .page-size-menu[hidden] {
+        display: none;
+      }
+
+      .page-size-option {
+        width: 100%;
+        min-height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 10px;
+        border: 0;
+        border-radius: 4px;
+        background: transparent;
+        color: rgb(113, 113, 122);
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+        text-align: left;
+      }
+
+      .page-size-option:hover {
+        background: #f6f7f8;
+        color: var(--text);
+      }
+
+      .page-size-option.selected {
+        color: #14171a;
+      }
+
+      .pagination-controls {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .pagination-pages {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .pagination-button {
+        width: 34px;
+        height: 34px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        color: rgb(113, 113, 122);
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+      }
+
+      .pagination-button:not(.current):not(:disabled):hover {
+        background: #f6f7f8;
+        color: var(--text);
+      }
+
+      .pagination-button.current {
+        color: var(--text);
+        background: var(--surface);
+      }
+
+      .pagination-button:disabled {
+        background: var(--surface);
+        color: #c4c4cc;
+        cursor: not-allowed;
+      }
+
+      .pagination-button .icon {
+        width: 16px;
+        height: 16px;
+        stroke-width: 2;
+      }
+
+      .video-list-scroll::-webkit-scrollbar {
+        height: 4px;
+      }
+
+      .video-list-scroll::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .video-list-scroll::-webkit-scrollbar-thumb {
+        border-radius: 999px;
+        background: #d4d4d8;
+      }
+
+      .content-menu::-webkit-scrollbar {
+        display: none;
+      }
+
+      html[data-theme="dark"] .topbar {
+        background: var(--color-bg-header);
+      }
+
+      html[data-theme="dark"] .sidebar {
+        background: var(--color-bg-elevated);
+      }
+
+      html[data-theme="dark"] .content-toolbar-frame {
+        background: var(--page);
+      }
+
+      html[data-theme="dark"] .icon-button,
+      html[data-theme="dark"] .nav-link,
+      html[data-theme="dark"] .content-menu-link,
+      html[data-theme="dark"] .language-option,
+      html[data-theme="dark"] .account-option,
+      html[data-theme="dark"] .filter-control,
+      html[data-theme="dark"] .filter-option,
+      html[data-theme="dark"] .row-action,
+      html[data-theme="dark"] .page-size-trigger,
+      html[data-theme="dark"] .page-size-option {
+        color: var(--color-text-secondary);
+      }
+
+      html[data-theme="dark"] .icon-button:hover,
+      html[data-theme="dark"] .account-profile:hover,
+      html[data-theme="dark"] .account-option:hover,
+      html[data-theme="dark"] .language-option:hover,
+      html[data-theme="dark"] .nav-link:hover,
+      html[data-theme="dark"] .filter-control:hover,
+      html[data-theme="dark"] .filter-option:hover,
+      html[data-theme="dark"] .search-control:hover,
+      html[data-theme="dark"] .row-action:hover,
+      html[data-theme="dark"] .row-action.icon-only:hover,
+      html[data-theme="dark"] .page-size-trigger:hover,
+      html[data-theme="dark"] .page-size-option:hover,
+      html[data-theme="dark"] .video-row:hover {
+        background: var(--color-bg-subtle);
+        color: var(--color-text-primary);
+      }
+
+      html[data-theme="dark"] .nav-link[aria-current="page"],
+      html[data-theme="dark"] .nav-link:active,
+      html[data-theme="dark"] .language-option[aria-selected="true"],
+      html[data-theme="dark"] .language-option[aria-selected="true"]:hover,
+      html[data-theme="dark"] .filter-control[aria-expanded="true"],
+      html[data-theme="dark"] .page-size-select.open .page-size-trigger {
+        background: var(--color-bg-selected);
+        color: var(--color-text-primary);
+      }
+
+      html[data-theme="dark"] .content-menu-link[aria-selected="true"],
+      html[data-theme="dark"] .content-menu-link:focus-visible {
+        background: transparent;
+        color: var(--color-text-primary);
+      }
+
+      html[data-theme="dark"] .account-menu,
+      html[data-theme="dark"] .language-menu,
+      html[data-theme="dark"] .filter-menu,
+      html[data-theme="dark"] .page-size-menu {
+        background: var(--color-bg-elevated);
+        border-color: var(--color-border-default);
+        box-shadow: 0 12px 28px var(--color-shadow);
+      }
+
+      html[data-theme="dark"] .avatar-button,
+      html[data-theme="dark"] .filter-control,
+      html[data-theme="dark"] .search-control,
+      html[data-theme="dark"] .row-action,
+      html[data-theme="dark"] .page-size-trigger,
+      html[data-theme="dark"] .pagination-button,
+      html[data-theme="dark"] .video-list-card,
+      html[data-theme="dark"] .video-list-header-scroll {
+        background: var(--color-bg-surface);
+        border-color: var(--color-border-default);
+      }
+
+      html[data-theme="dark"] .search-input {
+        color: var(--color-text-primary);
+      }
+
+      html[data-theme="dark"] .search-input::placeholder {
+        color: var(--color-text-disabled);
+      }
+
+      html[data-theme="dark"] .language-tooltip,
+      html[data-theme="dark"] .theme-tooltip,
+      html[data-theme="dark"] .account-tooltip,
+      html[data-theme="dark"] .video-duration {
+        background: var(--color-mask);
+      }
+
+      html[data-theme="dark"] .upload-button {
+        background: var(--color-brand-primary);
+        color: var(--color-text-inverse);
+      }
+
+      html[data-theme="dark"] .upload-button:hover {
+        background: var(--color-brand-hover);
+        box-shadow: none;
+      }
+
+      html[data-theme="dark"] .video-list-header {
+        background: var(--color-bg-surface);
+        color: var(--color-text-secondary);
+      }
+
+      html[data-theme="dark"] .video-row,
+      html[data-theme="dark"] .content-menu::after {
+        border-color: var(--color-border-default);
+      }
+
+      html[data-theme="dark"] .type-tag {
+        background: var(--color-bg-selected);
+        color: var(--color-text-muted);
+      }
+
+      html[data-theme="dark"] .type-tag.short {
+        background: rgba(0, 209, 87, 0.16);
+        color: var(--color-brand-active);
+      }
+
+      html[data-theme="dark"] .type-tag.comic-drama {
+        background: rgba(178, 123, 209, 0.18);
+        color: #d9b2ef;
+      }
+
+      html[data-theme="dark"] .type-tag.mid-length-drama {
+        background: rgba(245, 158, 11, 0.15);
+        color: #f3b95f;
+      }
+
+      html[data-theme="dark"] .type-tag.long-form-drama {
+        background: rgba(148, 163, 184, 0.16);
+        color: #c5ced9;
+      }
+
+      html[data-theme="dark"] .type-tag.movie {
+        background: rgba(96, 165, 250, 0.16);
+        color: #a9d0ff;
+      }
+
+      html[data-theme="dark"] .status-pill.draft,
+      html[data-theme="dark"] .pagination-range {
+        color: var(--color-text-secondary);
+      }
+
+      html[data-theme="dark"] .status-pill.publish,
+      html[data-theme="dark"] .status-pill.offline,
+      html[data-theme="dark"] .status-pill.draft {
+        background: transparent;
+      }
+
+      html[data-theme="dark"] .status-pill.publish {
+        color: var(--color-brand-active);
+      }
+
+      html[data-theme="dark"] .status-pill.offline {
+        color: #f3b95f;
+      }
+
+      html[data-theme="dark"] .status-text,
+      html[data-theme="dark"] .updated-time,
+      html[data-theme="dark"] .video-title,
+      html[data-theme="dark"] .video-subtitle {
+        color: var(--color-text-primary);
+      }
+
+      @media (min-width: 1280px) {
+        .workspace {
+          --workspace-x: clamp(10px, calc(10px + (100vw - 1280px) * 0.1), 28px);
+        }
+
+        .sidebar {
+          width: 240px;
+        }
+
+        .shell {
+          padding-left: 240px;
+        }
+
+        .content-filters {
+          flex-wrap: nowrap;
+        }
+
+        .filter-group {
+          flex: 0 0 auto;
+        }
+
+        .search-control {
+          flex: 0 0 300px;
+          width: 300px;
+        }
+      }
+
+      @media (min-width: 768px) and (max-width: 1279px) {
+        .sidebar {
+          width: 72px;
+          padding: 16px 12px;
+        }
+
+        .upload-button {
+          width: 48px;
+          min-height: 48px;
+          padding: 0;
+          gap: 0;
+        }
+
+        .upload-button span,
+        .nav-link span {
+          display: none;
+        }
+
+        .nav-link {
+          min-height: 48px;
+          justify-content: center;
+          padding: 0;
+        }
+
+        .shell {
+          padding-left: 72px;
+        }
+
+        .workspace {
+          --workspace-x: 20px;
+          padding-top: 20px;
+        }
+
+        .content-filters {
+          flex-wrap: nowrap;
+        }
+
+        .filter-group {
+          flex: 0 1 auto;
+        }
+
+        .filter-control {
+          max-width: 100%;
+        }
+
+        .search-control {
+          flex: 1 1 220px;
+          min-width: 220px;
+          width: auto;
+          margin-left: auto;
+        }
+
+        .video-list-card {
+          overflow: visible;
+        }
+
+        .video-list-scroll {
+          overflow-x: auto;
+        }
+      }
+
+      @media (max-width: 767px) {
+        body {
+          overflow: auto;
+        }
+
+        .topbar {
+          padding: 0 16px;
+        }
+
+        .brand-logo {
+          height: 20px;
+        }
+
+        .brand-title {
+          font-size: 18px;
+        }
+
+        .sidebar {
+          position: fixed;
+          top: 64px;
+          left: 0;
+          right: 0;
+          bottom: auto;
+          width: 100%;
+          height: auto;
+          display: grid;
+          gap: 12px;
+          padding: 12px 16px;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .upload-button {
+          width: 100%;
+          margin-bottom: 0;
+        }
+
+        .nav-list {
+          grid-auto-flow: column;
+          grid-auto-columns: max-content;
+          overflow-x: auto;
+          padding-bottom: 4px;
+        }
+
+        .shell {
+          height: auto;
+          padding: 188px 0 0;
+        }
+
+        .workspace {
+          padding: 20px 16px;
+        }
+
+        .workspace-inner {
+          padding: 0;
+        }
+
+        .content-toolbar-frame {
+          margin: -20px -16px 0;
+          padding: 16px 16px 12px;
+        }
+
+        .content-filters {
+          gap: 8px;
+        }
+
+        .filter-control {
+          flex: 1 1 calc(50% - 8px);
+        }
+
+        .search-control {
+          flex: 1 1 100%;
+          margin-left: 0;
+          width: 100%;
+        }
+
+        .content-menu {
+          margin: 0 -4px;
+          padding: 0 4px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand" aria-label="Studio">
+        <a class="brand-logo-link" href="https://www.iq.com/" aria-label="iQIYI">
+          <img class="brand-logo" src="logo.png" alt="iQIYI" />
+        </a>
+        <span class="brand-title" data-i18n="studio">Studio</span>
+      </div>
+      <div class="topbar-actions">
+        <div class="language-switch">
+          <button class="icon-button language-trigger" type="button" aria-label="Switch language" data-i18n-aria-label="switchLanguage" aria-haspopup="listbox" aria-expanded="false">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M3 12h18" />
+              <path d="M12 3c2.3 2.5 3.5 5.5 3.5 9S14.3 18.5 12 21" />
+              <path d="M12 3c-2.3 2.5-3.5 5.5-3.5 9s1.2 6.5 3.5 9" />
+            </svg>
+          </button>
+          <span class="language-tooltip" role="tooltip" data-i18n="languageTooltip">Language</span>
+          <div class="language-menu" role="listbox" aria-label="Language" data-i18n-aria-label="languageTooltip" hidden>
+            <button class="language-option" type="button" role="option" data-lang="en" aria-selected="true">English</button>
+            <button class="language-option" type="button" role="option" data-lang="zh" aria-selected="false">中文</button>
+          </div>
+        </div>
+        <div class="theme-switch">
+          <button class="icon-button theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode" data-theme-toggle>
+            <svg class="icon theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true" data-theme-toggle-icon>
+              <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8Z" />
+            </svg>
+            <svg class="icon theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2" />
+              <path d="M12 20v2" />
+              <path d="m4.93 4.93 1.41 1.41" />
+              <path d="m17.66 17.66 1.41 1.41" />
+              <path d="M2 12h2" />
+              <path d="M20 12h2" />
+              <path d="m6.34 17.66-1.41 1.41" />
+              <path d="m19.07 4.93-1.41 1.41" />
+            </svg>
+          </button>
+          <span class="theme-tooltip" role="tooltip" data-theme-tooltip>Dark mode</span>
+        </div>
+        <div class="account-entry">
+          <button class="avatar-button account-trigger" type="button" aria-label="Account" data-i18n-aria-label="accountTooltip" aria-haspopup="menu" aria-expanded="false">
+            <img class="avatar" src="assets/avatar.svg" alt="" />
+          </button>
+          <span class="account-tooltip" role="tooltip" data-i18n="accountTooltip">Account</span>
+          <div class="account-menu" role="menu" aria-label="Account" data-i18n-aria-label="accountTooltip" hidden>
+            <div class="account-profile" role="none">
+              <span class="account-profile-avatar-wrap" aria-hidden="true">
+                <img class="account-profile-avatar" src="assets/avatar.svg" alt="" />
+                <span class="account-profile-avatar-overlay">
+                  <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M15 3h6v6" />
+                    <path d="M10 14 21 3" />
+                    <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+                  </svg>
+                </span>
+              </span>
+              <div class="account-profile-copy">
+                <p class="account-profile-name" data-i18n="userName">用户名</p>
+                <p class="account-profile-id" data-i18n="iqId">IQ ID：1461926038</p>
+              </div>
+            </div>
+            <div class="account-menu-divider" role="separator" aria-hidden="true"></div>
+            <button class="account-option" type="button" role="menuitem">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21c1.8-5 4.5-7 8-7s6.2 2 8 7" />
+              </svg>
+              <span data-i18n="accountSetting">Account Setting</span>
+            </button>
+            <button class="account-option" type="button" role="menuitem">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
+                <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 0 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 0 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.6-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1A2 2 0 0 1 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1A2 2 0 0 1 19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1a2 2 0 0 1 0 4H21a1.7 1.7 0 0 0-1.6 1Z" />
+              </svg>
+              <span data-i18n="settings">Settings</span>
+            </button>
+            <button class="account-option sign-out" type="button" role="menuitem">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10 17l5-5-5-5" />
+                <path d="M15 12H3" />
+                <path d="M21 4v16" />
+              </svg>
+              <span data-i18n="signOut">Sign Out</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <aside class="sidebar" aria-label="Primary navigation">
+      <button class="upload-button" type="button">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 15V3" />
+          <path d="M7 8l5-5 5 5" />
+          <path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" />
+        </svg>
+        <span data-i18n="upload">Upload</span>
+      </button>
+
+      <nav>
+        <ul class="nav-list">
+          <li>
+            <a class="nav-link" href="index.html">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+              </svg>
+              <span data-i18n="dashboard">Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="content.html" aria-current="page">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="m10 9 6 3-6 3V9Z" />
+              </svg>
+              <span data-i18n="content">Content</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="#">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 19V5" />
+                <path d="M4 19h16" />
+                <path d="M8 16v-5" />
+                <path d="M12 16V8" />
+                <path d="M16 16v-9" />
+              </svg>
+              <span data-i18n="analytics">Analytics</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="#">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="M7 11h4" />
+                <path d="M13 11h4" />
+                <path d="M7 15h10" />
+              </svg>
+              <span data-i18n="subtitles">Subtitles</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="shell">
+      <section class="workspace" aria-label="Workspace">
+        <div class="workspace-inner">
+          <div class="content-toolbar-frame">
+            <nav aria-label="Content menu" data-i18n-aria-label="contentMenuAria">
+              <ul class="content-menu" role="tablist">
+                <li><button class="content-menu-link" type="button" role="tab" id="tab-all" data-content-tab="all" data-i18n="all" aria-selected="true" aria-controls="content-panel">All</button></li>
+                <li><button class="content-menu-link" type="button" role="tab" id="tab-short" data-content-tab="short" data-i18n="short" aria-selected="false" aria-controls="content-panel">Short</button></li>
+                <li><button class="content-menu-link" type="button" role="tab" id="tab-comic-drama" data-content-tab="comic-drama" data-i18n="comicDrama" aria-selected="false" aria-controls="content-panel">Comic Drama</button></li>
+                <li><button class="content-menu-link" type="button" role="tab" id="tab-mid-length-drama" data-content-tab="mid-length-drama" data-i18n="midLengthDrama" aria-selected="false" aria-controls="content-panel">Mid-length Drama</button></li>
+                <li><button class="content-menu-link" type="button" role="tab" id="tab-long-form-drama" data-content-tab="long-form-drama" data-i18n="longFormDrama" aria-selected="false" aria-controls="content-panel">Long-form Drama</button></li>
+                <li><button class="content-menu-link" type="button" role="tab" id="tab-movie" data-content-tab="movie" data-i18n="movie" aria-selected="false" aria-controls="content-panel">Movie</button></li>
+              </ul>
+            </nav>
+            <div class="content-filters" aria-label="Content filters" data-i18n-aria-label="contentFiltersAria">
+              <div class="filter-group">
+                <button class="filter-control" type="button" aria-haspopup="listbox" aria-expanded="false" data-filter-trigger data-filter-field="freePaidStatus">
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 7h16" />
+                    <path d="M7 12h10" />
+                    <path d="M10 17h4" />
+                  </svg>
+                  <span class="filter-label" data-i18n="freePaid">Free/Paid</span>
+                  <span class="filter-value" data-filter-value>All</span>
+                </button>
+                <div class="filter-menu" role="listbox" aria-label="Free/Paid" data-i18n-aria-label="freePaid" hidden>
+                  <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="freePaidStatus" data-filter-value="" data-i18n="all" aria-selected="true">All</button>
+                  <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="freePaidStatus" data-filter-value="Free" data-i18n="free" aria-selected="false">Free</button>
+                  <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="freePaidStatus" data-filter-value="Paid" data-i18n="paid" aria-selected="false">Paid</button>
+                </div>
+              </div>
+              <div class="filter-group">
+                <button class="filter-control" type="button" aria-haspopup="listbox" aria-expanded="false" data-filter-trigger data-filter-field="publicationStatus">
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 7h16" />
+                    <path d="M7 12h10" />
+                    <path d="M10 17h4" />
+                  </svg>
+                  <span class="filter-label" data-i18n="publication">Publication</span>
+                  <span class="filter-value" data-filter-value>All</span>
+                </button>
+                <div class="filter-menu" role="listbox" aria-label="Publication" data-i18n-aria-label="publication" hidden>
+                  <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="" data-i18n="all" aria-selected="true">All</button>
+                  <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="Online" data-i18n="online" aria-selected="false">Online</button>
+                  <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="Offline" data-i18n="offline" aria-selected="false">Offline</button>
+                  <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="Draft" data-i18n="draft" aria-selected="false">Draft</button>
+                </div>
+              </div>
+              <div class="search-control">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="m16 16 5 5" />
+                </svg>
+                <input class="search-input" type="search" aria-label="Search title or Content ID" placeholder="Search title or Content ID" data-i18n-aria-label="searchPlaceholder" data-i18n-placeholder="searchPlaceholder" data-search-input />
+                <button class="search-clear" type="button" aria-label="Clear search" data-i18n-aria-label="clearSearch" data-search-clear hidden>
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M7 7l10 10" />
+                    <path d="M17 7L7 17" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="content-view">
+            <section class="content-panel video-list-card" id="content-panel" role="tabpanel" aria-labelledby="tab-all">
+              <div class="video-list-header-scroll" data-video-list-header-scroll>
+                <div class="video-list-header" role="row">
+                  <span data-i18n="video">Video</span>
+                  <span data-i18n="freePaidStatus">Free/Paid Status</span>
+                  <span data-i18n="publicationStatus">Publication Status</span>
+                  <span data-i18n="updated">Updated</span>
+                  <span data-i18n="action">Action</span>
+                </div>
+              </div>
+              <div class="video-list-scroll" data-video-list-scroll>
+                <div class="video-list-table">
+                  <div class="video-list-body" data-video-list></div>
+                </div>
+              </div>
+            </section>
+            <div class="pagination" aria-label="Pagination" data-i18n-aria-label="pagination">
+              <span class="pagination-range" data-pagination-range>共 20 条</span>
+              <div class="pagination-controls">
+                <button class="pagination-button" type="button" aria-label="Previous page" data-i18n-aria-label="previousPage" data-page-prev>
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                </button>
+                <span class="pagination-pages" data-page-numbers></span>
+                <button class="pagination-button" type="button" aria-label="Next page" data-i18n-aria-label="nextPage" data-page-next>
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m9 18 6-6-6-6" />
+                  </svg>
+                </button>
+              </div>
+              <span class="page-size-select" data-page-size>
+                <button class="page-size-trigger" type="button" aria-label="Rows per page" data-i18n-aria-label="rowsPerPage" aria-expanded="false" data-page-size-trigger data-page-size-value="10">
+                  <span data-page-size-label>10 条/页</span>
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+                <span class="page-size-menu" data-page-size-menu hidden>
+                  <button class="page-size-option selected" type="button" data-page-size-option="10">10 条/页</button>
+                  <button class="page-size-option" type="button" data-page-size-option="20">20 条/页</button>
+                  <button class="page-size-option" type="button" data-page-size-option="50">50 条/页</button>
+                </span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script>
+      const messages = {
+        en: {
+          studio: "Studio",
+          languageTooltip: "Language",
+          switchLanguage: "Switch language",
+          switchToDarkMode: "Dark mode",
+          switchToLightMode: "Light mode",
+          accountTooltip: "Account",
+          accountSetting: "Account Setting",
+          signOut: "Sign Out",
+          userName: "用户名",
+          iqId: "IQ ID: 1461926038",
+          upload: "Upload",
+          dashboard: "Dashboard",
+          content: "Content",
+          analytics: "Analytics",
+          subtitles: "Subtitles",
+          settings: "Settings",
+          pageTitle: "Content - Studio",
+          contentMenuAria: "Content menu",
+          contentFiltersAria: "Content filters",
+          all: "All",
+          short: "Short",
+          comicDrama: "Comic Drama",
+          midLengthDrama: "Mid-length Drama",
+          longFormDrama: "Long-form Drama",
+          movie: "Movie",
+          freePaid: "Free/Paid",
+          publication: "Publication",
+          visibility: "Visibility",
+          free: "Free",
+          paid: "Paid",
+          online: "Online",
+          offline: "Offline",
+          draft: "Draft",
+          public: "Public",
+          private: "Private",
+          searchPlaceholder: "Search title or Content ID",
+          clearSearch: "Clear search",
+          video: "Content name",
+          freePaidStatus: "Free/Paid Status",
+          publicationStatus: "Publication Status",
+          updated: "Updated",
+          action: "Action",
+          pagination: "Pagination",
+          previousPage: "Previous page",
+          nextPage: "Next page",
+          rowsPerPage: "Rows per page",
+          rowsTotal: (total) => `${total} items`,
+          rowsPerPageLabel: (size) => `${size} / page`,
+          pageLabel: (page) => `Page ${page}`,
+          noContentYet: "No content yet",
+          edit: "Edit",
+          delete: "Delete",
+          today: "Today",
+          yesterday: "Yesterday"
+        },
+        zh: {
+          studio: "Studio",
+          languageTooltip: "语言",
+          switchLanguage: "切换语言",
+          switchToDarkMode: "夜间模式",
+          switchToLightMode: "浅色模式",
+          accountTooltip: "账号",
+          accountSetting: "账号设置",
+          signOut: "退出登录",
+          userName: "用户名",
+          iqId: "IQ ID：1461926038",
+          upload: "上传",
+          dashboard: "仪表盘",
+          content: "内容",
+          analytics: "数据分析",
+          subtitles: "字幕",
+          settings: "设置",
+          pageTitle: "内容 - Studio",
+          contentMenuAria: "内容菜单",
+          contentFiltersAria: "内容筛选",
+          all: "全部",
+          short: "短视频",
+          comicDrama: "喜剧短剧",
+          midLengthDrama: "中篇剧集",
+          longFormDrama: "长篇剧集",
+          movie: "电影",
+          freePaid: "免费/付费",
+          publication: "发布状态",
+          visibility: "可见性",
+          free: "免费",
+          paid: "付费",
+          online: "上线",
+          offline: "已下线",
+          draft: "草稿",
+          public: "公开",
+          private: "私密",
+          searchPlaceholder: "搜索标题或 Content ID",
+          clearSearch: "清除搜索",
+          video: "内容名称",
+          freePaidStatus: "免费/付费状态",
+          publicationStatus: "发布状态",
+          updated: "更新时间",
+          action: "操作",
+          pagination: "分页",
+          previousPage: "上一页",
+          nextPage: "下一页",
+          rowsPerPage: "每页条数",
+          rowsTotal: (total) => `共 ${total} 条`,
+          rowsPerPageLabel: (size) => `${size} 条/页`,
+          pageLabel: (page) => `第 ${page} 页`,
+          noContentYet: "暂无内容",
+          edit: "编辑",
+          delete: "删除",
+          today: "今天",
+          yesterday: "昨天"
+        }
+      };
+
+      const trigger = document.querySelector(".language-trigger");
+      const languageSwitch = document.querySelector(".language-switch");
+      const menu = document.querySelector(".language-menu");
+      const options = document.querySelectorAll(".language-option");
+      const accountEntry = document.querySelector(".account-entry");
+      const accountTrigger = document.querySelector(".account-trigger");
+      const accountMenu = document.querySelector(".account-menu");
+      const themeToggle = document.querySelector("[data-theme-toggle]");
+      const themeTooltip = document.querySelector("[data-theme-tooltip]");
+      const contentTabs = Array.from(document.querySelectorAll("[data-content-tab]"));
+      const workspace = document.querySelector(".workspace");
+      const contentView = document.querySelector(".content-view");
+      const contentToolbar = document.querySelector(".content-toolbar-frame");
+      const contentPanel = document.querySelector("#content-panel");
+      const videoListCard = document.querySelector(".video-list-card");
+      const videoListHeaderScroll = document.querySelector("[data-video-list-header-scroll]");
+      const videoListScroll = document.querySelector("[data-video-list-scroll]");
+      const contentList = document.querySelector("[data-video-list]");
+      const searchInput = document.querySelector("[data-search-input]");
+      const searchClear = document.querySelector("[data-search-clear]");
+      const filterTriggers = Array.from(document.querySelectorAll("[data-filter-trigger]"));
+      const filterOptions = Array.from(document.querySelectorAll("[data-filter-option]"));
+      const pageSizeSelect = document.querySelector("[data-page-size]");
+      const pageSizeTrigger = document.querySelector("[data-page-size-trigger]");
+      const pageSizeLabel = document.querySelector("[data-page-size-label]");
+      const pageSizeMenu = document.querySelector("[data-page-size-menu]");
+      const pageSizeOptions = Array.from(document.querySelectorAll("[data-page-size-option]"));
+      const paginationRange = document.querySelector("[data-pagination-range]");
+      const pageNumbers = document.querySelector("[data-page-numbers]");
+      const prevPageButton = document.querySelector("[data-page-prev]");
+      const nextPageButton = document.querySelector("[data-page-next]");
+      let currentContentView = "all";
+      let currentLanguage = "en";
+      let currentPage = 1;
+      let pageSize = Number(pageSizeTrigger.dataset.pageSizeValue);
+      const activeFilters = {
+        freePaidStatus: "",
+        publicationStatus: ""
+      };
+      const videoItems = [
+        {
+          type: "short",
+          title: "Launch Teaser",
+          id: "VID-2408-0192",
+          duration: "00:42",
+          episodes: 12,
+          format: "1080x1920",
+          freePaidStatus: "Free",
+          publicationStatus: "Online",
+          visibilityStatus: "Public",
+          updated: "Today 14:26"
+        },
+        {
+          type: "short",
+          title: "Behind the Scene",
+          id: "VID-2408-0164",
+          duration: "00:28",
+          episodes: 8,
+          format: "1080x1920",
+          freePaidStatus: "Paid",
+          publicationStatus: "Draft",
+          visibilityStatus: "Private",
+          updated: "Aug 10, 2026"
+        },
+        {
+          type: "short",
+          title: "Creator Challenge",
+          id: "VID-2408-0142",
+          duration: "00:36",
+          episodes: 16,
+          format: "1080x1920",
+          freePaidStatus: "Free",
+          publicationStatus: "Online",
+          visibilityStatus: "Public",
+          updated: "Aug 7, 2026"
+        },
+        {
+          type: "short",
+          title: "Weekend Recap",
+          id: "VID-2408-0128",
+          duration: "00:51",
+          episodes: 10,
+          format: "1080x1920",
+          freePaidStatus: "Paid",
+          publicationStatus: "Draft",
+          visibilityStatus: "Private",
+          updated: "Aug 5, 2026"
+        },
+        {
+          type: "comic-drama",
+          title: "Moonlit Bistro",
+          id: "VID-2408-0187",
+          duration: "03:18",
+          episodes: 6,
+          format: "",
+          freePaidStatus: "Paid",
+          publicationStatus: "Draft",
+          visibilityStatus: "Private",
+          updated: "Yesterday 18:40"
+        },
+        {
+          type: "comic-drama",
+          title: "Roommate Contract",
+          id: "VID-2408-0179",
+          duration: "02:44",
+          episodes: 8,
+          format: "",
+          freePaidStatus: "Free",
+          publicationStatus: "Offline",
+          visibilityStatus: "Public",
+          updated: "Aug 13, 2026"
+        },
+        {
+          type: "comic-drama",
+          title: "Office Crush",
+          id: "VID-2408-0168",
+          duration: "03:05",
+          episodes: 10,
+          format: "",
+          freePaidStatus: "Paid",
+          publicationStatus: "Draft",
+          visibilityStatus: "Private",
+          updated: "Aug 11, 2026"
+        },
+        {
+          type: "comic-drama",
+          title: "Delivery Mix-up",
+          id: "VID-2408-0147",
+          duration: "02:58",
+          episodes: 12,
+          format: "",
+          freePaidStatus: "Free",
+          publicationStatus: "Offline",
+          visibilityStatus: "Public",
+          updated: "Aug 8, 2026"
+        },
+        {
+          type: "mid-length-drama",
+          title: "Character Moment",
+          id: "VID-2408-0158",
+          duration: "02:06",
+          episodes: 18,
+          format: "",
+          freePaidStatus: "Free",
+          publicationStatus: "Online",
+          visibilityStatus: "Public",
+          updated: "Aug 9, 2026"
+        },
+        {
+          type: "mid-length-drama",
+          title: "Second Chance",
+          id: "VID-2408-0151",
+          duration: "07:36",
+          episodes: 24,
+          format: "",
+          freePaidStatus: "Paid",
+          publicationStatus: "Draft",
+          visibilityStatus: "Private",
+          updated: "Aug 7, 2026"
+        },
+        {
+          type: "mid-length-drama",
+          title: "Evidence Board",
+          id: "VID-2408-0136",
+          duration: "09:12",
+          episodes: 16,
+          format: "",
+          freePaidStatus: "Free",
+          publicationStatus: "Online",
+          visibilityStatus: "Public",
+          updated: "Aug 4, 2026"
+        },
+        {
+          type: "mid-length-drama",
+          title: "Rainy Street",
+          id: "VID-2408-0124",
+          duration: "08:48",
+          episodes: 20,
+          format: "",
+          freePaidStatus: "Paid",
+          publicationStatus: "Draft",
+          visibilityStatus: "Private",
+          updated: "Aug 2, 2026"
+        },
+        {
+          type: "long-form-drama",
+          title: "Harbor Lights",
+          id: "VID-2408-0181",
+          duration: "28:14",
+          episodes: 32,
+          format: "",
+          freePaidStatus: "Paid",
+          publicationStatus: "Draft",
+          visibilityStatus: "Private",
+          updated: "Aug 11, 2026"
+        },
+        {
+          type: "long-form-drama",
+          title: "Silent Witness",
+          id: "VID-2408-0162",
+          duration: "31:08",
+          episodes: 40,
+          format: "",
+          freePaidStatus: "Free",
+          publicationStatus: "Offline",
+          visibilityStatus: "Public",
+          updated: "Aug 6, 2026"
+        },
+        {
+          type: "long-form-drama",
+          title: "Northern Promise",
+          id: "VID-2408-0144",
+          duration: "26:52",
+          episodes: 36,
+          format: "",
+          freePaidStatus: "Paid",
+          publicationStatus: "Draft",
+          visibilityStatus: "Private",
+          updated: "Aug 3, 2026"
+        },
+        {
+          type: "long-form-drama",
+          title: "Glass City",
+          id: "VID-2408-0121",
+          duration: "33:19",
+          episodes: 28,
+          format: "",
+          freePaidStatus: "Free",
+          publicationStatus: "Online",
+          visibilityStatus: "Public",
+          updated: "Jul 30, 2026"
+        },
+        {
+          type: "movie",
+          title: "Festival",
+          id: "VID-2408-0173",
+          duration: "01:57:50",
+          format: "4K",
+          freePaidStatus: "Free",
+          publicationStatus: "Online",
+          visibilityStatus: "Public",
+          updated: "Aug 12, 2026"
+        },
+        {
+          type: "movie",
+          title: "Premiere Red Carpet",
+          id: "VID-2408-0155",
+          duration: "02:08:16",
+          format: "4K",
+          freePaidStatus: "Paid",
+          publicationStatus: "Draft",
+          visibilityStatus: "Private",
+          updated: "Aug 9, 2026"
+        },
+        {
+          type: "movie",
+          title: "Action Set Piece",
+          id: "VID-2408-0133",
+          duration: "01:46:38",
+          format: "",
+          freePaidStatus: "Free",
+          publicationStatus: "Offline",
+          visibilityStatus: "Public",
+          updated: "Aug 4, 2026"
+        },
+        {
+          type: "movie",
+          title: "Director Commentary",
+          id: "VID-2408-0119",
+          duration: "02:14:05",
+          format: "4K",
+          freePaidStatus: "Paid",
+          publicationStatus: "Draft",
+          visibilityStatus: "Private",
+          updated: "Aug 1, 2026"
+        }
+      ];
+
+      function t(key, ...args) {
+        const message = messages[currentLanguage][key] ?? messages.en[key] ?? key;
+        return typeof message === "function" ? message(...args) : message;
+      }
+
+      function setTheme(theme, persist = true) {
+        const nextTheme = theme === "dark" ? "dark" : "light";
+        document.documentElement.dataset.theme = nextTheme;
+        document.documentElement.style.colorScheme = nextTheme;
+        if (themeToggle) {
+          const label = nextTheme === "dark" ? t("switchToLightMode") : t("switchToDarkMode");
+          themeToggle.setAttribute("aria-label", label);
+          themeToggle.title = label;
+          if (themeTooltip) {
+            themeTooltip.textContent = label;
+          }
+        }
+        if (persist) {
+          try {
+            localStorage.setItem("studio-theme", nextTheme);
+          } catch (error) {}
+        }
+      }
+
+      function syncThemePreference() {
+        const currentTheme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+        setTheme(currentTheme, false);
+      }
+
+      themeToggle?.addEventListener("click", () => {
+        const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+        setTheme(nextTheme);
+      });
+
+      window.matchMedia?.("(prefers-color-scheme: dark)").addEventListener?.("change", (event) => {
+        try {
+          if (localStorage.getItem("studio-theme")) return;
+        } catch (error) {}
+        setTheme(event.matches ? "dark" : "light", false);
+      });
+
+      function getTypeLabel(type) {
+        const typeKeys = {
+          short: "short",
+          "comic-drama": "comicDrama",
+          "mid-length-drama": "midLengthDrama",
+          "long-form-drama": "longFormDrama",
+          movie: "movie"
+        };
+        return t(typeKeys[type] || type);
+      }
+
+      function getStatusKey(value) {
+        const statusKeys = {
+          Free: "free",
+          Paid: "paid",
+          Online: "online",
+          Offline: "offline",
+          Draft: "draft",
+          Public: "public",
+          Private: "private",
+          免费: "free",
+          付费: "paid",
+          上线: "online",
+          已上线: "online",
+          在线: "online",
+          已下线: "offline",
+          下线: "offline",
+          草稿: "draft",
+          公开: "public",
+          私密: "private"
+        };
+        return statusKeys[value] || value;
+      }
+
+      function getStatusLabel(value) {
+        return t(getStatusKey(value));
+      }
+
+      function getPublicationClass(value) {
+        const statusKey = getStatusKey(value);
+        return statusKey === "online" ? "publish" : statusKey === "offline" ? "offline" : "draft";
+      }
+
+      function getPublicationIcon(value) {
+        const statusKey = getStatusKey(value);
+        if (statusKey === "online") {
+          return `
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none" />
+            </svg>
+          `;
+        }
+        if (statusKey === "offline") {
+          return `
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 12h10" />
+            </svg>
+          `;
+        }
+        return `
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+            <path d="M14 3v6h6" />
+            <path d="M8 15h4" />
+          </svg>
+        `;
+      }
+
+      function renderPublicationStatus(value) {
+        return `<span class="status-pill ${getPublicationClass(value)}">${getPublicationIcon(value)}<span>${getStatusLabel(value)}</span></span>`;
+      }
+
+      function getThumbBadgeLabel(item) {
+        return item.type === "movie" ? item.duration : `${item.episodes} Episodes`;
+      }
+
+      function getUpdatedLabel(updated) {
+        if (updated.startsWith("Today")) {
+          return updated.replace("Today", t("today"));
+        }
+        if (updated.startsWith("Yesterday")) {
+          return updated.replace("Yesterday", t("yesterday"));
+        }
+        const timestamp = Date.parse(updated);
+        if (Number.isNaN(timestamp)) {
+          return updated;
+        }
+        return new Intl.DateTimeFormat(currentLanguage === "zh" ? "zh-CN" : "en-US", {
+          year: "numeric",
+          month: currentLanguage === "zh" ? "numeric" : "short",
+          day: "numeric"
+        }).format(timestamp);
+      }
+
+      function syncFilterLabels() {
+        filterTriggers.forEach((filterTrigger) => {
+          const field = filterTrigger.dataset.filterField;
+          const selectedValue = activeFilters[field];
+          const valueNode = filterTrigger.querySelector("[data-filter-value]");
+          if (field === "publicationStatus" && selectedValue) {
+            valueNode.innerHTML = renderPublicationStatus(selectedValue);
+          } else {
+            valueNode.textContent = selectedValue ? getStatusLabel(selectedValue) : t("all");
+          }
+        });
+      }
+
+      function syncFilterOptionLabels() {
+        filterOptions.forEach((option) => {
+          const value = option.dataset.filterValue;
+          if (option.dataset.filterField === "publicationStatus" && value) {
+            option.innerHTML = renderPublicationStatus(value);
+          } else if (value) {
+            option.textContent = getStatusLabel(value);
+          } else {
+            option.textContent = t("all");
+          }
+        });
+      }
+
+      function syncPageSizeLabels() {
+        pageSizeLabel.textContent = t("rowsPerPageLabel", pageSize);
+        pageSizeOptions.forEach((option) => {
+          option.textContent = t("rowsPerPageLabel", Number(option.dataset.pageSizeOption));
+        });
+      }
+
+      function setLanguage(lang) {
+        const nextLang = messages[lang] ? lang : "en";
+        currentLanguage = nextLang;
+        document.documentElement.lang = nextLang === "zh" ? "zh-CN" : "en";
+        document.title = t("pageTitle");
+        document.querySelectorAll("[data-i18n]").forEach((node) => {
+          const key = node.dataset.i18n;
+          node.textContent = t(key);
+        });
+        document.querySelectorAll("[data-i18n-aria-label]").forEach((node) => {
+          node.setAttribute("aria-label", t(node.dataset.i18nAriaLabel));
+        });
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
+          node.setAttribute("placeholder", t(node.dataset.i18nPlaceholder));
+        });
+        options.forEach((option) => {
+          option.setAttribute("aria-selected", String(option.dataset.lang === nextLang));
+        });
+        syncFilterLabels();
+        syncFilterOptionLabels();
+        syncPageSizeLabels();
+        renderVideoList(currentContentView);
+        syncThemePreference();
+        syncContentToolbarHeight();
+        window.dispatchEvent(new CustomEvent("studio:languagechange", { detail: { language: nextLang } }));
+        localStorage.setItem("studio-language", nextLang);
+      }
+
+      function suppressTooltipIfHidden(container, tooltipSelector) {
+        const tooltip = container.querySelector(tooltipSelector);
+        const tooltipOpacity = tooltip ? parseFloat(getComputedStyle(tooltip).opacity) : 0;
+        if (tooltipOpacity < 0.95) {
+          container.classList.add("suppress-tooltip");
+        }
+      }
+
+      [languageSwitch, accountEntry].forEach((container) => {
+        container.addEventListener("pointerleave", () => {
+          container.classList.remove("suppress-tooltip");
+        });
+        container.addEventListener("focusout", (event) => {
+          if (!container.contains(event.relatedTarget)) {
+            container.classList.remove("suppress-tooltip");
+          }
+        });
+      });
+
+      function closeFilterMenus() {
+        filterTriggers.forEach((filterTrigger) => {
+          filterTrigger.setAttribute("aria-expanded", "false");
+          filterTrigger.closest(".filter-group").querySelector(".filter-menu").hidden = true;
+        });
+      }
+
+      function closePageSizeMenu() {
+        pageSizeSelect.classList.remove("open");
+        pageSizeTrigger.setAttribute("aria-expanded", "false");
+        pageSizeMenu.hidden = true;
+      }
+
+      function syncSearchClear() {
+        searchClear.hidden = !searchInput.value;
+      }
+
+      searchInput.addEventListener("input", syncSearchClear);
+
+      searchClear.addEventListener("click", (event) => {
+        event.preventDefault();
+        searchInput.value = "";
+        syncSearchClear();
+        searchInput.focus();
+      });
+
+      filterTriggers.forEach((filterTrigger) => {
+        filterTrigger.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const group = filterTrigger.closest(".filter-group");
+          const filterMenu = group.querySelector(".filter-menu");
+          const shouldOpen = filterMenu.hidden;
+          closeFilterMenus();
+          filterMenu.hidden = !shouldOpen;
+          filterTrigger.setAttribute("aria-expanded", String(shouldOpen));
+          closePageSizeMenu();
+          menu.hidden = true;
+          languageSwitch.classList.remove("is-open");
+          trigger.setAttribute("aria-expanded", "false");
+          accountMenu.hidden = true;
+          accountEntry.classList.remove("is-open");
+          accountTrigger.setAttribute("aria-expanded", "false");
+        });
+      });
+
+      filterOptions.forEach((filterOption) => {
+        filterOption.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const field = filterOption.dataset.filterField;
+          activeFilters[field] = filterOption.dataset.filterValue;
+          filterOptions
+            .filter((option) => option.dataset.filterField === field)
+            .forEach((option) => {
+              option.setAttribute("aria-selected", String(option === filterOption));
+            });
+          const group = filterOption.closest(".filter-group");
+          syncFilterLabels();
+          closeFilterMenus();
+          currentPage = 1;
+          renderVideoList(currentContentView);
+          syncStickyDivider();
+        });
+      });
+
+      trigger.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const isOpen = !menu.hidden;
+        if (!isOpen) {
+          suppressTooltipIfHidden(languageSwitch, ".language-tooltip");
+        }
+        menu.hidden = isOpen;
+        languageSwitch.classList.toggle("is-open", !isOpen);
+        trigger.setAttribute("aria-expanded", String(!isOpen));
+        accountMenu.hidden = true;
+        accountEntry.classList.remove("is-open");
+        accountTrigger.setAttribute("aria-expanded", "false");
+        closeFilterMenus();
+      });
+
+      options.forEach((option) => {
+        option.addEventListener("click", () => {
+          setLanguage(option.dataset.lang);
+          menu.hidden = true;
+          languageSwitch.classList.remove("is-open");
+          trigger.setAttribute("aria-expanded", "false");
+        });
+      });
+
+      document.addEventListener("click", (event) => {
+        if (!event.target.closest(".language-switch")) {
+          menu.hidden = true;
+          languageSwitch.classList.remove("is-open");
+          trigger.setAttribute("aria-expanded", "false");
+        }
+        if (!event.target.closest(".account-entry")) {
+          accountMenu.hidden = true;
+          accountEntry.classList.remove("is-open");
+          accountTrigger.setAttribute("aria-expanded", "false");
+        }
+        if (!event.target.closest(".content-filters")) {
+          closeFilterMenus();
+        }
+      });
+
+      accountTrigger.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const isOpen = !accountMenu.hidden;
+        if (!isOpen) {
+          suppressTooltipIfHidden(accountEntry, ".account-tooltip");
+        }
+        accountMenu.hidden = isOpen;
+        accountEntry.classList.toggle("is-open", !isOpen);
+        accountTrigger.setAttribute("aria-expanded", String(!isOpen));
+        menu.hidden = true;
+        languageSwitch.classList.remove("is-open");
+        trigger.setAttribute("aria-expanded", "false");
+        closeFilterMenus();
+      });
+
+      function getUpdatedTimeValue(updated) {
+        if (updated.startsWith("Today")) {
+          return Date.parse(`2026-08-14T${updated.split(" ")[1] || "00:00"}:00`);
+        }
+        if (updated.startsWith("Yesterday")) {
+          return Date.parse(`2026-08-13T${updated.split(" ")[1] || "00:00"}:00`);
+        }
+        return Date.parse(updated);
+      }
+
+      function getVideoRows(view) {
+        return (
+          view === "all"
+            ? [...videoItems].sort((a, b) => getUpdatedTimeValue(b.updated) - getUpdatedTimeValue(a.updated))
+            : videoItems.filter((item) => item.type === view)
+        ).filter((item) =>
+          Object.entries(activeFilters).every(([field, value]) => {
+            if (!value) return true;
+            if (["freePaidStatus", "publicationStatus", "visibilityStatus"].includes(field)) {
+              return getStatusKey(item[field]) === getStatusKey(value);
+            }
+            return item[field] === value;
+          })
+        );
+      }
+
+      function updatePagination(totalRows) {
+        const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
+        currentPage = Math.min(currentPage, totalPages);
+        paginationRange.textContent = t("rowsTotal", totalRows);
+        if (!totalRows) {
+          pageNumbers.innerHTML = "";
+          prevPageButton.disabled = true;
+          nextPageButton.disabled = true;
+          return;
+        }
+        pageNumbers.innerHTML = Array.from({ length: totalPages }, (_, index) => {
+          const page = index + 1;
+          return `<button class="pagination-button${page === currentPage ? " current" : ""}" type="button" aria-label="${t("pageLabel", page)}" data-page-number="${page}">${page}</button>`;
+        }).join("");
+        prevPageButton.disabled = currentPage <= 1;
+        nextPageButton.disabled = currentPage >= totalPages;
+      }
+
+      function renderVideoList(view) {
+        const rows = getVideoRows(view);
+        updatePagination(rows.length);
+        const visibleRows = rows.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+        if (!visibleRows.length) {
+          contentList.innerHTML = `<div class="video-empty-state">${t("noContentYet")}</div>`;
+          return;
+        }
+        contentList.innerHTML = visibleRows
+          .map((item) => {
+            const isDraft = getStatusKey(item.publicationStatus) === "draft";
+            return `
+              <article class="video-row">
+                <div class="video-main">
+                  <div class="video-thumb ${item.type}${isDraft ? " draft" : ""}">
+                    <span class="video-duration">${getThumbBadgeLabel(item)}</span>
+                  </div>
+                  <div class="video-copy">
+                    <p class="video-title">${item.title}</p>
+                    <p class="video-subtitle">${item.id}</p>
+                    <div class="video-tags">
+                      <span class="type-tag ${item.type}">${getTypeLabel(item.type)}</span>
+                    </div>
+                  </div>
+                </div>
+                <span class="status-text">${isDraft ? "-" : getStatusLabel(item.freePaidStatus)}</span>
+                ${renderPublicationStatus(item.publicationStatus)}
+                <div>
+                  <p class="updated-time">${getUpdatedLabel(item.updated)}</p>
+                </div>
+                <div class="row-actions">
+                  <a class="row-action" href="edit.html?contentId=${encodeURIComponent(item.id)}&type=${encodeURIComponent(item.type)}">${t("edit")}</a>
+                  <button class="row-action icon-only" type="button" aria-label="${t("delete")}">
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M3 6h18" />
+                      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                      <path d="M10 11v6" />
+                      <path d="M14 11v6" />
+                    </svg>
+                  </button>
+                </div>
+              </article>
+            `;
+          })
+          .join("");
+      }
+
+      function setContentView(nextView) {
+        currentContentView = nextView;
+        currentPage = 1;
+        const selectedTab = contentTabs.find((tab) => tab.dataset.contentTab === nextView) || contentTabs[0];
+        contentTabs.forEach((tab) => {
+          const isSelected = tab.dataset.contentTab === nextView;
+          tab.setAttribute("aria-selected", String(isSelected));
+          tab.tabIndex = isSelected ? 0 : -1;
+        });
+        contentPanel.setAttribute("aria-labelledby", selectedTab.id);
+        renderVideoList(nextView);
+        syncStickyDivider();
+      }
+
+      function syncStickyDivider() {
+        videoListCard.classList.toggle("is-scrolled-x", videoListScroll.scrollLeft > 0);
+        videoListHeaderScroll.scrollLeft = videoListScroll.scrollLeft;
+      }
+
+      function scrollContentListToTop() {
+        const toolbarHeight = Math.ceil(contentToolbar.getBoundingClientRect().height);
+        if (workspace && workspace.scrollHeight > workspace.clientHeight) {
+          const targetTop = Math.max(
+            0,
+            workspace.scrollTop + contentPanel.getBoundingClientRect().top - workspace.getBoundingClientRect().top - toolbarHeight
+          );
+          workspace.scrollTo({ top: targetTop, left: workspace.scrollLeft });
+          return;
+        }
+        window.scrollTo({
+          top: Math.max(0, window.scrollY + contentPanel.getBoundingClientRect().top - toolbarHeight),
+          left: window.scrollX
+        });
+      }
+
+      function syncContentToolbarHeight() {
+        contentView.style.setProperty("--content-toolbar-height", `${Math.ceil(contentToolbar.getBoundingClientRect().height)}px`);
+      }
+
+      videoListScroll.addEventListener("scroll", syncStickyDivider, { passive: true });
+      window.addEventListener("resize", () => {
+        syncContentToolbarHeight();
+        syncStickyDivider();
+      });
+      new ResizeObserver(syncContentToolbarHeight).observe(contentToolbar);
+
+      pageSizeTrigger.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const shouldOpen = pageSizeMenu.hidden;
+        closeFilterMenus();
+        pageSizeSelect.classList.toggle("open", shouldOpen);
+        pageSizeTrigger.setAttribute("aria-expanded", String(shouldOpen));
+        pageSizeMenu.hidden = !shouldOpen;
+      });
+
+      pageSizeOptions.forEach((option) => {
+        option.addEventListener("click", (event) => {
+          event.stopPropagation();
+          pageSize = Number(option.dataset.pageSizeOption);
+          pageSizeTrigger.dataset.pageSizeValue = option.dataset.pageSizeOption;
+          pageSizeOptions.forEach((item) => item.classList.toggle("selected", item === option));
+          syncPageSizeLabels();
+          currentPage = 1;
+          renderVideoList(currentContentView);
+          scrollContentListToTop();
+          syncStickyDivider();
+          closePageSizeMenu();
+        });
+      });
+
+      pageNumbers.addEventListener("click", (event) => {
+        const pageButton = event.target.closest("[data-page-number]");
+        if (!pageButton) return;
+        currentPage = Number(pageButton.dataset.pageNumber);
+        renderVideoList(currentContentView);
+        scrollContentListToTop();
+        syncStickyDivider();
+      });
+
+      pageSizeSelect.addEventListener("click", (event) => {
+        event.stopPropagation();
+      });
+
+      document.addEventListener("click", closePageSizeMenu);
+
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closePageSizeMenu();
+        }
+      });
+
+      pageSizeTrigger.addEventListener("keydown", (event) => {
+        if (!["Enter", " "].includes(event.key)) return;
+        event.preventDefault();
+        pageSizeTrigger.click();
+      });
+
+      pageSizeOptions.forEach((option) => {
+        option.addEventListener("keydown", (event) => {
+          if (!["Enter", " "].includes(event.key)) return;
+          event.preventDefault();
+          option.click();
+        });
+      });
+
+      prevPageButton.addEventListener("click", () => {
+        currentPage = Math.max(1, currentPage - 1);
+        renderVideoList(currentContentView);
+        scrollContentListToTop();
+        syncStickyDivider();
+      });
+
+      nextPageButton.addEventListener("click", () => {
+        const totalPages = Math.max(1, Math.ceil(getVideoRows(currentContentView).length / pageSize));
+        currentPage = Math.min(totalPages, currentPage + 1);
+        renderVideoList(currentContentView);
+        scrollContentListToTop();
+        syncStickyDivider();
+      });
+
+      contentTabs.forEach((tab, index) => {
+        tab.addEventListener("click", () => {
+          setContentView(tab.dataset.contentTab);
+        });
+        tab.addEventListener("keydown", (event) => {
+          if (!["ArrowLeft", "ArrowRight"].includes(event.key)) {
+            return;
+          }
+          event.preventDefault();
+          const offset = event.key === "ArrowRight" ? 1 : -1;
+          const nextIndex = (index + offset + contentTabs.length) % contentTabs.length;
+          contentTabs[nextIndex].focus();
+          setContentView(contentTabs[nextIndex].dataset.contentTab);
+        });
+      });
+
+      syncSearchClear();
+      syncContentToolbarHeight();
+      setContentView("all");
+      syncThemePreference();
+      setLanguage(localStorage.getItem("studio-language") || "en");
+    </script>
+  </body>
+</html>

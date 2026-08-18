@@ -1,0 +1,1111 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Studio</title>
+    <script>
+      (() => {
+        const storageKey = "studio-theme";
+        const root = document.documentElement;
+        try {
+          const savedTheme = localStorage.getItem(storageKey);
+          const systemTheme = window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+          const theme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : systemTheme;
+          root.dataset.theme = theme;
+          root.style.colorScheme = theme;
+        } catch (error) {
+          root.dataset.theme = "light";
+          root.style.colorScheme = "light";
+        }
+      })();
+    </script>
+    <style>
+      :root {
+        color-scheme: light;
+        --color-bg-page: #fafbfc;
+        --color-bg-header: #ffffff;
+        --color-bg-surface: #ffffff;
+        --color-bg-elevated: #ffffff;
+        --color-bg-subtle: #f6f7f8;
+        --color-bg-selected: #e8ebee;
+        --color-text-primary: #0b0d0f;
+        --color-text-secondary: #71717a;
+        --color-text-muted: #52525b;
+        --color-text-disabled: #a1a1aa;
+        --color-text-inverse: #ffffff;
+        --color-border-default: #edf0f2;
+        --color-border-subtle: #d4d7dc;
+        --color-brand-primary: #00d157;
+        --color-brand-hover: #00bd4f;
+        --color-brand-active: #00a846;
+        --color-status-success-bg: #eef8f2;
+        --color-mask: rgba(11, 13, 15, 0.72);
+        --color-shadow: rgba(20, 23, 26, 0.08);
+        --brand: var(--color-brand-primary);
+        --brand-600: var(--color-brand-active);
+        --text: var(--color-text-primary);
+        --muted: var(--color-text-secondary);
+        --line: var(--color-border-default);
+        --surface: var(--color-bg-surface);
+        --page: var(--color-bg-page);
+        --nav-hover: var(--color-bg-subtle);
+        --nav-active: var(--color-bg-selected);
+        --focus: none;
+        --radius: 6px;
+      }
+
+      html[data-theme="dark"] {
+        color-scheme: dark;
+        --color-bg-page: #111417;
+        --color-bg-header: #171b1f;
+        --color-bg-surface: #1c2228;
+        --color-bg-elevated: #20272e;
+        --color-bg-subtle: #252d35;
+        --color-bg-selected: #2a353f;
+        --color-text-primary: #f4f7f8;
+        --color-text-secondary: #aab4bf;
+        --color-text-muted: #c7d0d8;
+        --color-text-disabled: #68737f;
+        --color-text-inverse: #08110d;
+        --color-border-default: #2d3741;
+        --color-border-subtle: #3a4652;
+        --color-brand-primary: #00d157;
+        --color-brand-hover: #12e06b;
+        --color-brand-active: #73f2a0;
+        --color-status-success-bg: rgba(0, 209, 87, 0.14);
+        --color-mask: rgba(0, 0, 0, 0.66);
+        --color-shadow: rgba(0, 0, 0, 0.34);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: var(--page);
+        color: var(--text);
+        font-family: "Inter var", "Inter", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      }
+
+      button,
+      a {
+        font: inherit;
+      }
+
+      .topbar {
+        position: fixed;
+        inset: 0 0 auto 0;
+        z-index: 100;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+        padding: 0 24px;
+        background: var(--surface);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+      }
+
+      .brand-logo-link {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 4px;
+      }
+
+      .brand-logo-link:focus-visible {
+        outline: none;
+      }
+
+      .brand-logo {
+        display: block;
+        width: auto;
+        height: 20px;
+        object-fit: contain;
+        object-position: left center;
+      }
+
+      .brand-title {
+        transform: translateY(2.5px);
+        font-size: 20px;
+        line-height: 28px;
+        font-weight: 500;
+        letter-spacing: 0;
+        white-space: nowrap;
+      }
+
+      .topbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .language-switch,
+      .theme-switch {
+        position: relative;
+        display: inline-flex;
+      }
+
+      .icon-button {
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: 0;
+        border-radius: var(--radius);
+        background: transparent;
+        color: rgb(113, 113, 122);
+        cursor: pointer;
+      }
+
+      .icon-button:hover {
+        background: #f6f7f8;
+        color: var(--text);
+      }
+
+      .theme-toggle {
+        width: 40px;
+        height: 40px;
+        border: 1px solid transparent;
+      }
+
+      .theme-toggle:active {
+        transform: translateY(1px);
+      }
+
+      .theme-icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      html[data-theme="light"] .theme-icon-sun,
+      html[data-theme="dark"] .theme-icon-moon {
+        display: none;
+      }
+
+      .language-trigger:focus-visible,
+      .language-switch.is-open .language-trigger {
+        border-color: var(--brand);
+      }
+
+      .language-tooltip,
+      .theme-tooltip {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 50%;
+        z-index: 30;
+        padding: 5px 8px;
+        border-radius: 4px;
+        background: rgba(11, 13, 15, 0.72);
+        color: #ffffff;
+        font-size: 12px;
+        line-height: 16px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -2px);
+        transition: opacity 120ms ease 250ms, transform 120ms ease 250ms;
+      }
+
+      .language-switch:hover .language-tooltip,
+      .language-switch:focus-within .language-tooltip,
+      .theme-switch:hover .theme-tooltip,
+      .theme-switch:focus-within .theme-tooltip {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
+      .language-switch.is-open .language-tooltip,
+      .language-switch.suppress-tooltip .language-tooltip,
+      .theme-switch.suppress-tooltip .theme-tooltip {
+        opacity: 0;
+        transform: translate(-50%, -2px);
+        transition-delay: 0ms;
+      }
+
+      .account-entry {
+        position: relative;
+        display: inline-flex;
+      }
+
+      .account-tooltip {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 50%;
+        z-index: 30;
+        padding: 5px 8px;
+        border-radius: 4px;
+        background: rgba(11, 13, 15, 0.72);
+        color: #ffffff;
+        font-size: 12px;
+        line-height: 16px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -2px);
+        transition: opacity 120ms ease 250ms, transform 120ms ease 250ms;
+      }
+
+      .account-entry:hover .account-tooltip,
+      .account-entry:focus-within .account-tooltip {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
+      .account-entry.is-open .account-tooltip,
+      .account-entry.suppress-tooltip .account-tooltip {
+        opacity: 0;
+        transform: translate(-50%, -2px);
+        transition-delay: 0ms;
+      }
+
+      .account-menu {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        z-index: 40;
+        min-width: 224px;
+        padding: 6px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        box-shadow: 0 8px 20px rgba(20, 23, 26, 0.08);
+      }
+
+      .account-menu[hidden] {
+        display: none;
+      }
+
+      .account-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 10px 10px;
+        border-radius: 4px;
+      }
+
+      .account-profile-avatar-wrap {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        flex: 0 0 auto;
+        border-radius: 999px;
+        overflow: hidden;
+      }
+
+      .account-profile-avatar {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+      }
+
+      .account-profile-avatar-overlay {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: rgba(11, 13, 15, 0.64);
+        color: #ffffff;
+        opacity: 0;
+        transition: opacity 120ms ease;
+      }
+
+      .account-profile-avatar-overlay .icon {
+        width: 18px;
+        height: 18px;
+        stroke-width: 2;
+      }
+
+      .account-profile:hover {
+        background: #f6f7f8;
+      }
+
+      .account-profile:focus-within {
+        background: var(--surface);
+      }
+
+      .account-profile:hover .account-profile-avatar-overlay,
+      .account-profile:focus-within .account-profile-avatar-overlay {
+        opacity: 1;
+      }
+
+      .account-profile-copy {
+        min-width: 0;
+      }
+
+      .account-profile-name {
+        margin: 0;
+        color: var(--text);
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+      }
+
+      .account-profile-id {
+        margin: 0;
+        color: var(--text);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 500;
+      }
+
+      .account-menu-divider {
+        height: 1px;
+        margin: 6px 0;
+        background: var(--line);
+      }
+
+      .account-option {
+        width: 100%;
+        min-height: 36px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 10px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background: transparent;
+        color: var(--text);
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+        text-align: left;
+      }
+
+      .account-option .icon {
+        width: 18px;
+        height: 18px;
+        stroke-width: 2;
+      }
+
+      .account-option:hover {
+        background: #f6f7f8;
+        color: var(--text);
+      }
+
+      .account-option.sign-out {
+        color: var(--text);
+      }
+
+      .language-menu {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        z-index: 40;
+        min-width: 132px;
+        padding: 6px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        box-shadow: 0 8px 20px rgba(20, 23, 26, 0.08);
+      }
+
+      .language-menu[hidden] {
+        display: none;
+      }
+
+      .language-option {
+        width: 100%;
+        min-height: 34px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 10px;
+        border: 0;
+        border-radius: 4px;
+        background: transparent;
+        color: rgb(113, 113, 122);
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+        text-align: left;
+      }
+
+      .language-option:hover {
+        background: #f6f7f8;
+        color: var(--text);
+      }
+
+      .language-option[aria-selected="true"] {
+        background: #eef8f2;
+        color: var(--brand-600);
+        font-weight: 500;
+      }
+
+      .language-option[aria-selected="true"]:hover {
+        background: #e4f6eb;
+        color: var(--brand-600);
+      }
+
+      .avatar-button {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        border: 1px solid #edf0f2;
+        border-radius: 999px;
+        background: var(--surface);
+        cursor: pointer;
+      }
+
+      .avatar-button:focus-visible,
+      .icon-button:focus-visible,
+      .upload-button:focus-visible,
+      .nav-link:focus-visible {
+        outline: none;
+      }
+
+      .avatar-button:focus-visible,
+      .icon-button:focus-visible,
+      .upload-button:focus-visible {
+        border-color: var(--brand);
+      }
+
+      .avatar {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 999px;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 64px;
+        bottom: 0;
+        left: 0;
+        z-index: 90;
+        width: 240px;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        padding: 20px 16px;
+        background: var(--surface);
+        border-right: 1px solid var(--line);
+      }
+
+      .upload-button {
+        width: 100%;
+        min-height: 42px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border: 0;
+        border-radius: var(--radius);
+        background: var(--brand);
+        color: #ffffff;
+        font-size: 15px;
+        line-height: 20px;
+        font-weight: 500;
+        cursor: pointer;
+        margin-bottom: 24px;
+        transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+      }
+
+      .upload-button:hover {
+        background: #00bd4f;
+        box-shadow: 0 10px 22px rgba(0, 209, 87, 0.24);
+      }
+
+      .upload-button:active {
+        transform: translateY(1px);
+      }
+
+      .nav-list {
+        display: grid;
+        row-gap: 0;
+        column-gap: 0;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .nav-link {
+        min-height: 42px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 0 12px;
+        border-radius: var(--radius);
+        color: #3f3f46;
+        text-decoration: none;
+        font-size: 14px;
+        line-height: 20px;
+        font-weight: 500;
+        transition: background 120ms ease, color 120ms ease, transform 120ms ease;
+      }
+
+      .nav-link:hover {
+        background: var(--nav-hover);
+        color: var(--text);
+      }
+
+      .nav-link:active {
+        background: var(--nav-active);
+        color: #14171a;
+        transform: translateY(1px);
+      }
+
+      .nav-link[aria-current="page"] {
+        background: var(--nav-active);
+        color: #14171a;
+        font-weight: 500;
+      }
+
+      .icon {
+        width: 20px;
+        height: 20px;
+        flex: 0 0 auto;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        fill: none;
+      }
+
+      .shell {
+        height: 100%;
+        padding: 64px 0 0 240px;
+      }
+
+      .workspace {
+        height: 100%;
+        overflow: auto;
+        padding: 20px 28px 28px;
+      }
+
+      .workspace-inner {
+        min-height: 460px;
+        display: grid;
+        align-content: start;
+        gap: 12px;
+        padding: 0;
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: var(--brand-600);
+        font-size: 13px;
+        line-height: 18px;
+        font-weight: 500;
+        text-transform: uppercase;
+      }
+
+      .title-frame {
+        display: grid;
+        gap: 8px;
+      }
+
+      h1 {
+        max-width: 720px;
+        margin: 0;
+        font-size: 32px;
+        line-height: 40px;
+        letter-spacing: 0;
+      }
+
+      .summary {
+        max-width: 720px;
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 24px;
+      }
+
+      html[data-theme="dark"] .topbar {
+        background: var(--color-bg-header);
+      }
+
+      html[data-theme="dark"] .sidebar {
+        background: var(--color-bg-elevated);
+      }
+
+      html[data-theme="dark"] .content-toolbar-frame {
+        background: var(--page);
+      }
+
+      html[data-theme="dark"] .icon-button,
+      html[data-theme="dark"] .nav-link,
+      html[data-theme="dark"] .language-option,
+      html[data-theme="dark"] .account-option {
+        color: var(--color-text-secondary);
+      }
+
+      html[data-theme="dark"] .icon-button:hover,
+      html[data-theme="dark"] .account-profile:hover,
+      html[data-theme="dark"] .account-option:hover,
+      html[data-theme="dark"] .language-option:hover,
+      html[data-theme="dark"] .nav-link:hover {
+        background: var(--color-bg-subtle);
+        color: var(--color-text-primary);
+      }
+
+      html[data-theme="dark"] .nav-link[aria-current="page"],
+      html[data-theme="dark"] .nav-link:active,
+      html[data-theme="dark"] .language-option[aria-selected="true"],
+      html[data-theme="dark"] .language-option[aria-selected="true"]:hover {
+        background: var(--color-bg-selected);
+        color: var(--color-text-primary);
+      }
+
+      html[data-theme="dark"] .account-menu,
+      html[data-theme="dark"] .language-menu {
+        background: var(--color-bg-elevated);
+        border-color: var(--color-border-default);
+        box-shadow: 0 12px 28px var(--color-shadow);
+      }
+
+      html[data-theme="dark"] .avatar-button {
+        border-color: var(--color-border-default);
+        background: var(--color-bg-surface);
+      }
+
+      html[data-theme="dark"] .language-tooltip,
+      html[data-theme="dark"] .theme-tooltip,
+      html[data-theme="dark"] .account-tooltip {
+        background: var(--color-mask);
+      }
+
+      html[data-theme="dark"] .upload-button {
+        background: var(--color-brand-primary);
+        color: var(--color-text-inverse);
+      }
+
+      html[data-theme="dark"] .upload-button:hover {
+        background: var(--color-brand-hover);
+        box-shadow: none;
+      }
+
+      @media (max-width: 720px) {
+        body {
+          overflow: auto;
+        }
+
+        .topbar {
+          padding: 0 16px;
+        }
+
+        .brand-logo {
+          height: 20px;
+        }
+
+        .brand-title {
+          font-size: 18px;
+        }
+
+        .sidebar {
+          position: fixed;
+          top: 64px;
+          right: 0;
+          bottom: auto;
+          width: 100%;
+          height: auto;
+          padding: 12px 16px;
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+        }
+
+        .nav-list {
+          grid-auto-flow: column;
+          grid-auto-columns: max-content;
+          overflow-x: auto;
+          padding-bottom: 4px;
+        }
+
+        .shell {
+          height: auto;
+          padding: 158px 0 0;
+        }
+
+        .workspace {
+          padding: 20px 16px;
+        }
+
+        .workspace-inner {
+          padding: 0;
+        }
+
+        h1 {
+          font-size: 26px;
+          line-height: 34px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand" aria-label="Studio">
+        <a class="brand-logo-link" href="https://www.iq.com/" aria-label="iQIYI">
+          <img class="brand-logo" src="logo.png" alt="iQIYI" />
+        </a>
+        <span class="brand-title" data-i18n="studio">Studio</span>
+      </div>
+      <div class="topbar-actions">
+        <div class="language-switch">
+          <button class="icon-button language-trigger" type="button" aria-label="Switch language" data-i18n-aria-label="switchLanguage" aria-haspopup="listbox" aria-expanded="false">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M3 12h18" />
+              <path d="M12 3c2.3 2.5 3.5 5.5 3.5 9S14.3 18.5 12 21" />
+              <path d="M12 3c-2.3 2.5-3.5 5.5-3.5 9s1.2 6.5 3.5 9" />
+            </svg>
+          </button>
+          <span class="language-tooltip" role="tooltip" data-i18n="languageTooltip">Language</span>
+          <div class="language-menu" role="listbox" aria-label="Language" data-i18n-aria-label="languageTooltip" hidden>
+            <button class="language-option" type="button" role="option" data-lang="en" aria-selected="true">English</button>
+            <button class="language-option" type="button" role="option" data-lang="zh" aria-selected="false">中文</button>
+          </div>
+        </div>
+        <div class="theme-switch">
+          <button class="icon-button theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode" data-theme-toggle>
+            <svg class="icon theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true" data-theme-toggle-icon>
+              <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.8 6.8 0 0 0 9.8 9.8Z" />
+            </svg>
+            <svg class="icon theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2" />
+              <path d="M12 20v2" />
+              <path d="m4.93 4.93 1.41 1.41" />
+              <path d="m17.66 17.66 1.41 1.41" />
+              <path d="M2 12h2" />
+              <path d="M20 12h2" />
+              <path d="m6.34 17.66-1.41 1.41" />
+              <path d="m19.07 4.93-1.41 1.41" />
+            </svg>
+          </button>
+          <span class="theme-tooltip" role="tooltip" data-theme-tooltip>Dark mode</span>
+        </div>
+        <div class="account-entry">
+          <button class="avatar-button account-trigger" type="button" aria-label="Account" data-i18n-aria-label="accountTooltip" aria-haspopup="menu" aria-expanded="false">
+            <img class="avatar" src="assets/avatar.svg" alt="" />
+          </button>
+          <span class="account-tooltip" role="tooltip" data-i18n="accountTooltip">Account</span>
+          <div class="account-menu" role="menu" aria-label="Account" data-i18n-aria-label="accountTooltip" hidden>
+            <div class="account-profile" role="none">
+              <span class="account-profile-avatar-wrap" aria-hidden="true">
+                <img class="account-profile-avatar" src="assets/avatar.svg" alt="" />
+                <span class="account-profile-avatar-overlay">
+                  <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M15 3h6v6" />
+                    <path d="M10 14 21 3" />
+                    <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+                  </svg>
+                </span>
+              </span>
+              <div class="account-profile-copy">
+                <p class="account-profile-name" data-i18n="userName">用户名</p>
+                <p class="account-profile-id" data-i18n="iqId">IQ ID：1461926038</p>
+              </div>
+            </div>
+            <div class="account-menu-divider" role="separator" aria-hidden="true"></div>
+            <button class="account-option" type="button" role="menuitem">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="8" r="4" />
+                <path d="M4 21c1.8-5 4.5-7 8-7s6.2 2 8 7" />
+              </svg>
+              <span data-i18n="accountSetting">Account Setting</span>
+            </button>
+            <button class="account-option" type="button" role="menuitem">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
+                <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 0 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 0 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.6-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1A2 2 0 0 1 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1A2 2 0 0 1 19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1a2 2 0 0 1 0 4H21a1.7 1.7 0 0 0-1.6 1Z" />
+              </svg>
+              <span data-i18n="settings">Settings</span>
+            </button>
+            <button class="account-option sign-out" type="button" role="menuitem">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M10 17l5-5-5-5" />
+                <path d="M15 12H3" />
+                <path d="M21 4v16" />
+              </svg>
+              <span data-i18n="signOut">Sign Out</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <aside class="sidebar" aria-label="Primary navigation">
+      <button class="upload-button" type="button">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 15V3" />
+          <path d="M7 8l5-5 5 5" />
+          <path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" />
+        </svg>
+        <span data-i18n="upload">Upload</span>
+      </button>
+
+      <nav>
+        <ul class="nav-list">
+          <li>
+            <a class="nav-link" href="index.html" aria-current="page">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+              </svg>
+              <span data-i18n="dashboard">Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="content.html">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="m10 9 6 3-6 3V9Z" />
+              </svg>
+              <span data-i18n="content">Content</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="#">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 19V5" />
+                <path d="M4 19h16" />
+                <path d="M8 16v-5" />
+                <path d="M12 16V8" />
+                <path d="M16 16v-9" />
+              </svg>
+              <span data-i18n="analytics">Analytics</span>
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="#">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="5" width="18" height="14" rx="2" />
+                <path d="M7 11h4" />
+                <path d="M13 11h4" />
+                <path d="M7 15h10" />
+              </svg>
+              <span data-i18n="subtitles">Subtitles</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="shell">
+      <section class="workspace" aria-label="Workspace">
+        <div class="workspace-inner">
+          <p class="eyebrow" data-i18n="dashboard">Dashboard</p>
+          <div class="title-frame">
+            <h1 data-i18n="dashboardTitle">Welcome back to Studio</h1>
+            <p class="summary" data-i18n="dashboardSummary">
+              Upload assets, manage content, review analytics, and prepare subtitles from a clean workspace shell.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script>
+      const messages = {
+        en: {
+          studio: "Studio",
+          languageTooltip: "Language",
+          switchLanguage: "Switch language",
+          switchToDarkMode: "Dark mode",
+          switchToLightMode: "Light mode",
+          accountTooltip: "Account",
+          accountSetting: "Account Setting",
+          signOut: "Sign Out",
+          userName: "Username",
+          iqId: "IQ ID: 1461926038",
+          upload: "Upload",
+          dashboard: "Dashboard",
+          content: "Content",
+          analytics: "Analytics",
+          subtitles: "Subtitles",
+          settings: "Settings",
+          dashboardTitle: "Welcome back to Studio",
+          dashboardSummary: "Upload assets, manage content, review analytics, and prepare subtitles from a clean workspace shell."
+        },
+        zh: {
+          studio: "Studio",
+          languageTooltip: "语言",
+          switchLanguage: "切换语言",
+          switchToDarkMode: "夜间模式",
+          switchToLightMode: "浅色模式",
+          accountTooltip: "账号",
+          accountSetting: "账号设置",
+          signOut: "退出登录",
+          userName: "用户名",
+          iqId: "IQ ID：1461926038",
+          upload: "上传",
+          dashboard: "仪表盘",
+          content: "内容",
+          analytics: "数据分析",
+          subtitles: "字幕",
+          settings: "设置",
+          dashboardTitle: "欢迎回到 Studio",
+          dashboardSummary: "上传素材、管理视频内容、查看数据分析，并为工作流准备字幕。"
+        }
+      };
+
+      const trigger = document.querySelector(".language-trigger");
+      const languageSwitch = document.querySelector(".language-switch");
+      const menu = document.querySelector(".language-menu");
+      const options = document.querySelectorAll(".language-option");
+      const accountEntry = document.querySelector(".account-entry");
+      const accountTrigger = document.querySelector(".account-trigger");
+      const accountMenu = document.querySelector(".account-menu");
+      const themeToggle = document.querySelector("[data-theme-toggle]");
+      const themeTooltip = document.querySelector("[data-theme-tooltip]");
+      let currentLanguage = "en";
+
+      function t(key, ...args) {
+        const message = messages[currentLanguage][key] ?? messages.en[key] ?? key;
+        return typeof message === "function" ? message(...args) : message;
+      }
+
+      function setTheme(theme, persist = true) {
+        const nextTheme = theme === "dark" ? "dark" : "light";
+        document.documentElement.dataset.theme = nextTheme;
+        document.documentElement.style.colorScheme = nextTheme;
+        if (themeToggle) {
+          const label = nextTheme === "dark" ? t("switchToLightMode") : t("switchToDarkMode");
+          themeToggle.setAttribute("aria-label", label);
+          themeToggle.title = label;
+          if (themeTooltip) {
+            themeTooltip.textContent = label;
+          }
+        }
+        if (persist) {
+          try {
+            localStorage.setItem("studio-theme", nextTheme);
+          } catch (error) {}
+        }
+      }
+
+      function syncThemePreference() {
+        const currentTheme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+        setTheme(currentTheme, false);
+      }
+
+      themeToggle?.addEventListener("click", () => {
+        const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+        setTheme(nextTheme);
+      });
+
+      window.matchMedia?.("(prefers-color-scheme: dark)").addEventListener?.("change", (event) => {
+        try {
+          if (localStorage.getItem("studio-theme")) return;
+        } catch (error) {}
+        setTheme(event.matches ? "dark" : "light", false);
+      });
+
+      function setLanguage(lang) {
+        const nextLang = messages[lang] ? lang : "en";
+        currentLanguage = nextLang;
+        document.documentElement.lang = nextLang === "zh" ? "zh-CN" : "en";
+        document.querySelectorAll("[data-i18n]").forEach((node) => {
+          const key = node.dataset.i18n;
+          node.textContent = t(key);
+        });
+        document.querySelectorAll("[data-i18n-aria-label]").forEach((node) => {
+          const key = node.dataset.i18nAriaLabel;
+          node.setAttribute("aria-label", t(key));
+        });
+        document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
+          const key = node.dataset.i18nPlaceholder;
+          node.setAttribute("placeholder", t(key));
+        });
+        options.forEach((option) => {
+          option.setAttribute("aria-selected", String(option.dataset.lang === nextLang));
+        });
+        syncThemePreference();
+        localStorage.setItem("studio-language", nextLang);
+      }
+
+      function suppressTooltipIfHidden(container, tooltipSelector) {
+        const tooltip = container.querySelector(tooltipSelector);
+        const tooltipOpacity = tooltip ? parseFloat(getComputedStyle(tooltip).opacity) : 0;
+        if (tooltipOpacity < 0.95) {
+          container.classList.add("suppress-tooltip");
+        }
+      }
+
+      [languageSwitch, accountEntry].forEach((container) => {
+        container.addEventListener("pointerleave", () => {
+          container.classList.remove("suppress-tooltip");
+        });
+        container.addEventListener("focusout", (event) => {
+          if (!container.contains(event.relatedTarget)) {
+            container.classList.remove("suppress-tooltip");
+          }
+        });
+      });
+
+      trigger.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const isOpen = !menu.hidden;
+        if (!isOpen) {
+          suppressTooltipIfHidden(languageSwitch, ".language-tooltip");
+        }
+        menu.hidden = isOpen;
+        languageSwitch.classList.toggle("is-open", !isOpen);
+        trigger.setAttribute("aria-expanded", String(!isOpen));
+        accountMenu.hidden = true;
+        accountEntry.classList.remove("is-open");
+        accountTrigger.setAttribute("aria-expanded", "false");
+      });
+
+      options.forEach((option) => {
+        option.addEventListener("click", () => {
+          setLanguage(option.dataset.lang);
+          menu.hidden = true;
+          languageSwitch.classList.remove("is-open");
+          trigger.setAttribute("aria-expanded", "false");
+        });
+      });
+
+      document.addEventListener("click", (event) => {
+        if (!event.target.closest(".language-switch")) {
+          menu.hidden = true;
+          languageSwitch.classList.remove("is-open");
+          trigger.setAttribute("aria-expanded", "false");
+        }
+        if (!event.target.closest(".account-entry")) {
+          accountMenu.hidden = true;
+          accountEntry.classList.remove("is-open");
+          accountTrigger.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      accountTrigger.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const isOpen = !accountMenu.hidden;
+        if (!isOpen) {
+          suppressTooltipIfHidden(accountEntry, ".account-tooltip");
+        }
+        accountMenu.hidden = isOpen;
+        accountEntry.classList.toggle("is-open", !isOpen);
+        accountTrigger.setAttribute("aria-expanded", String(!isOpen));
+        menu.hidden = true;
+        languageSwitch.classList.remove("is-open");
+        trigger.setAttribute("aria-expanded", "false");
+      });
+
+      syncThemePreference();
+      setLanguage(localStorage.getItem("studio-language") || "en");
+    </script>
+  </body>
+</html>
