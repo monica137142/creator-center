@@ -170,7 +170,7 @@
         border: 0;
         border-radius: var(--radius);
         background: transparent;
-        color: rgb(113, 113, 122);
+        color: #60646c;
         cursor: pointer;
       }
 
@@ -215,8 +215,7 @@
 
       .language-switch:hover .language-tooltip,
       .language-switch:focus-within .language-tooltip,
-      .theme-switch:hover .theme-tooltip,
-      .theme-switch:focus-within .theme-tooltip {
+      .theme-switch:hover .theme-tooltip {
         opacity: 1;
         transform: translate(-50%, 0);
       }
@@ -364,7 +363,7 @@
 
       .account-option {
         width: 100%;
-        min-height: 36px;
+        height: 48px;
         display: flex;
         align-items: center;
         gap: 10px;
@@ -437,7 +436,7 @@
       }
 
       .language-option[aria-selected="true"] {
-        background: #eef8f2;
+        background: var(--color-status-success-bg);
         color: var(--brand-600);
         font-weight: 500;
       }
@@ -482,7 +481,6 @@
         top: 64px;
         bottom: 0;
         left: 0;
-        z-index: 90;
         width: 240px;
         display: flex;
         flex-direction: column;
@@ -549,16 +547,32 @@
         color: var(--text);
       }
 
+      .nav-link[aria-current="page"] {
+        background: var(--nav-active);
+        color: #14171a;
+        font-weight: 500;
+      }
+
       .nav-link:active {
         background: var(--nav-active);
         color: #14171a;
         transform: translateY(1px);
       }
 
-      .nav-link[aria-current="page"] {
-        background: var(--nav-active);
-        color: #14171a;
+      .sidebar-footer {
+        margin-top: auto;
+        padding-top: 12px;
+      }
+
+      .settings-link {
+        min-height: 40px;
+        color: var(--muted);
         font-weight: 500;
+      }
+
+      .settings-link:hover {
+        background: #f6f7f8;
+        color: #3f3f46;
       }
 
       .icon {
@@ -580,7 +594,7 @@
       .workspace {
         height: 100%;
         overflow: auto;
-        padding: 20px 28px 28px;
+        padding: 12px 28px 28px;
       }
 
       .workspace-inner {
@@ -593,7 +607,7 @@
 
       .eyebrow {
         margin: 0;
-        color: var(--brand-600);
+        color: var(--brand);
         font-size: 13px;
         line-height: 18px;
         font-weight: 500;
@@ -629,14 +643,11 @@
         background: var(--color-bg-elevated);
       }
 
-      html[data-theme="dark"] .content-toolbar-frame {
-        background: var(--page);
-      }
-
       html[data-theme="dark"] .icon-button,
       html[data-theme="dark"] .nav-link,
       html[data-theme="dark"] .language-option,
-      html[data-theme="dark"] .account-option {
+      html[data-theme="dark"] .account-option,
+      html[data-theme="dark"] .settings-link {
         color: var(--color-text-secondary);
       }
 
@@ -644,7 +655,8 @@
       html[data-theme="dark"] .account-profile:hover,
       html[data-theme="dark"] .account-option:hover,
       html[data-theme="dark"] .language-option:hover,
-      html[data-theme="dark"] .nav-link:hover {
+      html[data-theme="dark"] .nav-link:hover,
+      html[data-theme="dark"] .settings-link:hover {
         background: var(--color-bg-subtle);
         color: var(--color-text-primary);
       }
@@ -665,8 +677,8 @@
       }
 
       html[data-theme="dark"] .avatar-button {
-        border-color: var(--color-border-default);
         background: var(--color-bg-surface);
+        border-color: var(--color-border-default);
       }
 
       html[data-theme="dark"] .language-tooltip,
@@ -719,6 +731,11 @@
           grid-auto-columns: max-content;
           overflow-x: auto;
           padding-bottom: 4px;
+        }
+
+        .sidebar-footer {
+          margin-top: 0;
+          padding-top: 0;
         }
 
         .shell {
@@ -891,6 +908,16 @@
           </li>
         </ul>
       </nav>
+
+      <div class="sidebar-footer">
+        <a class="nav-link settings-link" href="#">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" />
+            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 0 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 0 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.6-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1A2 2 0 0 1 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1A2 2 0 0 1 19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.1a2 2 0 0 1 0 4H21a1.7 1.7 0 0 0-1.6 1Z" />
+          </svg>
+          <span data-i18n="settings">Settings</span>
+        </a>
+      </div>
     </aside>
 
     <main class="shell">
@@ -917,7 +944,7 @@
           accountTooltip: "Account",
           accountSetting: "Account Setting",
           signOut: "Sign Out",
-          userName: "Username",
+          userName: "用户名",
           iqId: "IQ ID: 1461926038",
           upload: "Upload",
           dashboard: "Dashboard",
@@ -925,6 +952,7 @@
           analytics: "Analytics",
           subtitles: "Subtitles",
           settings: "Settings",
+          pageTitle: "Studio",
           dashboardTitle: "Welcome back to Studio",
           dashboardSummary: "Upload assets, manage content, review analytics, and prepare subtitles from a clean workspace shell."
         },
@@ -945,6 +973,7 @@
           analytics: "数据分析",
           subtitles: "字幕",
           settings: "设置",
+          pageTitle: "Studio",
           dashboardTitle: "欢迎回到 Studio",
           dashboardSummary: "上传素材、管理视频内容、查看数据分析，并为工作流准备字幕。"
         }
@@ -994,29 +1023,32 @@
         themeSwitch?.classList.add("suppress-tooltip");
         const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
         setTheme(nextTheme);
+        themeToggle.blur();
       });
 
       function setLanguage(lang) {
         const nextLang = messages[lang] ? lang : "en";
         currentLanguage = nextLang;
         document.documentElement.lang = nextLang === "zh" ? "zh-CN" : "en";
+        document.title = t("pageTitle");
         document.querySelectorAll("[data-i18n]").forEach((node) => {
           const key = node.dataset.i18n;
           node.textContent = t(key);
         });
         document.querySelectorAll("[data-i18n-aria-label]").forEach((node) => {
-          const key = node.dataset.i18nAriaLabel;
-          node.setAttribute("aria-label", t(key));
+          node.setAttribute("aria-label", t(node.dataset.i18nAriaLabel));
         });
         document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
-          const key = node.dataset.i18nPlaceholder;
-          node.setAttribute("placeholder", t(key));
+          node.setAttribute("placeholder", t(node.dataset.i18nPlaceholder));
         });
         options.forEach((option) => {
           option.setAttribute("aria-selected", String(option.dataset.lang === nextLang));
         });
         syncThemePreference();
-        localStorage.setItem("studio-language", nextLang);
+        window.dispatchEvent(new CustomEvent("studio:languagechange", { detail: { language: nextLang } }));
+        try {
+          localStorage.setItem("studio-language", nextLang);
+        } catch (error) {}
       }
 
       function suppressTooltipIfHidden(container, tooltipSelector) {
@@ -1088,7 +1120,6 @@
         trigger.setAttribute("aria-expanded", "false");
       });
 
-      syncThemePreference();
       setLanguage(localStorage.getItem("studio-language") || "en");
     </script>
   </body>
