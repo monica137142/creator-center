@@ -612,6 +612,17 @@
         background: var(--page);
       }
 
+      .content-toolbar-frame::before {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: 100%;
+        left: 0;
+        height: 20px;
+        background: var(--page);
+        pointer-events: none;
+      }
+
       .content-menu {
         position: relative;
         height: 48px;
@@ -684,7 +695,7 @@
         min-width: 0;
         display: grid;
         gap: 16px;
-        margin-top: 20px;
+        margin-top: 0;
         padding-bottom: 120px;
       }
 
@@ -1757,6 +1768,10 @@
           padding: 16px 16px 12px;
         }
 
+        .content-toolbar-frame::before {
+          display: none;
+        }
+
         .content-filters {
           gap: 8px;
         }
@@ -2624,7 +2639,7 @@
         syncPageSizeLabels();
         renderVideoList(currentContentView);
         syncThemePreference();
-        syncContentToolbarHeight();
+        scheduleContentToolbarHeightSync();
         window.dispatchEvent(new CustomEvent("studio:languagechange", { detail: { language: nextLang } }));
         localStorage.setItem("studio-language", nextLang);
       }
@@ -2906,7 +2921,12 @@
         syncStickyDivider();
       }
 
+      function isElementRendered(node) {
+        return Boolean(node && (node.offsetWidth || node.offsetHeight || node.getClientRects().length));
+      }
+
       function syncStickyDivider() {
+        if (!isElementRendered(videoListScroll)) return;
         videoListCard.classList.toggle("is-scrolled-x", videoListScroll.scrollLeft > 0);
         videoListHeaderScroll.scrollLeft = videoListScroll.scrollLeft;
       }
@@ -2927,16 +2947,31 @@
         });
       }
 
+      let contentToolbarHeight = "";
+      let contentToolbarHeightFrame = 0;
+
       function syncContentToolbarHeight() {
-        contentView.style.setProperty("--content-toolbar-height", `${Math.ceil(contentToolbar.getBoundingClientRect().height)}px`);
+        if (!isElementRendered(contentToolbar)) return;
+        const nextHeight = `${Math.ceil(contentToolbar.getBoundingClientRect().height)}px`;
+        if (nextHeight === contentToolbarHeight) return;
+        contentToolbarHeight = nextHeight;
+        contentView.style.setProperty("--content-toolbar-height", nextHeight);
+      }
+
+      function scheduleContentToolbarHeightSync() {
+        if (contentToolbarHeightFrame) return;
+        contentToolbarHeightFrame = window.requestAnimationFrame(() => {
+          contentToolbarHeightFrame = 0;
+          syncContentToolbarHeight();
+        });
       }
 
       videoListScroll.addEventListener("scroll", syncStickyDivider, { passive: true });
       window.addEventListener("resize", () => {
-        syncContentToolbarHeight();
+        scheduleContentToolbarHeightSync();
         syncStickyDivider();
       });
-      new ResizeObserver(syncContentToolbarHeight).observe(contentToolbar);
+      new ResizeObserver(scheduleContentToolbarHeightSync).observe(contentToolbar);
 
       pageSizeTrigger.addEventListener("click", (event) => {
         event.stopPropagation();
