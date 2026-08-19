@@ -97,6 +97,12 @@
         font-family: "Inter var", "Inter", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
       }
 
+      html.is-resizing *,
+      html.is-resizing *::before,
+      html.is-resizing *::after {
+        transition: none !important;
+      }
+
       button,
       a {
         font: inherit;
@@ -589,6 +595,7 @@
         height: 100%;
         overflow: auto;
         padding: 20px var(--workspace-x) 28px;
+        scrollbar-gutter: stable;
       }
 
       .workspace-inner {
@@ -1707,6 +1714,10 @@
       }
 
       @media (max-width: 767px) {
+        :root {
+          --content-toolbar-height: 176px;
+        }
+
         body {
           overflow: auto;
         }
@@ -1789,6 +1800,23 @@
         .content-menu {
           margin: 0 -4px;
           padding: 0 4px;
+        }
+
+        .video-list-header > :first-child,
+        .video-main {
+          overflow: visible;
+        }
+
+        .video-list-header > :first-child::before,
+        .video-main::before {
+          content: "";
+          position: absolute;
+          top: -16px;
+          bottom: -16px;
+          left: -16px;
+          width: 16px;
+          background: inherit;
+          pointer-events: none;
         }
       }
     </style>
@@ -2639,7 +2667,6 @@
         syncPageSizeLabels();
         renderVideoList(currentContentView);
         syncThemePreference();
-        scheduleContentToolbarHeightSync();
         window.dispatchEvent(new CustomEvent("studio:languagechange", { detail: { language: nextLang } }));
         localStorage.setItem("studio-language", nextLang);
       }
@@ -2925,10 +2952,40 @@
         return Boolean(node && (node.offsetWidth || node.offsetHeight || node.getClientRects().length));
       }
 
+      let stickyDividerFrame = 0;
+      let stickyDividerScrolled = false;
+      let stickyDividerScrollLeft = -1;
+      let resizeSettledTimer = 0;
+
       function syncStickyDivider() {
         if (!isElementRendered(videoListScroll)) return;
-        videoListCard.classList.toggle("is-scrolled-x", videoListScroll.scrollLeft > 0);
-        videoListHeaderScroll.scrollLeft = videoListScroll.scrollLeft;
+        const nextScrollLeft = videoListScroll.scrollLeft;
+        const nextScrolled = nextScrollLeft > 0;
+        if (nextScrolled !== stickyDividerScrolled) {
+          stickyDividerScrolled = nextScrolled;
+          videoListCard.classList.toggle("is-scrolled-x", nextScrolled);
+        }
+        if (nextScrollLeft !== stickyDividerScrollLeft) {
+          stickyDividerScrollLeft = nextScrollLeft;
+          videoListHeaderScroll.scrollLeft = nextScrollLeft;
+        }
+      }
+
+      function scheduleStickyDividerSync() {
+        if (stickyDividerFrame) return;
+        stickyDividerFrame = window.requestAnimationFrame(() => {
+          stickyDividerFrame = 0;
+          syncStickyDivider();
+        });
+      }
+
+      function handleResponsiveResize() {
+        document.documentElement.classList.add("is-resizing");
+        window.clearTimeout(resizeSettledTimer);
+        resizeSettledTimer = window.setTimeout(() => {
+          document.documentElement.classList.remove("is-resizing");
+        }, 140);
+        scheduleStickyDividerSync();
       }
 
       function scrollContentListToTop() {
@@ -2947,31 +3004,8 @@
         });
       }
 
-      let contentToolbarHeight = "";
-      let contentToolbarHeightFrame = 0;
-
-      function syncContentToolbarHeight() {
-        if (!isElementRendered(contentToolbar)) return;
-        const nextHeight = `${Math.ceil(contentToolbar.getBoundingClientRect().height)}px`;
-        if (nextHeight === contentToolbarHeight) return;
-        contentToolbarHeight = nextHeight;
-        contentView.style.setProperty("--content-toolbar-height", nextHeight);
-      }
-
-      function scheduleContentToolbarHeightSync() {
-        if (contentToolbarHeightFrame) return;
-        contentToolbarHeightFrame = window.requestAnimationFrame(() => {
-          contentToolbarHeightFrame = 0;
-          syncContentToolbarHeight();
-        });
-      }
-
-      videoListScroll.addEventListener("scroll", syncStickyDivider, { passive: true });
-      window.addEventListener("resize", () => {
-        scheduleContentToolbarHeightSync();
-        syncStickyDivider();
-      });
-      new ResizeObserver(scheduleContentToolbarHeightSync).observe(contentToolbar);
+      videoListScroll.addEventListener("scroll", scheduleStickyDividerSync, { passive: true });
+      window.addEventListener("resize", handleResponsiveResize);
 
       pageSizeTrigger.addEventListener("click", (event) => {
         event.stopPropagation();
@@ -3064,7 +3098,6 @@
       });
 
       syncSearchClear();
-      syncContentToolbarHeight();
       setContentView("all");
       syncThemePreference();
       setLanguage(localStorage.getItem("studio-language") || "en");
