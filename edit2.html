@@ -133,12 +133,17 @@
 
       .brand-title {
         transform: translateY(2.5px);
+        color: var(--color-text-primary);
         font-size: var(--text-title-2-size);
         line-height: var(--text-title-2-line-height);
-        font-weight: var(--text-body-medium-weight);
+        font-weight: 400;
         letter-spacing: 0;
         white-space: nowrap;
       }
+
+      .brand:hover .brand-title,
+      .brand:focus-visible .brand-title,
+      .brand:active .brand-title { color: var(--color-text-primary); }
 
       .topbar-actions {
         display: flex;
@@ -184,6 +189,10 @@
       .language-trigger:focus-visible,
       .language-switch.is-open .language-trigger {
         border-color: var(--brand);
+      }
+
+      .language-trigger:focus-visible {
+        box-shadow: none;
       }
 
       .language-tooltip,
@@ -443,7 +452,7 @@
         width: 32px;
         height: 32px;
         padding: 0;
-        border: 1px solid #edf0f2;
+        border: 1px solid var(--color-border-subtle);
         border-radius: var(--radius-full);
         background: var(--surface);
         cursor: pointer;
@@ -483,6 +492,14 @@
         background: var(--color-bg-page);
         border-right: 1px solid var(--line);
       }
+
+      .sidebar-profile { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 12px 16px; margin-bottom: 0; text-align: center; }
+      .sidebar-profile-avatar { width: 64px; height: 64px; display: block; border-radius: var(--radius-full); }
+      .avatar, .account-profile-avatar, .sidebar-profile-avatar { clip-path: circle(46% at 50% 50%); }
+      .sidebar-profile-copy { min-width: 0; width: 100%; }
+      .sidebar-profile-name, .sidebar-profile-id { margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .sidebar-profile-name { color: var(--color-text-primary); font-size: var(--text-body-size); line-height: var(--text-body-line-height); font-weight: var(--text-body-medium-weight); }
+      .sidebar-profile-id { color: var(--color-text-secondary); font-size: 12px; line-height: 18px; }
 
       .upload-button {
         width: 100%;
@@ -612,7 +629,7 @@
       .workspace {
         height: 100%;
         overflow: auto;
-        padding: 20px 28px 28px;
+        padding: 28px;
         scrollbar-gutter: stable;
         scrollbar-color: var(--color-border-subtle) var(--page);
         scrollbar-width: thin;
@@ -4024,8 +4041,7 @@
         }
 
         .workspace {
-          padding-right: 20px;
-          padding-left: 20px;
+          padding: 28px;
         }
 
         .edit-layout {
@@ -4117,8 +4133,7 @@
         }
 
         .workspace {
-          padding-right: 20px;
-          padding-left: 20px;
+          padding: 28px;
         }
 
         .episode-tabs-frame {
@@ -4226,8 +4241,7 @@
         }
 
         .workspace {
-          padding-right: 20px;
-          padding-left: 20px;
+          padding: 28px;
         }
 
         .episode-tabs-frame {
@@ -4365,6 +4379,10 @@
           border-bottom: 1px solid var(--line);
         }
 
+        .sidebar-profile { flex-direction: row; justify-content: center; padding: 0 12px 8px; margin-bottom: 0; text-align: left; }
+        .sidebar-profile-avatar { width: 64px; height: 64px; }
+        .sidebar-profile-copy { width: auto; }
+
         .upload-button {
           width: 100%;
           margin-bottom: 0;
@@ -4379,15 +4397,15 @@
 
         .shell {
           height: auto;
-          padding: 188px 0 0;
+          padding: 272px 0 0;
         }
 
         .main-loading {
-          inset: 188px 0 0;
+          inset: 272px 0 0;
         }
 
         .workspace {
-          padding: 20px 16px;
+          padding: 28px;
         }
 
         .workspace-inner {
@@ -4624,13 +4642,13 @@
         </div>
         <div class="account-entry">
           <button class="avatar-button account-trigger" type="button" aria-label="Account" data-i18n-aria-label="accountTooltip" aria-haspopup="menu" aria-expanded="false">
-            <img class="avatar" src="assets/avatar.svg" alt="" />
+            <img class="avatar" src="assets/avatar.png?v=2" alt="" />
           </button>
           <span class="account-tooltip" role="tooltip" data-i18n="accountTooltip">Account</span>
           <div class="account-menu" role="menu" aria-label="Account" data-i18n-aria-label="accountTooltip" hidden>
             <div class="account-profile" role="none">
               <span class="account-profile-avatar-wrap" aria-hidden="true">
-                <img class="account-profile-avatar" src="assets/avatar.svg" alt="" />
+                <img class="account-profile-avatar" src="assets/avatar.png?v=2" alt="" />
                 <span class="account-profile-avatar-overlay">
                   <svg class="icon" viewBox="0 0 24 24">
                     <path d="M15 3h6v6" />
@@ -4640,7 +4658,7 @@
                 </span>
               </span>
               <div class="account-profile-copy">
-                <p class="account-profile-name" data-i18n="userName">用户名</p>
+                <p class="account-profile-name" data-i18n="userName">Mia Studio</p>
                 <p class="account-profile-id" data-i18n="iqId">IQ ID：1461926038</p>
               </div>
             </div>
@@ -4673,6 +4691,11 @@
     </header>
 
     <aside class="sidebar" aria-label="Primary navigation">
+      <section class="sidebar-profile" aria-label="Account profile">
+        <img class="sidebar-profile-avatar" src="assets/avatar.png?v=2" alt="" />
+        <div class="sidebar-profile-copy"><p class="sidebar-profile-name" data-i18n="userName">Mia Studio</p><p class="sidebar-profile-id" data-i18n="iqId">IQ ID：1461926038</p></div>
+      </section>
+
       <button class="upload-button" type="button">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 15V3" />
@@ -5287,7 +5310,7 @@
           accountTooltip: "Account",
           accountSetting: "Account Setting",
           signOut: "Sign Out",
-          userName: "Username",
+          userName: "Mia Studio",
           iqId: "IQ ID: 1461926038",
           upload: "Upload",
           dashboard: "Home",
@@ -5438,7 +5461,7 @@
           accountTooltip: "账号",
           accountSetting: "账号设置",
           signOut: "退出登录",
-          userName: "用户名",
+          userName: "Mia Studio",
           iqId: "IQ ID：1461926038",
           upload: "上传",
           dashboard: "首页",

@@ -93,12 +93,17 @@
 
       .brand-title {
         transform: translateY(2.5px);
+        color: var(--color-text-primary);
         font-size: var(--text-title-2-size);
         line-height: var(--text-title-2-line-height);
-        font-weight: var(--text-title-2-weight);
+        font-weight: 400;
         letter-spacing: 0;
         white-space: nowrap;
       }
+
+      .brand:hover .brand-title,
+      .brand:focus-visible .brand-title,
+      .brand:active .brand-title { color: var(--color-text-primary); }
 
       .topbar-actions {
         display: flex;
@@ -145,7 +150,10 @@
       .language-switch.is-open .language-trigger {
         border-color: var(--color-action-primary);
         color: var(--color-action-primary);
-        box-shadow: var(--shadow-focus);
+      }
+
+      .language-trigger:focus-visible {
+        box-shadow: none;
       }
 
       .language-tooltip,
@@ -239,7 +247,7 @@
       .account-profile {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 20px;
         padding: 8px 10px 10px;
         border-radius: var(--radius-small);
       }
@@ -446,6 +454,17 @@
         border-right: 1px solid var(--color-border-subtle);
       }
 
+      .sidebar-profile {
+        width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px;
+        padding: 0 12px 16px; margin-bottom: 0; text-align: center;
+      }
+      .sidebar-profile-avatar { width: 64px; height: 64px; display: block; border-radius: var(--radius-full); }
+      .avatar, .account-profile-avatar, .sidebar-profile-avatar { clip-path: circle(46% at 50% 50%); }
+      .sidebar-profile-copy { min-width: 0; width: 100%; }
+      .sidebar-profile-name, .sidebar-profile-id { margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .sidebar-profile-name { color: var(--color-text-primary); font-size: var(--text-body-size); line-height: var(--text-body-line-height); font-weight: var(--text-body-medium-weight); }
+      .sidebar-profile-id { color: var(--color-text-secondary); font-size: 12px; line-height: 18px; }
+
       .upload-button {
         width: 100%;
         min-height: 42px;
@@ -534,7 +553,7 @@
       .workspace {
         height: 100%;
         overflow: auto;
-        padding: 12px 28px 28px;
+        padding: 28px;
       }
 
       .workspace-inner {
@@ -543,15 +562,6 @@
         align-content: start;
         gap: 12px;
         padding: 0;
-      }
-
-      .eyebrow {
-        margin: 0;
-        color: var(--color-action-primary);
-        font-size: var(--text-caption-medium-size);
-        line-height: var(--text-caption-medium-line-height);
-        font-weight: var(--text-caption-medium-weight);
-        text-transform: uppercase;
       }
 
       .title-frame {
@@ -567,14 +577,134 @@
         letter-spacing: 0;
       }
 
-      .summary {
-        max-width: 720px;
-        margin: 0;
-        color: var(--color-text-secondary);
-        font-size: var(--text-body-large-size);
-        line-height: var(--text-body-large-line-height);
-        font-weight: var(--text-body-large-weight);
+      .dashboard-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
       }
+
+      .dashboard-date {
+        color: var(--color-text-secondary);
+        font-size: var(--text-body-size);
+        line-height: var(--text-body-line-height);
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+        gap: 20px;
+      }
+
+      .dashboard-column {
+        min-width: 0;
+        display: grid;
+        align-content: start;
+        gap: 20px;
+      }
+
+      .dashboard-card {
+        min-width: 0;
+        border: 1px solid var(--color-border-subtle);
+        border-radius: var(--radius-large);
+        background: var(--color-bg-container);
+        box-shadow: var(--shadow-surface);
+      }
+
+      .announcement-card {
+        display: grid;
+        grid-template-columns: 40px minmax(0, 1fr);
+        gap: 12px;
+        padding: 18px 20px;
+      }
+
+      .announcement-icon {
+        width: 40px;
+        height: 40px;
+        display: grid;
+        place-items: center;
+        border-radius: var(--radius-full);
+        background: var(--color-action-primary-bg);
+        color: var(--color-action-primary);
+      }
+
+      .announcement-icon .icon { width: 18px; height: 18px; }
+      .announcement-title { margin: 0; color: var(--color-text-primary); font-size: var(--text-body-size); font-weight: var(--text-body-medium-weight); }
+      .announcement-copy { margin: 4px 0 0; color: var(--color-text-secondary); font-size: var(--text-caption-size); line-height: var(--text-caption-line-height); }
+
+      .card-header {
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--color-border-subtle);
+      }
+
+      .card-header h2 {
+        margin: 0;
+        font-size: var(--text-title-3-size);
+        line-height: var(--text-title-3-line-height);
+      }
+
+      .text-link {
+        color: var(--color-text-secondary);
+        font-size: var(--text-body-size);
+        line-height: var(--text-body-line-height);
+        text-decoration: none;
+      }
+
+      .text-link:hover { color: var(--color-action-primary); }
+
+      .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border-bottom: 1px solid var(--color-border-subtle);
+      }
+
+      .metric {
+        padding: 20px;
+        border-right: 1px solid var(--color-border-subtle);
+      }
+
+      .metric:last-child { border-right: 0; }
+      .metric-label { display: block; color: var(--color-text-secondary); font-size: var(--text-caption-size); line-height: var(--text-caption-line-height); }
+      .metric-value { display: block; margin-top: 4px; color: var(--color-text-primary); font-size: 24px; line-height: 32px; font-weight: 600; }
+      .metric-change { display: block; margin-top: 2px; color: var(--color-status-success); font-size: var(--text-caption-size); line-height: var(--text-caption-line-height); }
+
+      .chart-wrap { padding: 18px 20px 14px; }
+      .chart-legend { display: flex; justify-content: flex-end; gap: 18px; color: var(--color-text-secondary); font-size: var(--text-caption-size); }
+      .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+      .legend-dot { width: 8px; height: 8px; border-radius: var(--radius-full); background: var(--color-action-primary); }
+      .legend-dot.secondary { background: var(--color-category-blue); }
+      .dashboard-chart { width: 100%; height: 190px; margin-top: 8px; overflow: visible; }
+      .chart-grid-line { stroke: var(--color-border-subtle); stroke-width: 1; }
+      .chart-area { fill: color-mix(in srgb, var(--color-action-primary) 10%, transparent); }
+      .chart-line { fill: none; stroke: var(--color-action-primary); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+      .chart-line-secondary { fill: none; stroke: var(--color-category-blue); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 5 6; }
+      .chart-labels { display: flex; justify-content: space-between; color: var(--color-text-tertiary); font-size: 11px; }
+
+      .work-list, .ranking-list { margin: 0; padding: 0; list-style: none; }
+      .work-item { display: grid; grid-template-columns: 88px minmax(0, 1fr) repeat(3, minmax(72px, .4fr)); gap: 16px; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--color-border-subtle); }
+      .work-item:last-child { border-bottom: 0; }
+      .work-cover { width: 88px; aspect-ratio: 16 / 9; border-radius: var(--radius-small); background: linear-gradient(135deg, var(--color-category-purple), var(--color-category-blue)); }
+      .work-cover.green { background: linear-gradient(135deg, var(--color-action-primary), var(--color-category-teal)); }
+      .work-cover.orange { background: linear-gradient(135deg, var(--color-category-orange), var(--color-category-magenta)); }
+      .work-title { margin: 0; color: var(--color-text-primary); font-size: var(--text-body-size); font-weight: var(--text-body-medium-weight); }
+      .work-meta { margin: 3px 0 0; color: var(--color-text-tertiary); font-size: var(--text-caption-size); }
+      .work-stat { color: var(--color-text-secondary); font-size: var(--text-body-size); text-align: right; }
+      .work-stat strong { display: block; color: var(--color-text-primary); font-weight: var(--text-body-medium-weight); }
+
+      .ranking-item { display: grid; grid-template-columns: 28px 52px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--color-border-subtle); }
+      .ranking-item:last-child { border-bottom: 0; }
+      .rank-number { color: var(--color-text-tertiary); font-size: var(--text-title-3-size); font-weight: 600; }
+      .ranking-item:first-child .rank-number { color: var(--color-action-primary); }
+      .rank-cover { width: 52px; aspect-ratio: 16 / 9; border-radius: var(--radius-small); background: linear-gradient(135deg, var(--color-category-cyan), var(--color-category-blue)); }
+      .rank-cover.two { background: linear-gradient(135deg, var(--color-category-green), var(--color-category-lime)); }
+      .rank-cover.three { background: linear-gradient(135deg, var(--color-category-orange), var(--color-category-red)); }
+      .rank-title { overflow: hidden; color: var(--color-text-primary); font-size: var(--text-body-size); font-weight: var(--text-body-medium-weight); text-overflow: ellipsis; white-space: nowrap; }
+      .rank-value { color: var(--color-text-secondary); font-size: var(--text-body-size); }
 
       @media (max-width: 720px) {
         body {
@@ -592,7 +722,7 @@
         .brand-title {
           font-size: var(--text-title-3-size);
           line-height: var(--text-title-3-line-height);
-          font-weight: var(--text-title-3-weight);
+          font-weight: 400;
         }
 
         .sidebar {
@@ -607,6 +737,10 @@
           border-bottom: 1px solid var(--color-border-subtle);
         }
 
+        .sidebar-profile { flex-direction: row; justify-content: center; padding: 0 12px 8px; margin-bottom: 0; text-align: left; }
+        .sidebar-profile-avatar { width: 64px; height: 64px; }
+        .sidebar-profile-copy { width: auto; }
+
         .nav-list {
           grid-auto-flow: column;
           grid-auto-columns: max-content;
@@ -616,11 +750,11 @@
 
         .shell {
           height: auto;
-          padding: 158px 0 0;
+          padding: 242px 0 0;
         }
 
         .workspace {
-          padding: 20px 16px;
+          padding: 28px;
         }
 
         .workspace-inner {
@@ -631,6 +765,16 @@
           font-size: var(--text-title-1-size);
           line-height: var(--text-title-1-line-height);
         }
+
+        .dashboard-header { align-items: flex-start; flex-direction: column; gap: 4px; }
+        .dashboard-grid { grid-template-columns: 1fr; }
+        .dashboard-column { gap: 20px; }
+        .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .metric:nth-child(2) { border-right: 0; }
+        .metric:nth-child(-n + 2) { border-bottom: 1px solid var(--color-border-subtle); }
+        .work-item { grid-template-columns: 72px minmax(0, 1fr); }
+        .work-cover { width: 72px; }
+        .work-stat { display: none; }
       }
     </style>
   </head>
@@ -677,13 +821,13 @@
         </div>
         <div class="account-entry">
           <button class="avatar-button account-trigger" type="button" aria-label="Account" data-i18n-aria-label="accountTooltip" aria-haspopup="menu" aria-expanded="false">
-            <img class="avatar" src="assets/avatar.svg" alt="" />
+            <img class="avatar" src="assets/avatar.png?v=2" alt="" />
           </button>
           <span class="account-tooltip" role="tooltip" data-i18n="accountTooltip">Account</span>
           <div class="account-menu" role="menu" aria-label="Account" data-i18n-aria-label="accountTooltip" hidden>
             <div class="account-profile" role="none">
               <span class="account-profile-avatar-wrap" aria-hidden="true">
-                <img class="account-profile-avatar" src="assets/avatar.svg" alt="" />
+                <img class="account-profile-avatar" src="assets/avatar.png?v=2" alt="" />
                 <span class="account-profile-avatar-overlay">
                   <svg class="icon" viewBox="0 0 24 24">
                     <path d="M15 3h6v6" />
@@ -693,7 +837,7 @@
                 </span>
               </span>
               <div class="account-profile-copy">
-                <p class="account-profile-name" data-i18n="userName">用户名</p>
+                <p class="account-profile-name" data-i18n="userName">Mia Studio</p>
                 <p class="account-profile-id" data-i18n="iqId">IQ ID：1461926038</p>
               </div>
             </div>
@@ -726,6 +870,14 @@
     </header>
 
     <aside class="sidebar" aria-label="Primary navigation">
+      <section class="sidebar-profile" aria-label="Account profile">
+        <img class="sidebar-profile-avatar" src="assets/avatar.png?v=2" alt="" />
+        <div class="sidebar-profile-copy">
+          <p class="sidebar-profile-name" data-i18n="userName">Mia Studio</p>
+          <p class="sidebar-profile-id" data-i18n="iqId">IQ ID：1461926038</p>
+        </div>
+      </section>
+
       <button class="upload-button" type="button">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 15V3" />
@@ -788,12 +940,59 @@
     <main class="shell">
       <section class="workspace" aria-label="Workspace">
         <div class="workspace-inner">
-          <p class="eyebrow" data-i18n="dashboard">Home</p>
-          <div class="title-frame">
-            <h1 data-i18n="dashboardTitle">Welcome back to Studio</h1>
-            <p class="summary" data-i18n="dashboardSummary">
-              Upload assets, manage content, review analytics, and prepare subtitles from a clean workspace shell.
-            </p>
+          <div class="dashboard-header">
+            <div class="title-frame"><h1 data-i18n="dashboardTitle">Welcome back, Mia Studio</h1></div>
+            <span class="dashboard-date" data-i18n="dashboardDate">Data updated today at 10:30</span>
+          </div>
+          <div class="dashboard-grid">
+            <div class="dashboard-column">
+            <section class="dashboard-card" aria-labelledby="performance-title">
+              <div class="card-header"><h2 id="performance-title" data-i18n="recentPerformance">Recent performance</h2><a class="text-link" href="analytics.html" data-i18n="viewDetails">View details →</a></div>
+              <div class="metrics">
+                <div class="metric"><span class="metric-label" data-i18n="views">Views</span><strong class="metric-value">1.28M</strong><span class="metric-change">↑ 12.4%</span></div>
+                <div class="metric"><span class="metric-label" data-i18n="watchTime">Watch time</span><strong class="metric-value">86.4K h</strong><span class="metric-change">↑ 8.7%</span></div>
+                <div class="metric"><span class="metric-label" data-i18n="followers">New followers</span><strong class="metric-value">24.8K</strong><span class="metric-change">↑ 6.2%</span></div>
+                <div class="metric"><span class="metric-label" data-i18n="engagement">Engagement</span><strong class="metric-value">9.6%</strong><span class="metric-change">↑ 1.8%</span></div>
+              </div>
+              <div class="chart-wrap">
+                <div class="chart-legend"><span class="legend-item"><i class="legend-dot"></i><span data-i18n="views">Views</span></span><span class="legend-item"><i class="legend-dot secondary"></i><span data-i18n="followersShort">Followers</span></span></div>
+                <svg class="dashboard-chart" viewBox="0 0 720 190" preserveAspectRatio="none" aria-label="Performance trend">
+                  <path class="chart-grid-line" d="M0 30H720M0 80H720M0 130H720M0 180H720" />
+                  <path class="chart-area" d="M0 158L90 142L180 149L270 108L360 118L450 72L540 86L630 45L720 28V180H0Z" />
+                  <path class="chart-line" d="M0 158L90 142L180 149L270 108L360 118L450 72L540 86L630 45L720 28" />
+                  <path class="chart-line-secondary" d="M0 170L90 160L180 163L270 146L360 136L450 121L540 114L630 94L720 80" />
+                </svg>
+                <div class="chart-labels"><span>May 15</span><span>May 20</span><span>May 25</span><span>May 30</span><span>Jun 4</span><span>Jun 10</span></div>
+              </div>
+            </section>
+
+            <section class="dashboard-card" aria-labelledby="recent-works-title">
+              <div class="card-header"><h2 id="recent-works-title" data-i18n="recentWorks">Recent works</h2><a class="text-link" href="content.html" data-i18n="manageAll">Manage all →</a></div>
+              <ul class="work-list">
+                <li class="work-item"><span class="work-cover green"></span><div><p class="work-title">Beyond the Horizon · EP12</p><p class="work-meta" data-i18n="publishedToday">Published today · Online</p></div><span class="work-stat"><strong>486K</strong><span data-i18n="views">Views</span></span><span class="work-stat"><strong>32.8K</strong><span data-i18n="likes">Likes</span></span><span class="work-stat"><strong>98.4%</strong><span data-i18n="completion">Completed</span></span></li>
+                <li class="work-item"><span class="work-cover"></span><div><p class="work-title">City Walk: Shanghai</p><p class="work-meta" data-i18n="publishedYesterday">Published yesterday · Online</p></div><span class="work-stat"><strong>328K</strong><span data-i18n="views">Views</span></span><span class="work-stat"><strong>21.6K</strong><span data-i18n="likes">Likes</span></span><span class="work-stat"><strong>91.2%</strong><span data-i18n="completion">Completed</span></span></li>
+                <li class="work-item"><span class="work-cover orange"></span><div><p class="work-title">A Taste of Summer</p><p class="work-meta" data-i18n="draftUpdated">Draft · Updated 2 days ago</p></div><span class="work-stat"><strong>—</strong><span data-i18n="views">Views</span></span><span class="work-stat"><strong>—</strong><span data-i18n="likes">Likes</span></span><span class="work-stat"><strong>—</strong><span data-i18n="completion">Completed</span></span></li>
+              </ul>
+            </section>
+            </div>
+
+            <div class="dashboard-column">
+            <aside class="dashboard-card announcement-card" aria-labelledby="announcement-title">
+              <span class="announcement-icon" aria-hidden="true"><svg class="icon" viewBox="0 0 24 24"><path d="M4 13V9a2 2 0 0 1 2-2h3l7-3v14l-7-3H6a2 2 0 0 1-2-2Z"/><path d="M9 15v4H6v-4"/><path d="M19 8a5 5 0 0 1 0 6"/></svg></span>
+              <div><p class="announcement-title" id="announcement-title" data-i18n="announcement">Announcement</p><p class="announcement-copy" data-i18n="announcementCopy">Creator incentive applications for June are now open.</p></div>
+            </aside>
+
+            <section class="dashboard-card" aria-labelledby="ranking-title">
+              <div class="card-header"><h2 id="ranking-title" data-i18n="workRanking">Top works</h2><span class="dashboard-date" data-i18n="lastSevenDays">Last 7 days</span></div>
+              <ol class="ranking-list">
+                <li class="ranking-item"><span class="rank-number">1</span><span class="rank-cover"></span><span class="rank-title">Beyond the Horizon · EP12</span><span class="rank-value">486K</span></li>
+                <li class="ranking-item"><span class="rank-number">2</span><span class="rank-cover two"></span><span class="rank-title">City Walk: Shanghai</span><span class="rank-value">328K</span></li>
+                <li class="ranking-item"><span class="rank-number">3</span><span class="rank-cover three"></span><span class="rank-title">A Taste of Summer</span><span class="rank-value">214K</span></li>
+                <li class="ranking-item"><span class="rank-number">4</span><span class="rank-cover"></span><span class="rank-title">Studio Behind the Scenes</span><span class="rank-value">186K</span></li>
+                <li class="ranking-item"><span class="rank-number">5</span><span class="rank-cover two"></span><span class="rank-title">Weekend Inspiration</span><span class="rank-value">132K</span></li>
+              </ol>
+            </section>
+            </div>
           </div>
         </div>
       </section>
@@ -809,7 +1008,7 @@
           accountTooltip: "Account",
           accountSetting: "Account Setting",
           signOut: "Sign Out",
-          userName: "用户名",
+          userName: "Mia Studio",
           iqId: "IQ ID: 1461926038",
           upload: "Upload",
           dashboard: "Home",
@@ -818,8 +1017,26 @@
           subtitles: "Subtitles",
           settings: "Settings",
           pageTitle: "Studio",
-          dashboardTitle: "Welcome back to Studio",
-          dashboardSummary: "Upload assets, manage content, review analytics, and prepare subtitles from a clean workspace shell."
+          dashboardTitle: "Welcome back, Mia Studio",
+          dashboardDate: "Data updated today at 10:30",
+          recentPerformance: "Recent performance",
+          viewDetails: "View details →",
+          views: "Views",
+          watchTime: "Watch time",
+          followers: "New followers",
+          followersShort: "Followers",
+          engagement: "Engagement",
+          announcement: "Announcement",
+          announcementCopy: "Creator incentive applications for June are now open.",
+          workRanking: "Top works",
+          lastSevenDays: "Last 7 days",
+          recentWorks: "Recent works",
+          manageAll: "Manage all →",
+          likes: "Likes",
+          completion: "Completed",
+          publishedToday: "Published today · Online",
+          publishedYesterday: "Published yesterday · Online",
+          draftUpdated: "Draft · Updated 2 days ago"
         },
         zh: {
           studio: "Studio",
@@ -830,7 +1047,7 @@
           accountTooltip: "账号",
           accountSetting: "账号设置",
           signOut: "退出登录",
-          userName: "用户名",
+          userName: "Mia Studio",
           iqId: "IQ ID：1461926038",
           upload: "上传",
           dashboard: "首页",
@@ -839,8 +1056,26 @@
           subtitles: "字幕",
           settings: "设置",
           pageTitle: "Studio",
-          dashboardTitle: "欢迎回到 Studio",
-          dashboardSummary: "上传素材、管理视频内容、查看数据分析，并为工作流准备字幕。"
+          dashboardTitle: "欢迎回来，Mia Studio",
+          dashboardDate: "数据更新于今天 10:30",
+          recentPerformance: "近期作品数据",
+          viewDetails: "查看详情 →",
+          views: "播放量",
+          watchTime: "观看时长",
+          followers: "新增粉丝",
+          followersShort: "粉丝",
+          engagement: "互动率",
+          announcement: "公告",
+          announcementCopy: "六月创作者激励计划现已开放申请。",
+          workRanking: "作品榜单",
+          lastSevenDays: "近 7 天",
+          recentWorks: "近期作品管理",
+          manageAll: "管理全部 →",
+          likes: "点赞",
+          completion: "完播率",
+          publishedToday: "今天发布 · 已上线",
+          publishedYesterday: "昨天发布 · 已上线",
+          draftUpdated: "草稿 · 2 天前更新"
         }
       };
 

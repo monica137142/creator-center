@@ -93,12 +93,17 @@
 
       .brand-title {
         transform: translateY(2.5px);
+        color: var(--color-text-primary);
         font-size: var(--text-title-2-size);
         line-height: var(--text-title-2-line-height);
-        font-weight: var(--text-title-2-weight);
+        font-weight: 400;
         letter-spacing: 0;
         white-space: nowrap;
       }
+
+      .brand:hover .brand-title,
+      .brand:focus-visible .brand-title,
+      .brand:active .brand-title { color: var(--color-text-primary); }
 
       .topbar-actions {
         display: flex;
@@ -145,7 +150,10 @@
       .language-switch.is-open .language-trigger {
         border-color: var(--color-action-primary);
         color: var(--color-action-primary);
-        box-shadow: var(--shadow-focus);
+      }
+
+      .language-trigger:focus-visible {
+        box-shadow: none;
       }
 
       .language-tooltip,
@@ -446,6 +454,14 @@
         border-right: 1px solid var(--color-border-subtle);
       }
 
+      .sidebar-profile { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 12px 16px; margin-bottom: 0; text-align: center; }
+      .sidebar-profile-avatar { width: 64px; height: 64px; display: block; border-radius: var(--radius-full); }
+      .avatar, .account-profile-avatar, .sidebar-profile-avatar { clip-path: circle(46% at 50% 50%); }
+      .sidebar-profile-copy { min-width: 0; width: 100%; }
+      .sidebar-profile-name, .sidebar-profile-id { margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .sidebar-profile-name { color: var(--color-text-primary); font-size: var(--text-body-size); line-height: var(--text-body-line-height); font-weight: var(--text-body-medium-weight); }
+      .sidebar-profile-id { color: var(--color-text-secondary); font-size: 12px; line-height: 18px; }
+
       .upload-button {
         width: 100%;
         min-height: 42px;
@@ -534,7 +550,7 @@
       .workspace {
         height: 100%;
         overflow: auto;
-        padding: 12px 28px 28px;
+        padding: 28px;
       }
 
       .workspace-inner {
@@ -543,15 +559,6 @@
         align-content: start;
         gap: 12px;
         padding: 0;
-      }
-
-      .eyebrow {
-        margin: 0;
-        color: var(--color-action-primary);
-        font-size: var(--text-caption-medium-size);
-        line-height: var(--text-caption-medium-line-height);
-        font-weight: var(--text-caption-medium-weight);
-        text-transform: uppercase;
       }
 
       .title-frame {
@@ -566,16 +573,6 @@
         line-height: var(--text-display-line-height);
         letter-spacing: 0;
       }
-
-      .summary {
-        max-width: 720px;
-        margin: 0;
-        color: var(--color-text-secondary);
-        font-size: var(--text-body-large-size);
-        line-height: var(--text-body-large-line-height);
-        font-weight: var(--text-body-large-weight);
-      }
-
 
       .analytics-grid {
         display: grid;
@@ -636,7 +633,7 @@
         .brand-title {
           font-size: var(--text-title-3-size);
           line-height: var(--text-title-3-line-height);
-          font-weight: var(--text-title-3-weight);
+          font-weight: 400;
         }
 
         .sidebar {
@@ -651,6 +648,10 @@
           border-bottom: 1px solid var(--color-border-subtle);
         }
 
+        .sidebar-profile { flex-direction: row; justify-content: center; padding: 0 12px 8px; margin-bottom: 0; text-align: left; }
+        .sidebar-profile-avatar { width: 64px; height: 64px; }
+        .sidebar-profile-copy { width: auto; }
+
         .nav-list {
           grid-auto-flow: column;
           grid-auto-columns: max-content;
@@ -660,11 +661,11 @@
 
         .shell {
           height: auto;
-          padding: 158px 0 0;
+          padding: 242px 0 0;
         }
 
         .workspace {
-          padding: 20px 16px;
+          padding: 28px;
         }
 
         .workspace-inner {
@@ -721,13 +722,13 @@
         </div>
         <div class="account-entry">
           <button class="avatar-button account-trigger" type="button" aria-label="Account" data-i18n-aria-label="accountTooltip" aria-haspopup="menu" aria-expanded="false">
-            <img class="avatar" src="assets/avatar.svg" alt="" />
+            <img class="avatar" src="assets/avatar.png?v=2" alt="" />
           </button>
           <span class="account-tooltip" role="tooltip" data-i18n="accountTooltip">Account</span>
           <div class="account-menu" role="menu" aria-label="Account" data-i18n-aria-label="accountTooltip" hidden>
             <div class="account-profile" role="none">
               <span class="account-profile-avatar-wrap" aria-hidden="true">
-                <img class="account-profile-avatar" src="assets/avatar.svg" alt="" />
+                <img class="account-profile-avatar" src="assets/avatar.png?v=2" alt="" />
                 <span class="account-profile-avatar-overlay">
                   <svg class="icon" viewBox="0 0 24 24">
                     <path d="M15 3h6v6" />
@@ -737,7 +738,7 @@
                 </span>
               </span>
               <div class="account-profile-copy">
-                <p class="account-profile-name" data-i18n="userName">用户名</p>
+                <p class="account-profile-name" data-i18n="userName">Mia Studio</p>
                 <p class="account-profile-id" data-i18n="iqId">IQ ID：1461926038</p>
               </div>
             </div>
@@ -770,6 +771,11 @@
     </header>
 
     <aside class="sidebar" aria-label="Primary navigation">
+      <section class="sidebar-profile" aria-label="Account profile">
+        <img class="sidebar-profile-avatar" src="assets/avatar.png?v=2" alt="" />
+        <div class="sidebar-profile-copy"><p class="sidebar-profile-name" data-i18n="userName">Mia Studio</p><p class="sidebar-profile-id" data-i18n="iqId">IQ ID：1461926038</p></div>
+      </section>
+
       <button class="upload-button" type="button">
         <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 15V3" />
@@ -832,10 +838,8 @@
     <main class="shell">
       <section class="workspace" aria-label="Analytics workspace">
         <div class="workspace-inner">
-          <p class="eyebrow" data-i18n="analytics">Analytics</p>
           <div class="title-frame">
             <h1 data-i18n="analyticsTitle">Channel analytics</h1>
-            <p class="summary" data-i18n="analyticsSummary">Review the latest performance of your published content.</p>
           </div>
           <div class="analytics-grid" aria-label="Key metrics" data-i18n-aria-label="keyMetrics">
             <article class="metric-card">
@@ -868,7 +872,7 @@
           accountTooltip: "Account",
           accountSetting: "Account Setting",
           signOut: "Sign Out",
-          userName: "用户名",
+          userName: "Mia Studio",
           iqId: "IQ ID: 1461926038",
           upload: "Upload",
           dashboard: "Home",
@@ -878,8 +882,7 @@
           settings: "Settings",
           pageTitle: "Analytics | Studio",
           dashboardTitle: "Welcome back to Studio",
-          dashboardSummary: "Upload assets, manage content, review analytics, and prepare subtitles from a clean workspace shell.",
-          analyticsTitle: "Channel analytics", analyticsSummary: "Review the latest performance of your published content.", keyMetrics: "Key metrics", totalViews: "Total views", viewsChange: "Up 12.4% in 28 days", watchTime: "Watch time", watchTimeChange: "Up 8.7% in 28 days", followers: "New followers", followersChange: "Up 6.2% in 28 days"
+          analyticsTitle: "Channel analytics", keyMetrics: "Key metrics", totalViews: "Total views", viewsChange: "Up 12.4% in 28 days", watchTime: "Watch time", watchTimeChange: "Up 8.7% in 28 days", followers: "New followers", followersChange: "Up 6.2% in 28 days"
         },
         zh: {
           studio: "Studio",
@@ -890,7 +893,7 @@
           accountTooltip: "账号",
           accountSetting: "账号设置",
           signOut: "退出登录",
-          userName: "用户名",
+          userName: "Mia Studio",
           iqId: "IQ ID：1461926038",
           upload: "上传",
           dashboard: "首页",
@@ -900,8 +903,7 @@
           settings: "设置",
           pageTitle: "数据分析 | Studio",
           dashboardTitle: "欢迎回到 Studio",
-          dashboardSummary: "上传素材、管理视频内容、查看数据分析，并为工作流准备字幕。",
-          analyticsTitle: "频道数据分析", analyticsSummary: "查看已发布内容的近期表现。", keyMetrics: "关键指标", totalViews: "总播放量", viewsChange: "近 28 天增长 12.4%", watchTime: "观看时长", watchTimeChange: "近 28 天增长 8.7%", followers: "新增关注", followersChange: "近 28 天增长 6.2%"
+          analyticsTitle: "频道数据分析", keyMetrics: "关键指标", totalViews: "总播放量", viewsChange: "近 28 天增长 12.4%", watchTime: "观看时长", watchTimeChange: "近 28 天增长 8.7%", followers: "新增关注", followersChange: "近 28 天增长 6.2%"
         }
       };
 
