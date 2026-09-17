@@ -606,7 +606,7 @@
         right: 0;
         bottom: 100%;
         left: 0;
-        height: 20px;
+        height: var(--workspace-x);
         background: var(--color-bg-page);
         pointer-events: none;
       }
@@ -636,6 +636,21 @@
         background: var(--color-border-subtle);
       }
 
+      .content-menu::before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        z-index: 2;
+        width: var(--content-indicator-width, 0px);
+        height: 2px;
+        border-radius: var(--radius-full);
+        background: var(--color-action-primary);
+        transform: translateX(var(--content-indicator-x, 0px));
+        transition: width 220ms ease, transform 220ms ease;
+        pointer-events: none;
+      }
+
       .content-menu-link {
         position: relative;
         height: 48px;
@@ -661,18 +676,6 @@
       .content-menu-link[aria-selected="true"] {
         color: var(--color-text-primary);
         font-weight: var(--text-title-3-weight);
-      }
-
-      .content-menu-link[aria-selected="true"]::after {
-        content: "";
-        position: absolute;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        z-index: 1;
-        height: 2px;
-        border-radius: var(--radius-full);
-        background: var(--color-action-primary);
       }
 
       .content-menu-link:focus-visible {
@@ -716,6 +719,7 @@
         font-size: var(--text-body-size);
         line-height: var(--text-body-line-height);
         font-weight: var(--text-body-weight);
+        transition: border-color 150ms ease;
       }
 
       .filter-control {
@@ -738,7 +742,8 @@
       }
 
       .filter-control:hover {
-        background: var(--color-bg-hover);
+        border-color: var(--color-action-primary);
+        background: var(--color-bg-container);
       }
 
       .filter-control:focus-visible,
@@ -850,7 +855,8 @@
       }
 
       .search-control:hover {
-        background: var(--color-bg-hover);
+        border-color: var(--color-action-primary);
+        background: var(--color-bg-container);
       }
 
       .search-control:focus-within {
@@ -885,8 +891,8 @@
       }
 
       .search-clear {
-        width: 24px;
-        height: 24px;
+        width: 32px;
+        height: 32px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -920,12 +926,12 @@
       }
 
       .video-list-card {
+        position: relative;
         min-width: 0;
         overflow: visible;
         border: 1px solid var(--color-border-subtle);
         border-radius: var(--radius-default);
         background: var(--color-bg-container);
-        box-shadow: var(--shadow-surface);
       }
 
       .video-list-header-scroll {
@@ -950,13 +956,13 @@
 
       .video-list-table,
       .video-list-header {
-        min-width: 1020px;
+        min-width: 1280px;
       }
 
       .video-list-header,
       .video-row {
         display: grid;
-        grid-template-columns: minmax(312px, 1.5fr) 144px 168px 136px 150px;
+        grid-template-columns: minmax(312px, 1.5fr) 144px 168px 136px 150px 180px;
         column-gap: 20px;
         align-items: center;
       }
@@ -1037,21 +1043,58 @@
         position: sticky;
         left: 16px;
         z-index: 2;
+        align-self: stretch;
         background: var(--color-bg-container);
         box-shadow: none;
       }
 
-      .video-row:hover .video-main {
-        background: var(--color-bg-subtle);
+      .video-list-header > :last-child,
+      .video-row > .row-actions {
+        position: sticky;
+        right: 16px;
+        z-index: 2;
+        align-self: stretch;
+        background: var(--color-bg-container);
+        box-shadow: none;
       }
 
-      .video-list-header > :first-child {
+      .video-row:hover .video-main,
+      .video-row:hover > .row-actions {
+        background: var(--color-bg-hover);
+      }
+
+      .video-list-header > :first-child,
+      .video-list-header > :last-child {
         z-index: 21;
+        display: flex;
+        align-items: center;
       }
 
-      .video-list-card.is-scrolled-x .video-list-header > :first-child,
-      .video-list-card.is-scrolled-x .video-main {
-        box-shadow: var(--shadow-surface);
+      .video-list-header > :last-child {
+        width: 100%;
+        justify-self: stretch;
+        justify-content: center;
+      }
+
+      .video-list-card.is-scrolled-x::before,
+      .video-list-card:not(.is-scroll-end)::after {
+        content: "";
+        position: absolute;
+        top: var(--sticky-shadow-top, 0px);
+        bottom: 0;
+        width: 12px;
+        z-index: 30;
+        pointer-events: none;
+      }
+
+      .video-list-card.is-scrolled-x::before {
+        left: var(--sticky-first-edge, 0px);
+        background: linear-gradient(to right, color-mix(in srgb, var(--color-bg-inverse) 4%, transparent), transparent);
+      }
+
+      .video-list-card:not(.is-scroll-end)::after {
+        left: calc(var(--sticky-last-edge, 100%) - 12px);
+        background: linear-gradient(to right, transparent, color-mix(in srgb, var(--color-bg-inverse) 4%, transparent));
       }
 
       .video-main {
@@ -1061,11 +1104,41 @@
         gap: 16px;
       }
 
-      .video-thumb {
+      .video-thumb-stack {
         position: relative;
         width: 128px;
         aspect-ratio: 16 / 9;
         flex: 0 0 auto;
+      }
+
+      .video-thumb-stack.has-multiple::before,
+      .video-thumb-stack.has-multiple::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border: 1px solid color-mix(in srgb, var(--color-border-default) 82%, transparent);
+        border-radius: var(--radius-small);
+        background: color-mix(in srgb, var(--color-text-tertiary) 14%, var(--color-bg-container));
+      }
+
+      .video-thumb-stack.has-multiple::before {
+        transform: translate(6px, 6px);
+        box-shadow: 0 3px 7px color-mix(in srgb, var(--color-bg-inverse) 12%, transparent);
+        opacity: 0.72;
+      }
+
+      .video-thumb-stack.has-multiple::after {
+        transform: translate(3px, 3px);
+        background: color-mix(in srgb, var(--color-text-tertiary) 14%, var(--color-bg-container));
+        box-shadow: 0 2px 4px color-mix(in srgb, var(--color-bg-inverse) 9%, transparent);
+        opacity: 0.72;
+      }
+
+      .video-thumb {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
         overflow: hidden;
         border-radius: var(--radius-small);
         background: linear-gradient(135deg, var(--color-text-primary), var(--color-text-tertiary) 48%, var(--color-border-default));
@@ -1085,10 +1158,6 @@
 
       .video-thumb.anime {
         background: linear-gradient(135deg, var(--color-text-primary), var(--color-category-blue) 52%, color-mix(in srgb, var(--color-category-blue) 18%, var(--color-bg-container)));
-      }
-
-      .video-thumb.movie {
-        background: linear-gradient(135deg, var(--color-category-blue), var(--color-category-cyan) 52%, color-mix(in srgb, var(--color-category-cyan) 18%, var(--color-bg-container)));
       }
 
       .video-thumb.draft::before {
@@ -1191,11 +1260,6 @@
         color: var(--color-category-cyan);
       }
 
-      .type-tag.movie {
-        background: color-mix(in srgb, var(--color-category-blue) 12%, var(--color-bg-container));
-        color: var(--color-category-blue);
-      }
-
       .status-pill {
         min-height: 16px;
         justify-content: center;
@@ -1217,9 +1281,71 @@
         stroke-width: 2;
       }
 
-      .video-row > .status-pill {
+      .video-row > .publication-status {
         justify-self: stretch;
         width: 100%;
+      }
+
+      .publication-status {
+        display: grid;
+        justify-items: center;
+        gap: 2px;
+      }
+
+      .publication-status-note {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--color-text-tertiary);
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+        white-space: nowrap;
+      }
+
+      .publication-status-note .icon {
+        width: 14px;
+        height: 14px;
+        stroke-width: 2;
+      }
+
+      .publication-status-note.review-pending { color: var(--color-status-warning); }
+      .publication-status-note.review-rejected { color: var(--color-status-error); }
+      .publication-status-note.review-approved { color: var(--color-status-success); }
+
+      .publication-status-note.has-tooltip {
+        position: relative;
+        border-radius: var(--radius-small);
+        cursor: help;
+      }
+
+      .publication-status-note.has-tooltip:focus-visible {
+        outline: none;
+        box-shadow: var(--shadow-focus);
+      }
+
+      .review-status-tooltip {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 50%;
+        z-index: 40;
+        padding: 5px 8px;
+        border-radius: var(--radius-small);
+        background: var(--color-bg-inverse);
+        color: var(--color-text-inverse);
+        box-shadow: var(--shadow-overlay);
+        font-size: var(--text-caption-size);
+        font-weight: var(--text-caption-weight);
+        line-height: var(--text-caption-line-height);
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -2px);
+        transition: opacity 120ms ease 150ms, transform 120ms ease 150ms;
+      }
+
+      .publication-status-note.has-tooltip:hover .review-status-tooltip,
+      .publication-status-note.has-tooltip:focus-visible .review-status-tooltip {
+        opacity: 1;
+        transform: translate(-50%, 0);
       }
 
       .filter-value .status-pill,
@@ -1239,9 +1365,14 @@
         color: var(--color-action-primary);
       }
 
+      .status-pill.publishing {
+        background: transparent;
+        color: var(--color-text-default);
+      }
+
       .status-pill.offline {
         background: transparent;
-        color: var(--color-status-warning);
+        color: var(--color-text-default);
       }
 
       .filter-option .status-pill {
@@ -1258,12 +1389,20 @@
         text-align: center;
       }
 
+      .updated-time .date-line,
+      .updated-time .time-line {
+        display: block;
+        white-space: nowrap;
+      }
+
       .video-row > .row-actions {
         justify-content: center;
+        flex-wrap: nowrap;
       }
 
       .row-action {
-        min-height: 34px;
+        height: 30px;
+        flex: 0 0 auto;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -1277,6 +1416,7 @@
         line-height: var(--text-body-line-height);
         font-weight: var(--text-body-medium-weight);
         text-decoration: none;
+        white-space: nowrap;
         transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, box-shadow 150ms ease;
       }
 
@@ -1291,6 +1431,86 @@
         border-color: var(--color-border-default);
         box-shadow: var(--shadow-focus);
       }
+
+      .row-action:disabled,
+      .row-action:disabled:hover {
+        cursor: not-allowed;
+        border-color: var(--color-border-default);
+        background: var(--color-bg-disabled);
+        color: var(--color-text-disabled);
+      }
+
+      .row-action-spinner {
+        width: 14px;
+        height: 14px;
+        margin-right: 6px;
+        border: 2px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 50%;
+        animation: row-action-spin 700ms linear infinite;
+      }
+
+      @keyframes row-action-spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .message-portal {
+        position: fixed;
+        top: max(36px, env(safe-area-inset-top));
+        left: 50%;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        width: max-content;
+        max-width: calc(100vw - 32px);
+        pointer-events: none;
+        transform: translateX(-50%);
+      }
+
+      .feedback-message {
+        position: relative;
+        width: max-content;
+        max-width: 100%;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 9px 16px;
+        border: 1px solid var(--color-border-subtle);
+        border-radius: var(--radius-xlarge);
+        background: var(--color-bg-elevated);
+        color: var(--color-text-primary);
+        box-shadow: var(--shadow-overlay);
+        font-size: var(--text-body-size);
+        line-height: 22px;
+        pointer-events: auto;
+        animation: message-enter 200ms ease-out;
+      }
+
+      .feedback-message.is-leaving {
+        animation: message-leave 160ms ease-in forwards;
+      }
+
+      .feedback-message .message-icon {
+        width: 18px;
+        height: 18px;
+        display: grid;
+        place-items: center;
+        flex: 0 0 auto;
+        border-radius: 50%;
+        color: var(--neutral-0);
+        line-height: 0;
+      }
+
+      .feedback-message.success .message-icon { background: var(--color-status-success); }
+      .feedback-message .message-icon svg { width: 18px; height: 18px; fill: none; stroke: var(--neutral-0); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      .feedback-message .message-icon-bg { fill: transparent; stroke: none; opacity: 0; }
+      .feedback-message .message-icon-line { fill: none; stroke: var(--neutral-0); }
+
+      @keyframes message-enter { from { opacity: 0; transform: translateY(-8px); } }
+      @keyframes message-leave { to { opacity: 0; transform: translateY(-8px); } }
 
       .row-action.icon-only {
         width: 34px;
@@ -1309,13 +1529,171 @@
         color: var(--color-text-default);
       }
 
+      .feedback-modal-layer {
+        position: fixed;
+        inset: 0;
+        z-index: 200;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .feedback-modal-layer[hidden] {
+        display: none;
+      }
+
+      .feedback-modal-mask {
+        position: absolute;
+        inset: 0;
+        background: var(--color-overlay-modal);
+      }
+
+      .feedback-modal {
+        position: relative;
+        z-index: 1;
+        width: 400px;
+        overflow: hidden;
+        border: 1px solid var(--color-border-subtle);
+        border-radius: var(--radius-xlarge);
+        background: var(--color-bg-elevated);
+        box-shadow: var(--shadow-overlay);
+      }
+
+      .feedback-modal-header {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 24px 52px 12px 20px;
+      }
+
+      .feedback-modal-icon {
+        display: grid;
+        width: 24px;
+        height: 24px;
+        flex: 0 0 24px;
+        place-items: center;
+        color: var(--color-status-warning);
+      }
+
+      .feedback-modal-icon svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      .feedback-modal-icon circle {
+        fill: currentColor;
+        stroke: none;
+      }
+
+      .feedback-modal-icon path {
+        fill: none;
+        stroke: var(--neutral-0);
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .feedback-modal-title {
+        margin: 0;
+        color: var(--color-text-primary);
+        font-size: var(--text-title-3-size);
+        line-height: var(--text-title-3-line-height);
+        font-weight: var(--text-title-3-weight);
+      }
+
+      .feedback-modal-close {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 32px;
+        height: 32px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        border-radius: var(--radius-default);
+        background: transparent;
+        color: var(--color-text-tertiary);
+        cursor: pointer;
+      }
+
+      .feedback-modal-close:hover {
+        background: var(--color-bg-hover);
+        color: var(--color-text-primary);
+      }
+
+      .feedback-modal-close:focus-visible,
+      .feedback-modal-action:focus-visible {
+        outline: 0;
+        box-shadow: var(--shadow-focus);
+      }
+
+      .feedback-modal-close .icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      .feedback-modal-body {
+        padding: 0 20px 20px;
+        color: var(--color-text-secondary);
+        font-size: var(--text-body-size);
+        line-height: var(--text-body-line-height);
+      }
+
+      .feedback-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 0 20px 24px;
+      }
+
+      .feedback-modal-action {
+        height: 32px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 14px;
+        border: 1px solid var(--color-border-default);
+        border-radius: var(--radius-default);
+        color: var(--color-text-default);
+        cursor: pointer;
+        font-size: var(--text-body-size);
+        line-height: 1.2;
+        font-weight: var(--text-body-weight);
+        transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+      }
+
+      .feedback-modal-action.secondary {
+        border-color: transparent;
+        background: var(--color-action-neutral-bg-hover);
+        color: var(--color-text-default);
+      }
+
+      .feedback-modal-action.primary {
+        border-color: var(--color-action-primary);
+        background: var(--color-action-primary);
+        color: var(--color-text-inverse);
+      }
+
+      .feedback-modal-action.secondary:hover {
+        border-color: transparent;
+        background: color-mix(in srgb, var(--color-text-primary) 20%, transparent);
+        color: var(--color-text-default);
+      }
+
+      .feedback-modal-action.primary:hover {
+        background: var(--color-action-primary-hover);
+        color: var(--color-text-inverse);
+      }
+
       .video-row.is-draft .video-title,
       .video-row.is-draft .video-subtitle,
-      .video-row.is-draft .video-duration,
       .video-row.is-draft .status-text,
       .video-row.is-draft .status-pill,
+      .video-row.is-draft .publication-status-note,
       .video-row.is-draft .updated-time {
-        color: var(--color-text-tertiary);
+        color: var(--color-text-disabled);
       }
 
       .pagination {
@@ -1891,7 +2269,6 @@
                 <li><button class="content-menu-link" type="button" role="tab" id="tab-all" data-content-tab="all" data-i18n="all" aria-selected="true" aria-controls="content-panel">All</button></li>
                 <li><button class="content-menu-link" type="button" role="tab" id="tab-short" data-content-tab="short" data-i18n="short" aria-selected="false" aria-controls="content-panel">Short</button></li>
                 <li><button class="content-menu-link" type="button" role="tab" id="tab-comic-drama" data-content-tab="comic-drama" data-i18n="comicDrama" aria-selected="false" aria-controls="content-panel">ComicDrama</button></li>
-                <li><button class="content-menu-link" type="button" role="tab" id="tab-movie" data-content-tab="movie" data-i18n="movie" aria-selected="false" aria-controls="content-panel">Movie</button></li>
                 <li><button class="content-menu-link" type="button" role="tab" id="tab-drama" data-content-tab="drama" data-i18n="drama" aria-selected="false" aria-controls="content-panel">Drama</button></li>
                 <li><button class="content-menu-link" type="button" role="tab" id="tab-anime" data-content-tab="anime" data-i18n="anime" aria-selected="false" aria-controls="content-panel">Anime</button></li>
               </ul>
@@ -1930,8 +2307,8 @@
                 <div class="filter-menu" role="listbox" aria-label="Publication" data-i18n-aria-label="publication" hidden>
                   <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="" data-i18n="all" aria-selected="true">All</button>
                   <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="Online" data-i18n="online" aria-selected="false">Online</button>
+                  <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="Publishing" data-i18n="publishing" aria-selected="false">Publishing</button>
                   <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="Offline" data-i18n="offline" aria-selected="false">Offline</button>
-                  <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="Draft" data-i18n="draft" aria-selected="false">Draft</button>
                 </div>
               </div>
               <div class="search-control">
@@ -1957,6 +2334,7 @@
                   <span data-i18n="freePaidStatus">Free/Paid Status</span>
                   <span data-i18n="publicationStatus">Publication Status</span>
                   <span data-i18n="updated">Updated</span>
+                  <span data-i18n="firstOnline">First published</span>
                   <span data-i18n="action">Action</span>
                 </div>
               </div>
@@ -2000,6 +2378,31 @@
         </div>
       </section>
     </main>
+    <div class="message-portal" aria-live="polite" aria-atomic="false" data-message-portal></div>
+    <div class="feedback-modal-layer" data-offline-modal hidden>
+      <div class="feedback-modal-mask" data-offline-modal-dismiss></div>
+      <section class="feedback-modal" role="dialog" aria-modal="true" aria-labelledby="offline-modal-title" aria-describedby="offline-modal-description" tabindex="-1" data-offline-modal-dialog>
+        <header class="feedback-modal-header">
+          <span class="feedback-modal-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 7v7M12 17h.01" />
+            </svg>
+          </span>
+          <h2 class="feedback-modal-title" id="offline-modal-title" data-offline-modal-title>请确认信息</h2>
+          <button class="feedback-modal-close" type="button" aria-label="关闭弹窗" data-offline-modal-close>
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </header>
+        <div class="feedback-modal-body" id="offline-modal-description" data-offline-modal-description></div>
+        <footer class="feedback-modal-footer">
+          <button class="feedback-modal-action secondary" type="button" data-offline-modal-cancel>返回</button>
+          <button class="feedback-modal-action primary" type="button" data-offline-modal-confirm>继续</button>
+        </footer>
+      </section>
+    </div>
     <script>
       const messages = {
         en: {
@@ -2025,7 +2428,6 @@
           all: "All",
           short: "Short",
           comicDrama: "ComicDrama",
-          movie: "Movie",
           drama: "Drama",
           anime: "Anime",
           freePaid: "Free/Paid",
@@ -2034,8 +2436,13 @@
           free: "Free",
           paid: "Paid",
           online: "Online",
+          publishing: "Publishing",
           offline: "Offline",
           draft: "Draft",
+          reviewPending: "Under review",
+          reviewRejected: "Review rejected",
+          reviewApproved: "Review approved",
+          reviewRejectedReason: "Subtitle format does not meet the standard",
           public: "Public",
           private: "Private",
           searchPlaceholder: "Search title or Content ID",
@@ -2044,6 +2451,7 @@
           freePaidStatus: "Free/Paid Status",
           publicationStatus: "Publication Status",
           updated: "Updated",
+          firstOnline: "First published",
           action: "Action",
           pagination: "Pagination",
           previousPage: "Previous page",
@@ -2054,7 +2462,16 @@
           pageLabel: (page) => `Page ${page}`,
           noContentYet: "No content yet",
           edit: "Edit",
-          delete: "Delete",
+          requestOffline: "Offline",
+          republish: "Republish",
+          offlineSuccess: "Content taken offline successfully",
+          republishSuccess: "Content republished successfully",
+          offlineModalTitle: "Please confirm",
+          confirmOffline: (title) => `After “${title}” is taken offline, viewers will no longer be able to access it. Continue?`,
+          confirmRepublish: (title) => `Republish “${title}”? Viewers will be able to access it again after it is online.`,
+          closeModal: "Close dialog",
+          back: "Back",
+          continueAction: "Continue",
           today: "Today",
           yesterday: "Yesterday"
         },
@@ -2081,7 +2498,6 @@
           all: "全部",
           short: "短剧",
           comicDrama: "漫剧",
-          movie: "电影",
           drama: "电视剧",
           anime: "动漫",
           freePaid: "免费/付费",
@@ -2089,9 +2505,14 @@
           visibility: "可见性",
           free: "免费",
           paid: "付费",
-          online: "上线",
+          online: "已上线",
+          publishing: "发布中",
           offline: "已下线",
           draft: "草稿",
+          reviewPending: "审核中",
+          reviewRejected: "审核不通过",
+          reviewApproved: "审核成功",
+          reviewRejectedReason: "字幕格式不符合标准",
           public: "公开",
           private: "私密",
           searchPlaceholder: "搜索标题或 Content ID",
@@ -2100,6 +2521,7 @@
           freePaidStatus: "免费/付费状态",
           publicationStatus: "发布状态",
           updated: "更新时间",
+          firstOnline: "首次上线时间",
           action: "操作",
           pagination: "分页",
           previousPage: "上一页",
@@ -2110,7 +2532,16 @@
           pageLabel: (page) => `第 ${page} 页`,
           noContentYet: "暂无内容",
           edit: "编辑",
-          delete: "删除",
+          requestOffline: "下线",
+          republish: "重新上线",
+          offlineSuccess: "内容已成功下线",
+          republishSuccess: "内容已成功重新上线",
+          offlineModalTitle: "请确认信息",
+          confirmOffline: (title) => `《${title}》下线后用户将无法访问，是否继续？`,
+          confirmRepublish: (title) => `是否确认重新上线《${title}》？上线后用户将可再次访问。`,
+          closeModal: "关闭弹窗",
+          back: "返回",
+          continueAction: "继续",
           today: "今天",
           yesterday: "昨天"
         }
@@ -2126,6 +2557,7 @@
       const accountMenu = document.querySelector(".account-menu");
       const themeToggle = document.querySelector("[data-theme-toggle]");
       const themeTooltip = document.querySelector("[data-theme-tooltip]");
+      const contentMenu = document.querySelector(".content-menu");
       const contentTabs = Array.from(document.querySelectorAll("[data-content-tab]"));
       const workspace = document.querySelector(".workspace");
       const contentView = document.querySelector(".content-view");
@@ -2148,10 +2580,22 @@
       const pageNumbers = document.querySelector("[data-page-numbers]");
       const prevPageButton = document.querySelector("[data-page-prev]");
       const nextPageButton = document.querySelector("[data-page-next]");
+      const offlineModalLayer = document.querySelector("[data-offline-modal]");
+      const offlineModalDialog = document.querySelector("[data-offline-modal-dialog]");
+      const offlineModalTitle = document.querySelector("[data-offline-modal-title]");
+      const offlineModalDescription = document.querySelector("[data-offline-modal-description]");
+      const offlineModalClose = document.querySelector("[data-offline-modal-close]");
+      const offlineModalCancel = document.querySelector("[data-offline-modal-cancel]");
+      const offlineModalConfirm = document.querySelector("[data-offline-modal-confirm]");
+      const messagePortal = document.querySelector("[data-message-portal]");
       let currentContentView = "all";
       let currentLanguage = "en";
       let currentPage = 1;
       let pageSize = Number(pageSizeTrigger.dataset.pageSizeValue);
+      let pendingOfflineItem = null;
+      let pendingPublicationStatus = "Offline";
+      let offlineModalTrigger = null;
+      const loadingPublicationIds = new Set();
       const activeFilters = {
         freePaidStatus: "",
         publicationStatus: ""
@@ -2165,9 +2609,10 @@
           episodes: 12,
           format: "1080x1920",
           freePaidStatus: "Free",
-          publicationStatus: "Online",
+          publicationStatus: "Publishing",
+          publicationNote: "ReviewApproved",
           visibilityStatus: "Public",
-          updated: "Today 14:26"
+          updated: "Today 14:26:35"
         },
         {
           type: "short",
@@ -2177,9 +2622,10 @@
           episodes: 8,
           format: "1080x1920",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Online",
+          publicationNote: "ReviewRejected",
           visibilityStatus: "Private",
-          updated: "Aug 10, 2026"
+          updated: "Aug 10, 2026 10:18:42"
         },
         {
           type: "short",
@@ -2190,8 +2636,9 @@
           format: "1080x1920",
           freePaidStatus: "Free",
           publicationStatus: "Online",
+          publicationNote: "ReviewPending",
           visibilityStatus: "Public",
-          updated: "Aug 7, 2026"
+          updated: "Aug 7, 2026 16:05:27"
         },
         {
           type: "short",
@@ -2201,9 +2648,9 @@
           episodes: 10,
           format: "1080x1920",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Offline",
           visibilityStatus: "Private",
-          updated: "Aug 5, 2026"
+          updated: "Aug 5, 2026 09:42:16"
         },
         {
           type: "comic-drama",
@@ -2213,9 +2660,10 @@
           episodes: 6,
           format: "",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Publishing",
+          publicationNote: "ReviewApproved",
           visibilityStatus: "Private",
-          updated: "Yesterday 18:40"
+          updated: "Yesterday 18:40:21"
         },
         {
           type: "comic-drama",
@@ -2227,7 +2675,7 @@
           freePaidStatus: "Free",
           publicationStatus: "Offline",
           visibilityStatus: "Public",
-          updated: "Aug 13, 2026"
+          updated: "Aug 13, 2026 11:32:08"
         },
         {
           type: "comic-drama",
@@ -2237,9 +2685,9 @@
           episodes: 10,
           format: "",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Offline",
           visibilityStatus: "Private",
-          updated: "Aug 11, 2026"
+          updated: "Aug 11, 2026 15:47:33"
         },
         {
           type: "comic-drama",
@@ -2251,7 +2699,7 @@
           freePaidStatus: "Free",
           publicationStatus: "Offline",
           visibilityStatus: "Public",
-          updated: "Aug 8, 2026"
+          updated: "Aug 8, 2026 08:26:54"
         },
         {
           type: "drama",
@@ -2262,8 +2710,9 @@
           format: "",
           freePaidStatus: "Free",
           publicationStatus: "Online",
+          publicationNote: "ReviewPending",
           visibilityStatus: "Public",
-          updated: "Aug 9, 2026"
+          updated: "Aug 9, 2026 17:14:06"
         },
         {
           type: "drama",
@@ -2273,9 +2722,10 @@
           episodes: 24,
           format: "",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Online",
+          publicationNote: "ReviewRejected",
           visibilityStatus: "Private",
-          updated: "Aug 7, 2026"
+          updated: "Aug 7, 2026 13:38:45"
         },
         {
           type: "drama",
@@ -2287,7 +2737,7 @@
           freePaidStatus: "Free",
           publicationStatus: "Online",
           visibilityStatus: "Public",
-          updated: "Aug 4, 2026"
+          updated: "Aug 4, 2026 19:03:12"
         },
         {
           type: "drama",
@@ -2297,9 +2747,9 @@
           episodes: 20,
           format: "",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Offline",
           visibilityStatus: "Private",
-          updated: "Aug 2, 2026"
+          updated: "Aug 2, 2026 12:51:39"
         },
         {
           type: "anime",
@@ -2309,9 +2759,10 @@
           episodes: 32,
           format: "",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Online",
+          publicationNote: "ReviewRejected",
           visibilityStatus: "Private",
-          updated: "Aug 11, 2026"
+          updated: "Aug 11, 2026 20:16:24"
         },
         {
           type: "anime",
@@ -2323,7 +2774,7 @@
           freePaidStatus: "Free",
           publicationStatus: "Offline",
           visibilityStatus: "Public",
-          updated: "Aug 6, 2026"
+          updated: "Aug 6, 2026 14:29:51"
         },
         {
           type: "anime",
@@ -2333,9 +2784,9 @@
           episodes: 36,
           format: "",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Offline",
           visibilityStatus: "Private",
-          updated: "Aug 3, 2026"
+          updated: "Aug 3, 2026 10:44:18"
         },
         {
           type: "anime",
@@ -2347,53 +2798,28 @@
           freePaidStatus: "Free",
           publicationStatus: "Online",
           visibilityStatus: "Public",
-          updated: "Jul 30, 2026"
-        },
-        {
-          type: "movie",
-          title: "Festival",
-          id: "VID-2408-0173",
-          duration: "01:57:50",
-          format: "4K",
-          freePaidStatus: "Free",
-          publicationStatus: "Online",
-          visibilityStatus: "Public",
-          updated: "Aug 12, 2026"
-        },
-        {
-          type: "movie",
-          title: "Premiere Red Carpet",
-          id: "VID-2408-0155",
-          duration: "02:08:16",
-          format: "4K",
-          freePaidStatus: "Paid",
-          publicationStatus: "Draft",
-          visibilityStatus: "Private",
-          updated: "Aug 9, 2026"
-        },
-        {
-          type: "movie",
-          title: "Action Set Piece",
-          id: "VID-2408-0133",
-          duration: "01:46:38",
-          format: "",
-          freePaidStatus: "Free",
-          publicationStatus: "Offline",
-          visibilityStatus: "Public",
-          updated: "Aug 4, 2026"
-        },
-        {
-          type: "movie",
-          title: "Director Commentary",
-          id: "VID-2408-0119",
-          duration: "02:14:05",
-          format: "4K",
-          freePaidStatus: "Paid",
-          publicationStatus: "Draft",
-          visibilityStatus: "Private",
-          updated: "Aug 1, 2026"
+          updated: "Jul 30, 2026 16:37:02"
         }
       ];
+
+      const firstOnlineTimes = {
+        "VID-2408-0192": "Aug 14, 2026 09:12:18",
+        "VID-2408-0164": "Aug 8, 2026 14:36:42",
+        "VID-2408-0142": "Aug 3, 2026 10:08:25",
+        "VID-2408-0128": "Aug 1, 2026 16:22:51",
+        "VID-2408-0187": "Aug 12, 2026 11:45:06",
+        "VID-2408-0179": "Aug 9, 2026 08:30:14",
+        "VID-2408-0168": "Aug 7, 2026 15:17:39",
+        "VID-2408-0147": "Aug 4, 2026 12:52:28",
+        "VID-2408-0158": "Aug 5, 2026 09:41:33",
+        "VID-2408-0151": "Aug 3, 2026 18:06:47",
+        "VID-2408-0136": "Jul 31, 2026 13:24:10",
+        "VID-2408-0124": "Jul 29, 2026 17:38:56",
+        "VID-2408-0181": "Aug 7, 2026 10:15:22",
+        "VID-2408-0162": "Aug 2, 2026 14:49:31",
+        "VID-2408-0144": "Jul 30, 2026 08:57:44",
+        "VID-2408-0121": "Jul 26, 2026 16:33:19"
+      };
 
       function t(key, ...args) {
         const message = messages[currentLanguage][key] ?? messages.en[key] ?? key;
@@ -2435,7 +2861,6 @@
         const typeKeys = {
           short: "short",
           "comic-drama": "comicDrama",
-          movie: "movie",
           drama: "drama",
           anime: "anime"
         };
@@ -2447,8 +2872,12 @@
           Free: "free",
           Paid: "paid",
           Online: "online",
+          Publishing: "publishing",
           Offline: "offline",
           Draft: "draft",
+          ReviewPending: "reviewPending",
+          ReviewRejected: "reviewRejected",
+          ReviewApproved: "reviewApproved",
           Public: "public",
           Private: "private",
           免费: "free",
@@ -2456,9 +2885,13 @@
           上线: "online",
           已上线: "online",
           在线: "online",
+          发布中: "publishing",
           已下线: "offline",
           下线: "offline",
           草稿: "draft",
+          审核中: "reviewPending",
+          审核不通过: "reviewRejected",
+          审核成功: "reviewApproved",
           公开: "public",
           私密: "private"
         };
@@ -2471,25 +2904,14 @@
 
       function getPublicationClass(value) {
         const statusKey = getStatusKey(value);
-        return statusKey === "online" ? "publish" : statusKey === "offline" ? "offline" : "draft";
+        if (statusKey === "online") return "publish";
+        if (statusKey === "publishing") return "publishing";
+        return statusKey === "offline" ? "offline" : "draft";
       }
 
       function getPublicationIcon(value) {
         const statusKey = getStatusKey(value);
-        if (statusKey === "online") {
-          return `
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none" />
-            </svg>
-          `;
-        }
-        if (statusKey === "offline") {
-          return `
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 12h10" />
-            </svg>
-          `;
-        }
+        if (["online", "publishing", "offline"].includes(statusKey)) return "";
         return `
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
@@ -2499,12 +2921,40 @@
         `;
       }
 
-      function renderPublicationStatus(value) {
+      function renderPublicationPill(value) {
         return `<span class="status-pill ${getPublicationClass(value)}">${getPublicationIcon(value)}<span>${getStatusLabel(value)}</span></span>`;
       }
 
+      function getPublicationNoteMeta(note) {
+        const noteKey = getStatusKey(note);
+        const noteMeta = {
+          reviewPending: {
+            className: "review-pending",
+            icon: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>'
+          },
+          reviewRejected: {
+            className: "review-rejected",
+            icon: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="m9 9 6 6M15 9l-6 6" /></svg>'
+          },
+          reviewApproved: {
+            className: "review-approved",
+            icon: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="m8 12 2.5 2.5L16 9" /></svg>'
+          }
+        };
+        return noteMeta[noteKey] || { className: "", icon: "" };
+      }
+
+      function renderPublicationStatus(value, note) {
+        const noteMeta = getPublicationNoteMeta(note);
+        const isRejected = getStatusKey(note) === "reviewRejected";
+        const tooltip = isRejected ? `<span class="review-status-tooltip" role="tooltip">${t("reviewRejectedReason")}</span>` : "";
+        const tooltipAttributes = isRejected ? ` tabindex="0" aria-label="${getStatusLabel(note)}：${t("reviewRejectedReason")}"` : "";
+        const noteLabel = note ? `<span class="publication-status-note ${noteMeta.className}${isRejected ? " has-tooltip" : ""}"${tooltipAttributes}>${noteMeta.icon}<span>${getStatusLabel(note)}</span>${tooltip}</span>` : "";
+        return `<div class="publication-status">${renderPublicationPill(value)}${noteLabel}</div>`;
+      }
+
       function getThumbBadgeLabel(item) {
-        return item.type === "movie" ? item.duration : `${item.episodes} Episodes`;
+        return `${item.episodes} Episodes`;
       }
 
       function getUpdatedLabel(updated) {
@@ -2518,11 +2968,19 @@
         if (Number.isNaN(timestamp)) {
           return updated;
         }
-        return new Intl.DateTimeFormat(currentLanguage === "zh" ? "zh-CN" : "en-US", {
+        const locale = currentLanguage === "zh" ? "zh-CN" : "en-US";
+        const dateLabel = new Intl.DateTimeFormat(locale, {
           year: "numeric",
           month: currentLanguage === "zh" ? "numeric" : "short",
           day: "numeric"
         }).format(timestamp);
+        const timeLabel = new Intl.DateTimeFormat(locale, {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hourCycle: "h23"
+        }).format(timestamp);
+        return `<span class="date-line">${dateLabel}</span><span class="time-line">${timeLabel}</span>`;
       }
 
       function syncFilterLabels() {
@@ -2531,7 +2989,7 @@
           const selectedValue = activeFilters[field];
           const valueNode = filterTrigger.querySelector("[data-filter-value]");
           if (field === "publicationStatus" && selectedValue) {
-            valueNode.innerHTML = renderPublicationStatus(selectedValue);
+            valueNode.innerHTML = renderPublicationPill(selectedValue);
           } else {
             valueNode.textContent = selectedValue ? getStatusLabel(selectedValue) : t("all");
           }
@@ -2542,7 +3000,7 @@
         filterOptions.forEach((option) => {
           const value = option.dataset.filterValue;
           if (option.dataset.filterField === "publicationStatus" && value) {
-            option.innerHTML = renderPublicationStatus(value);
+            option.innerHTML = renderPublicationPill(value);
           } else if (value) {
             option.textContent = getStatusLabel(value);
           } else {
@@ -2580,6 +3038,8 @@
         syncFilterOptionLabels();
         syncPageSizeLabels();
         renderVideoList(currentContentView);
+        syncContentMenuIndicator();
+        syncOfflineModalText();
         syncThemePreference();
         window.dispatchEvent(new CustomEvent("studio:languagechange", { detail: { language: nextLang } }));
         localStorage.setItem("studio-language", nextLang);
@@ -2758,10 +3218,10 @@
 
       function getUpdatedTimeValue(updated) {
         if (updated.startsWith("Today")) {
-          return Date.parse(`2026-08-14T${updated.split(" ")[1] || "00:00"}:00`);
+          return Date.parse(`2026-08-14T${updated.split(" ")[1] || "00:00:00"}`);
         }
         if (updated.startsWith("Yesterday")) {
-          return Date.parse(`2026-08-13T${updated.split(" ")[1] || "00:00"}:00`);
+          return Date.parse(`2026-08-13T${updated.split(" ")[1] || "00:00:00"}`);
         }
         return Date.parse(updated);
       }
@@ -2826,11 +3286,16 @@
         contentList.innerHTML = visibleRows
           .map((item) => {
             const isDraft = getStatusKey(item.publicationStatus) === "draft";
+            const isOffline = getStatusKey(item.publicationStatus) === "offline";
+            const isLoading = loadingPublicationIds.has(item.id);
+            const publicationActionLabel = t(isOffline ? "republish" : "requestOffline");
             return `
               <article class="video-row${isDraft ? " is-draft" : ""}">
                 <div class="video-main">
-                  <div class="video-thumb ${item.type}${isDraft ? " draft" : ""}">
-                    <span class="video-duration">${getThumbBadgeLabel(item)}</span>
+                  <div class="video-thumb-stack${Number(item.episodes) > 1 ? " has-multiple" : ""}">
+                    <div class="video-thumb ${item.type}${isDraft ? " draft" : ""}">
+                      <span class="video-duration">${getThumbBadgeLabel(item)}</span>
+                    </div>
                   </div>
                   <div class="video-copy">
                     <p class="video-title">${item.title}</p>
@@ -2841,27 +3306,130 @@
                   </div>
                 </div>
                 <span class="status-text">${isDraft ? "-" : getStatusLabel(item.freePaidStatus)}</span>
-                ${renderPublicationStatus(item.publicationStatus)}
+                ${renderPublicationStatus(item.publicationStatus, item.publicationNote)}
                 <div>
                   <p class="updated-time">${getUpdatedLabel(item.updated)}</p>
                 </div>
+                <div>
+                  <p class="updated-time">${getUpdatedLabel(firstOnlineTimes[item.id])}</p>
+                </div>
                 <div class="row-actions">
-                  <a class="row-action" href="edit.html?contentId=${encodeURIComponent(item.id)}&type=${encodeURIComponent(item.type)}">${t("edit")}</a>
-                  <button class="row-action icon-only" type="button" aria-label="${t("delete")}">
-                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M3 6h18" />
-                      <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
-                      <path d="M10 11v6" />
-                      <path d="M14 11v6" />
-                    </svg>
-                  </button>
+                  <a class="row-action" href="edit.html?contentId=${encodeURIComponent(item.id)}&type=${encodeURIComponent(item.type)}&tab=details">${t("edit")}</a>
+                  <button class="row-action" type="button" data-toggle-publication="${item.id}"${isLoading ? " disabled aria-busy=\"true\"" : ""}>${isLoading ? '<span class="row-action-spinner" aria-hidden="true"></span>' : ""}${publicationActionLabel}</button>
                 </div>
               </article>
             `;
           })
           .join("");
       }
+
+      function syncOfflineModalText() {
+        if (!offlineModalLayer) return;
+        offlineModalTitle.textContent = t("offlineModalTitle");
+        const confirmKey = pendingPublicationStatus === "Online" ? "confirmRepublish" : "confirmOffline";
+        offlineModalDescription.textContent = pendingOfflineItem ? t(confirmKey, pendingOfflineItem.title) : "";
+        offlineModalClose.setAttribute("aria-label", t("closeModal"));
+        offlineModalCancel.textContent = t("back");
+        offlineModalConfirm.textContent = t("continueAction");
+      }
+
+      function openOfflineModal(item, triggerButton, nextStatus = "Offline") {
+        pendingOfflineItem = item;
+        pendingPublicationStatus = nextStatus;
+        offlineModalTrigger = triggerButton;
+        syncOfflineModalText();
+        offlineModalLayer.hidden = false;
+        window.requestAnimationFrame(() => offlineModalCancel.focus());
+      }
+
+      function closeOfflineModal(restoreFocus = true) {
+        if (offlineModalLayer.hidden) return;
+        offlineModalLayer.hidden = true;
+        pendingOfflineItem = null;
+        pendingPublicationStatus = "Offline";
+        if (restoreFocus) offlineModalTrigger?.focus();
+        offlineModalTrigger = null;
+      }
+
+      function showGlobalMessage(message) {
+        if (!messagePortal || !message) return;
+        while (messagePortal.children.length >= 3) {
+          messagePortal.lastElementChild.remove();
+        }
+        const messageElement = document.createElement("div");
+        messageElement.className = "feedback-message success";
+        messageElement.setAttribute("role", "status");
+        messageElement.innerHTML = `
+          <span class="message-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle class="message-icon-bg" cx="12" cy="12" r="10"></circle>
+              <path class="message-icon-line" d="M8 12.5l2.5 2.5L16.5 9"></path>
+            </svg>
+          </span>
+          <span></span>`;
+        messageElement.lastElementChild.textContent = message;
+        messagePortal.prepend(messageElement);
+        window.setTimeout(() => {
+          if (!messageElement.isConnected) return;
+          messageElement.classList.add("is-leaving");
+          messageElement.addEventListener("animationend", () => messageElement.remove(), { once: true });
+        }, 3000);
+      }
+
+      function updatePublicationStatus(item, nextStatus) {
+        if (loadingPublicationIds.has(item.id)) return;
+        loadingPublicationIds.add(item.id);
+        renderVideoList(currentContentView);
+        window.setTimeout(() => {
+          item.publicationStatus = nextStatus;
+          item.publicationNote = "";
+          loadingPublicationIds.delete(item.id);
+          renderVideoList(currentContentView);
+          showGlobalMessage(t(nextStatus === "Offline" ? "offlineSuccess" : "republishSuccess"));
+        }, 800);
+      }
+
+      contentList.addEventListener("click", (event) => {
+        const requestButton = event.target.closest("[data-toggle-publication]");
+        if (!requestButton || requestButton.disabled) return;
+        const item = videoItems.find((video) => video.id === requestButton.dataset.togglePublication);
+        if (!item) return;
+        if (getStatusKey(item.publicationStatus) === "offline") {
+          openOfflineModal(item, requestButton, "Online");
+          return;
+        }
+        openOfflineModal(item, requestButton, "Offline");
+      });
+
+      offlineModalLayer.addEventListener("click", (event) => {
+        if (event.target.closest("[data-offline-modal-close], [data-offline-modal-cancel], [data-offline-modal-dismiss]")) {
+          closeOfflineModal();
+        }
+      });
+
+      offlineModalConfirm.addEventListener("click", () => {
+        if (!pendingOfflineItem) return;
+        const item = pendingOfflineItem;
+        const nextStatus = pendingPublicationStatus;
+        closeOfflineModal(false);
+        updatePublicationStatus(item, nextStatus);
+      });
+
+      offlineModalDialog.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          closeOfflineModal();
+          return;
+        }
+        if (event.key !== "Tab") return;
+        const focusable = [offlineModalClose, offlineModalCancel, offlineModalConfirm];
+        const currentIndex = focusable.indexOf(document.activeElement);
+        const nextIndex = event.shiftKey
+          ? (currentIndex - 1 + focusable.length) % focusable.length
+          : (currentIndex + 1) % focusable.length;
+        event.preventDefault();
+        focusable[nextIndex].focus();
+      });
 
       function setContentView(nextView) {
         currentContentView = nextView;
@@ -2873,8 +3441,18 @@
           tab.tabIndex = isSelected ? 0 : -1;
         });
         contentPanel.setAttribute("aria-labelledby", selectedTab.id);
+        syncContentMenuIndicator(selectedTab);
         renderVideoList(nextView);
         syncStickyDivider();
+      }
+
+      function syncContentMenuIndicator(selectedTab = contentTabs.find((tab) => tab.getAttribute("aria-selected") === "true")) {
+        if (!contentMenu || !selectedTab) return;
+        const menuRect = contentMenu.getBoundingClientRect();
+        const tabRect = selectedTab.getBoundingClientRect();
+        const indicatorX = tabRect.left - menuRect.left + contentMenu.scrollLeft;
+        contentMenu.style.setProperty("--content-indicator-x", `${indicatorX}px`);
+        contentMenu.style.setProperty("--content-indicator-width", `${tabRect.width}px`);
       }
 
       function isElementRendered(node) {
@@ -2883,6 +3461,7 @@
 
       let stickyDividerFrame = 0;
       let stickyDividerScrolled = false;
+      let stickyDividerAtEnd = false;
       let stickyDividerScrollLeft = -1;
       let resizeSettledTimer = 0;
 
@@ -2890,9 +3469,26 @@
         if (!isElementRendered(videoListScroll)) return;
         const nextScrollLeft = videoListScroll.scrollLeft;
         const nextScrolled = nextScrollLeft > 0;
+        const nextAtEnd = nextScrollLeft + videoListScroll.clientWidth >= videoListScroll.scrollWidth - 1;
+        const cardRect = videoListCard.getBoundingClientRect();
+        const headerRect = videoListHeaderScroll.getBoundingClientRect();
+        const firstHeaderCell = videoListHeaderScroll.querySelector(".video-list-header > :first-child");
+        const lastHeaderCell = videoListHeaderScroll.querySelector(".video-list-header > :last-child");
+        const shadowTop = Math.max(0, headerRect.top - cardRect.top);
+        videoListCard.style.setProperty("--sticky-shadow-top", `${shadowTop}px`);
+        if (firstHeaderCell && lastHeaderCell) {
+          const firstEdge = firstHeaderCell.getBoundingClientRect().right - cardRect.left;
+          const lastEdge = lastHeaderCell.getBoundingClientRect().left - cardRect.left;
+          videoListCard.style.setProperty("--sticky-first-edge", `${firstEdge}px`);
+          videoListCard.style.setProperty("--sticky-last-edge", `${lastEdge}px`);
+        }
         if (nextScrolled !== stickyDividerScrolled) {
           stickyDividerScrolled = nextScrolled;
           videoListCard.classList.toggle("is-scrolled-x", nextScrolled);
+        }
+        if (nextAtEnd !== stickyDividerAtEnd) {
+          stickyDividerAtEnd = nextAtEnd;
+          videoListCard.classList.toggle("is-scroll-end", nextAtEnd);
         }
         if (nextScrollLeft !== stickyDividerScrollLeft) {
           stickyDividerScrollLeft = nextScrollLeft;
@@ -2914,6 +3510,7 @@
         resizeSettledTimer = window.setTimeout(() => {
           document.documentElement.classList.remove("is-resizing");
         }, 140);
+        syncContentMenuIndicator();
         scheduleStickyDividerSync();
       }
 
@@ -2934,6 +3531,8 @@
       }
 
       videoListScroll.addEventListener("scroll", scheduleStickyDividerSync, { passive: true });
+      workspace?.addEventListener("scroll", scheduleStickyDividerSync, { passive: true });
+      window.addEventListener("scroll", scheduleStickyDividerSync, { passive: true });
       window.addEventListener("resize", handleResponsiveResize);
 
       pageSizeTrigger.addEventListener("click", (event) => {

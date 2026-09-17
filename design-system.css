@@ -71,6 +71,7 @@
   --color-bg-selected: var(--brand-0);
   --color-bg-disabled: var(--neutral-2);
   --color-bg-inverse: var(--neutral-9);
+  --color-overlay-modal: color-mix(in srgb, var(--neutral-13) 45%, transparent);
   --color-border-default: var(--neutral-3);
   --color-border-subtle: var(--neutral-2);
   --color-border-strong: var(--neutral-4);

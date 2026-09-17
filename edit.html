@@ -570,14 +570,39 @@
         background: var(--color-bg-page);
       }
 
+      .main-loading-content {
+        display: grid;
+        justify-items: center;
+        gap: 12px;
+      }
+
+      .main-loading-tip {
+        margin: 0;
+        color: var(--color-text-default);
+        font-size: var(--text-body-size);
+        line-height: var(--text-body-line-height);
+      }
+
+      .main-loading-tip[hidden] { display: none; }
+
       .shell.is-loading .main-loading {
         display: grid;
       }
 
-      .shell.is-loading .workspace {
+      .shell.is-loading:not(.is-publishing) .workspace {
         visibility: hidden;
         pointer-events: none;
       }
+
+      .shell.is-publishing .main-loading {
+        background: color-mix(in srgb, var(--neutral-13) 80%, transparent);
+      }
+
+      .shell.is-publishing .main-loading-tip {
+        color: var(--neutral-0);
+      }
+
+      .shell.is-publishing .workspace { pointer-events: none; }
 
       .loading-ring {
         width: 32px;
@@ -755,6 +780,7 @@
         font-size: var(--text-body-size);
         line-height: var(--text-body-line-height);
         font-weight: var(--text-body-medium-weight);
+        transition: border-color 150ms ease;
       }
 
       .filter-control {
@@ -777,7 +803,8 @@
       }
 
       .filter-control:hover {
-        background: var(--color-bg-hover);
+        border-color: var(--color-action-primary);
+        background: var(--color-bg-container);
       }
 
       .filter-control:focus-visible,
@@ -877,7 +904,8 @@
       }
 
       .search-control:hover {
-        background: var(--color-bg-hover);
+        border-color: var(--color-action-primary);
+        background: var(--color-bg-container);
       }
 
       .search-control:focus-within {
@@ -951,7 +979,6 @@
         border: 1px solid var(--color-border-subtle);
         border-radius: var(--radius-default);
         background: var(--color-bg-container);
-        box-shadow: var(--shadow-surface);
       }
 
       .video-list-header-scroll {
@@ -1535,73 +1562,384 @@
       }
 
       .edit-page .workspace-inner {
-        gap: 24px;
-        padding: 28px 0 120px;
+        gap: 0;
+        padding: 0 0 120px;
       }
 
-      .breadcrumb {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 8px;
-        margin: 0;
-        padding: 0;
-        color: var(--color-text-disabled);
-        font-size: var(--text-caption-medium-size);
-        line-height: var(--text-caption-medium-line-height);
-        font-weight: var(--text-caption-weight);
-        list-style: none;
+      .edit-backbutton + .edit-heading-row {
+        margin-top: 8px;
       }
 
-      .breadcrumb li,
-      .breadcrumb a {
-        min-height: 20px;
+      .edit-heading-row + .edit-layout {
+        margin-top: 24px;
+      }
+
+      .edit-page .sidebar {
+        gap: 0;
+        padding: 20px 16px;
+      }
+
+      .secondary-back-button {
+        height: 42px;
         display: inline-flex;
         align-items: center;
-      }
-
-      .breadcrumb a {
-        color: var(--color-text-disabled);
+        gap: 8px;
+        padding: 0 10px;
+        border: 0;
+        border-radius: var(--radius-default);
+        background: transparent;
+        color: var(--color-text-default);
+        font-size: var(--text-body-size);
+        line-height: var(--text-body-line-height);
+        font-weight: var(--text-body-medium-weight);
         text-decoration: none;
       }
 
-      .breadcrumb a:hover {
-        color: var(--color-text-tertiary);
+      .secondary-back-button:hover {
+        background: var(--color-bg-hover);
+        color: var(--color-text-primary);
       }
 
-      .breadcrumb li[aria-current="page"] {
+      .secondary-back-icon {
+        width: 20px;
+        height: 20px;
+        flex: 0 0 20px;
+      }
+
+      .secondary-back-button:focus-visible,
+      .edit-secondary-tab:focus-visible {
+        outline: none;
+        box-shadow: var(--shadow-focus);
+      }
+
+      .edit-secondary-tabs-list {
+        display: grid;
+        gap: 0;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .edit-secondary-tab {
+        position: relative;
+        width: 100%;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 12px;
+        border: 0;
+        border-radius: var(--radius-default);
+        background: transparent;
+        color: var(--color-text-secondary);
+        cursor: pointer;
+        font: inherit;
+        font-size: var(--text-body-size);
+        line-height: var(--text-body-line-height);
+        font-weight: var(--text-body-medium-weight);
+        text-align: left;
+      }
+
+      .edit-secondary-tab:hover {
+        background: var(--color-bg-hover);
         color: var(--color-text-default);
       }
 
-      .breadcrumb-separator {
-        display: block;
-        width: 14px;
-        height: 14px;
-        color: var(--color-text-disabled);
+      .edit-secondary-tab[aria-selected="true"] {
+        background: var(--color-bg-hover);
+        color: var(--color-text-primary);
+      }
+
+      .edit-secondary-tab .icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      .edit-secondary-tab[data-edit-section-tab="details"] .icon {
+        width: 18px;
+        height: 18px;
+      }
+
+      .secondary-video-link {
+        display: grid;
+        gap: 8px;
+        color: var(--color-text-default);
+        text-decoration: none;
+      }
+
+      .secondary-video-frame {
+        position: relative;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        border-radius: var(--radius-default);
+        background: linear-gradient(135deg, var(--color-category-blue), var(--color-category-cyan) 52%, var(--color-action-primary-bg));
+      }
+
+      .secondary-video-frame::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: color-mix(in srgb, var(--color-overlay-black-strong) 54%, transparent);
+        opacity: 0;
+        transition: opacity 120ms ease;
+      }
+
+      .secondary-video-play {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: 2;
+        width: 36px;
+        height: 36px;
+        display: grid;
+        place-items: center;
+        border: 1px solid var(--color-overlay-white-default);
+        border-radius: var(--radius-full);
+        background: var(--color-overlay-black-default);
+        color: var(--color-overlay-white-strong);
+        backdrop-filter: blur(4px);
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+        transition: opacity 120ms ease, transform 120ms ease;
+      }
+
+      .secondary-video-play .icon {
+        width: 18px;
+        height: 18px;
+      }
+
+      .secondary-video-badge {
+        position: absolute;
+        right: 6px;
+        bottom: 6px;
+        z-index: 2;
+        padding: 2px 6px;
+        border-radius: var(--radius-small);
+        background: color-mix(in srgb, var(--color-bg-inverse) 20%, transparent);
+        color: var(--color-text-inverse);
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+        font-weight: var(--text-caption-medium-weight);
+      }
+
+      .secondary-video-tooltip {
+        position: absolute;
+        top: calc(50% + 24px);
+        left: 50%;
+        z-index: 3;
+        padding: 4px 8px;
+        border-radius: var(--radius-small);
+        background: var(--color-bg-elevated);
+        color: var(--color-text-default);
+        box-shadow: var(--shadow-overlay);
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, 4px);
+        transition: opacity 120ms ease, transform 120ms ease;
+      }
+
+      .secondary-video-title {
+        margin: 0;
+        overflow: hidden;
+        color: var(--color-text-default);
+        font-size: var(--text-body-size);
+        line-height: var(--text-body-line-height);
+        font-weight: var(--text-body-medium-weight);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .secondary-video-copy {
+        min-width: 0;
+        display: grid;
+        gap: 2px;
+        margin-left: 10px;
+      }
+
+      .secondary-video-id {
+        margin: 0;
+        overflow: hidden;
+        color: var(--color-text-secondary);
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+        font-weight: var(--text-caption-weight);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .secondary-video-link:hover .secondary-video-frame::after,
+      .secondary-video-link:hover .secondary-video-play,
+      .secondary-video-link:focus-visible .secondary-video-frame::after,
+      .secondary-video-link:focus-visible .secondary-video-play {
+        opacity: 1;
+      }
+
+      .secondary-video-link:hover .secondary-video-play,
+      .secondary-video-link:focus-visible .secondary-video-play {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .secondary-video-link:hover .secondary-video-tooltip,
+      .secondary-video-link:focus-visible .secondary-video-tooltip {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
+      .secondary-video-link:focus-visible {
+        outline: none;
+      }
+
+      .secondary-video-link:focus-visible .secondary-video-frame {
+        box-shadow: var(--shadow-focus);
+      }
+
+      .edit-page[data-edit-section="details"] .episode-card,
+      .edit-page[data-edit-section="details"] .episode-toolbar,
+      .edit-page[data-edit-section="details"] .episode-pagination,
+      .edit-page[data-edit-section="episodes"] .edit-form,
+      .edit-page[data-edit-section="episodes"] .preview-column > .preview-card {
+        display: none;
+      }
+
+      .edit-page[data-edit-section="episodes"] .edit-layout {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .edit-page[data-edit-section="episodes"] .preview-column {
+        width: 100%;
+        max-width: none;
       }
 
       .edit-heading-row {
+        position: relative;
+        min-height: 48px;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 20px;
       }
 
+      .edit-heading-row::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 1px;
+        background: var(--color-border-subtle);
+        pointer-events: none;
+      }
+
+      .edit-backbutton {
+        width: fit-content;
+        min-height: 40px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-left: -8px;
+        padding: 0 8px;
+        border: 0;
+        border-radius: var(--radius-default);
+        background: transparent;
+        color: var(--color-text-secondary);
+        font-size: var(--text-body-size);
+        line-height: var(--text-body-line-height);
+        font-weight: var(--text-body-medium-weight);
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .edit-backbutton:hover {
+        background: var(--color-bg-hover);
+        color: var(--color-text-default);
+      }
+
+      .edit-backbutton:focus-visible {
+        outline: none;
+        box-shadow: var(--shadow-focus);
+      }
+
+      .edit-backbutton .icon {
+        width: 20px;
+        height: 20px;
+      }
+
       .edit-title-group {
         min-width: 0;
         display: flex;
-        flex-wrap: wrap;
         align-items: center;
-        gap: 12px;
+        height: 48px;
+        overflow: hidden;
       }
 
-      .edit-title {
-        margin: 0;
+      .edit-title-tabs {
+        --edit-tab-indicator-x: 0px;
+        --edit-tab-indicator-width: 0px;
+        position: relative;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        min-width: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      .edit-title-tabs::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        z-index: 2;
+        width: var(--edit-tab-indicator-width);
+        height: 2px;
+        border-radius: var(--radius-full);
+        background: var(--color-action-primary);
+        transform: translateX(var(--edit-tab-indicator-x));
+        transition: transform 220ms ease, width 220ms ease;
+        pointer-events: none;
+      }
+
+      .edit-title-tabs.is-measuring::after {
+        transition: none;
+      }
+
+      .edit-title-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .edit-title-tab {
+        position: relative;
+        height: 48px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--color-text-secondary);
+        cursor: pointer;
+        font: inherit;
+        font-size: var(--text-body-large-size);
+        line-height: var(--text-body-large-line-height);
+        font-weight: 400;
+        white-space: nowrap;
+      }
+
+      .edit-title-tab:hover {
         color: var(--color-text-default);
-        font-size: var(--text-title-1-size);
-        line-height: var(--text-title-1-line-height);
-        font-weight: var(--text-title-1-weight);
-        letter-spacing: 0;
+      }
+
+      .edit-title-tab[aria-selected="true"] {
+        color: var(--color-text-primary);
+        font-weight: var(--text-body-medium-weight);
+      }
+
+      .edit-title-tab:focus-visible {
+        outline: none;
       }
 
       .edit-category-tag {
@@ -1610,14 +1948,14 @@
         align-items: center;
         padding: 0 10px;
         border-radius: var(--radius-full);
-        background: color-mix(in srgb, var(--color-category-blue) 12%, var(--color-bg-container));
-        color: var(--color-category-blue);
         font-size: var(--text-caption-medium-size);
         line-height: var(--text-caption-medium-line-height);
         font-weight: var(--text-caption-medium-weight);
       }
 
       .edit-actions {
+        position: relative;
+        z-index: 2;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -1686,6 +2024,18 @@
         color: var(--color-text-disabled);
       }
 
+      .edit-action.secondary {
+        border-color: transparent;
+        background: color-mix(in srgb, var(--color-text-primary) 10%, transparent);
+        color: var(--color-text-primary);
+      }
+
+      .edit-action.secondary:hover {
+        border-color: transparent;
+        background: color-mix(in srgb, var(--color-text-primary) 20%, transparent);
+        color: var(--color-text-primary);
+      }
+
       .edit-action.icon-only {
         width: 36px;
         padding: 0;
@@ -1710,6 +2060,10 @@
         gap: 16px;
       }
 
+      .preview-column {
+        gap: 0;
+      }
+
       .form-section,
       .preview-card,
       .episode-card {
@@ -1717,7 +2071,6 @@
         border: 1px solid var(--color-border-subtle);
         border-radius: var(--radius-default);
         background: var(--color-bg-container);
-        box-shadow: var(--shadow-surface);
       }
 
       .form-section {
@@ -1730,6 +2083,66 @@
         font-size: var(--text-title-3-size);
         line-height: var(--text-title-3-line-height);
         font-weight: var(--text-title-3-weight);
+      }
+
+      .section-heading-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+
+      .section-heading-row .section-title {
+        margin: 0;
+      }
+
+      .content-language-filter .filter-control {
+        min-width: 0;
+      }
+
+      .content-language-filter .filter-value {
+        flex: 0 0 auto;
+      }
+
+      .content-language-filter .filter-menu {
+        right: 0;
+        left: auto;
+        min-width: 184px;
+        max-height: 320px;
+        overflow-y: auto;
+      }
+
+      .field-label-group {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .content-source-tag {
+        margin-left: auto;
+        display: inline-flex;
+        align-items: center;
+        min-height: 20px;
+        padding: 0 7px;
+        border-radius: var(--radius-full);
+        gap: 4px;
+        background: color-mix(in srgb, var(--color-category-purple) 14%, var(--color-bg-container));
+        color: var(--color-category-purple);
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+        font-weight: var(--text-caption-medium-weight);
+      }
+
+      .content-source-tag.manual {
+        background: color-mix(in srgb, var(--color-category-blue) 14%, var(--color-bg-container));
+        color: var(--color-category-blue);
+      }
+
+      .content-source-tag .icon {
+        width: 12px;
+        height: 12px;
       }
 
       .form-grid {
@@ -1818,6 +2231,13 @@
         font-size: var(--text-body-size);
         line-height: var(--text-body-line-height);
         font-weight: var(--text-body-weight);
+        transition: border-color 150ms ease;
+      }
+
+      .field-control:not(:disabled):not(.is-invalid):hover,
+      .textarea-control:not(:disabled):not(.is-invalid):hover,
+      .select-control:not(:disabled):not(.is-invalid):hover {
+        border-color: var(--color-action-primary);
       }
 
       .field-control,
@@ -1843,6 +2263,15 @@
       .translation-input.is-invalid,
       .translation-textarea.is-invalid {
         border-color: var(--color-status-error-border);
+      }
+
+      .field-control.is-invalid:focus,
+      .textarea-control.is-invalid:focus,
+      .translation-input.is-invalid:focus,
+      .translation-textarea.is-invalid:focus {
+        outline: none;
+        border-color: var(--color-status-error);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-status-error) 18%, transparent);
       }
 
       .cover-uploader.is-invalid .cover-preview {
@@ -1925,7 +2354,7 @@
       .cover-preview-grid {
         width: min(720px, 100%);
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 16px;
         align-items: end;
         justify-self: start;
@@ -2150,6 +2579,11 @@
         font-size: var(--text-body-size);
         line-height: var(--text-body-line-height);
         font-weight: var(--text-body-weight);
+        transition: border-color 150ms ease;
+      }
+
+      .cover-title-textarea:not(:disabled):hover {
+        border-color: var(--color-action-primary);
       }
 
       .cover-title-panel-actions {
@@ -2430,7 +2864,7 @@
         min-height: 24px;
         width: fit-content;
         padding: 3px 8px 3px 4px;
-        border-radius: var(--radius-large);
+        border-radius: var(--radius-default);
         color: var(--color-text-secondary);
         transition: background-color 0.15s ease, color 0.15s ease;
       }
@@ -2489,6 +2923,30 @@
 
       .iqb-radio:has(.iqb-radio-input:checked) {
         color: var(--color-text-primary);
+      }
+
+      .iqb-radio:has(.iqb-radio-input:disabled) {
+        background: transparent;
+        color: var(--color-text-disabled);
+        cursor: not-allowed;
+      }
+
+      .iqb-radio-input:disabled {
+        border-color: var(--color-border-disabled);
+        background: var(--color-bg-disabled);
+        cursor: not-allowed;
+      }
+
+      .iqb-radio-input:checked:disabled {
+        border-color: var(--color-text-disabled);
+        background: var(--color-text-disabled);
+      }
+
+      .field-help-text {
+        margin: 0;
+        color: var(--color-text-tertiary);
+        font-size: var(--text-caption-medium-size);
+        line-height: var(--text-caption-medium-line-height);
       }
 
       .iqb-radio-mark {
@@ -2585,10 +3043,12 @@
         font-size: var(--text-body-size);
         line-height: var(--text-body-line-height);
         font-weight: var(--text-body-medium-weight);
+        transition: border-color 150ms ease;
       }
 
-      .iqb-select-trigger:hover {
-        background: var(--color-bg-page);
+      .iqb-select-trigger:not(:disabled):not(.is-invalid):hover {
+        border-color: var(--color-action-primary);
+        background: var(--color-bg-container);
       }
 
       .iqb-select-trigger:focus-visible,
@@ -2678,39 +3138,103 @@
         aspect-ratio: 16 / 9;
         display: grid;
         place-items: center;
-        background: linear-gradient(135deg, var(--color-text-primary), var(--color-text-tertiary) 48%, var(--color-border-default));
+        background-color: var(--color-bg-subtle);
+        background-image: url("./assets/video-player-placeholder.png");
+        background-position: center;
+        background-size: cover;
         color: var(--neutral-0);
       }
 
-      .play-button {
-        width: 48px;
-        height: 48px;
+      .video-player::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: var(--color-overlay-black-default);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity var(--duration-fast) var(--easing-standard);
+      }
+
+      .video-player:hover::after,
+      .video-player:focus-within::after {
+        opacity: 1;
+      }
+
+      .player-external-link {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        color: var(--neutral-0);
+        text-decoration: none;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity var(--duration-fast) var(--easing-standard);
+      }
+
+      .player-external-link:hover,
+      .player-external-link:focus,
+      .player-external-link:visited {
+        color: var(--neutral-0);
+      }
+
+      .video-player:hover .player-external-link,
+      .video-player:focus-within .player-external-link {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .player-external-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 40px;
+        height: 40px;
         display: grid;
         place-items: center;
-        border: 1px solid color-mix(in srgb, var(--neutral-0) 22%, transparent);
+        border: 1px solid color-mix(in srgb, var(--neutral-0) 44%, transparent);
         border-radius: var(--radius-full);
         background: var(--color-overlay-black-default);
-        color: var(--neutral-0);
+        opacity: 0;
+        transform: translate(-50%, calc(-50% + 4px)) scale(0.88);
+        transition:
+          opacity var(--duration-fast) var(--easing-standard),
+          transform var(--duration-fast) var(--easing-standard);
       }
 
-      .play-button .icon {
-        width: 22px;
-        height: 22px;
-        transform: translateX(1px);
+      .player-external-icon .icon {
+        width: 20px;
+        height: 20px;
       }
 
-      .player-meta {
+      .player-external-tooltip {
         position: absolute;
-        right: 12px;
-        bottom: 12px;
-        left: 12px;
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        color: var(--neutral-0);
+        top: calc(50% + 28px);
+        left: 50%;
+        padding: 4px 8px;
+        border-radius: var(--radius-small);
+        background: var(--color-overlay-black-strong);
         font-size: var(--text-caption-medium-size);
         line-height: var(--text-caption-medium-line-height);
         font-weight: var(--text-caption-medium-weight);
+        white-space: nowrap;
+        opacity: 0;
+        transform: translate(-50%, 4px);
+        transition:
+          opacity var(--duration-fast) var(--easing-standard) 40ms,
+          transform var(--duration-fast) var(--easing-standard) 40ms;
+      }
+
+      .video-player:hover .player-external-icon,
+      .video-player:focus-within .player-external-icon {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .video-player:hover .player-external-tooltip,
+      .video-player:focus-within .player-external-tooltip {
+        opacity: 1;
+        transform: translate(-50%, 0);
       }
 
       .preview-details,
@@ -2725,6 +3249,13 @@
         font-size: var(--text-title-3-size);
         line-height: var(--text-title-3-line-height);
         font-weight: var(--text-title-3-weight);
+      }
+
+      .preview-title-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
       }
 
       .preview-id {
@@ -2834,10 +3365,332 @@
         margin-left: auto;
       }
 
-      .episode-list {
+      .episode-card .episode-list {
+        min-width: 1120px;
+        display: block;
+        margin: 0;
+      }
+
+      .episode-card[data-edit-episode-card] {
+        position: relative;
+        overflow: hidden;
+        padding: 0;
+      }
+
+      .episode-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .episode-toolbar .content-filters {
+        gap: 12px;
+      }
+
+      .episode-pagination {
+        margin-top: 16px;
+        padding: 0;
+        gap: 6px;
+        font-size: var(--text-body-size);
+        line-height: var(--text-body-line-height);
+        font-weight: var(--text-body-weight);
+      }
+
+      .episode-pagination .pagination-range {
+        color: var(--color-text-tertiary);
+      }
+
+      .episode-pagination .pagination-controls,
+      .episode-pagination .pagination-pages {
+        gap: 6px;
+      }
+
+      .episode-pagination .pagination-button {
+        min-width: 32px;
+        width: 32px;
+        height: 32px;
+        color: var(--color-text-default);
+        font-weight: var(--text-body-weight);
+      }
+
+      .episode-pagination .pagination-button.current {
+        border-color: var(--color-action-primary);
+        background: var(--color-action-primary);
+        color: var(--color-text-inverse);
+      }
+
+      .episode-pagination .page-size-select,
+      .episode-pagination .page-size-trigger {
+        height: 32px;
+      }
+
+      .episode-pagination .page-size-select {
+        margin-left: 0;
+      }
+
+      .episode-pagination .page-size-trigger {
+        min-width: 112px;
+        padding: 0 28px 0 12px;
+        font-weight: var(--text-body-weight);
+      }
+
+      .episode-table-scroll {
+        width: 100%;
+        overflow-x: auto;
+        scrollbar-width: thin;
+      }
+
+      .episode-table-header,
+      .episode-table-row {
         display: grid;
-        gap: 8px;
-        margin-top: 14px;
+        grid-template-columns: minmax(300px, 1.5fr) 130px 160px 160px 180px 150px;
+        column-gap: 20px;
+        align-items: center;
+        padding: 0 16px;
+      }
+
+      .episode-table-header {
+        min-width: 1120px;
+        min-height: 42px;
+        border-bottom: 1px solid var(--color-border-subtle);
+        color: var(--color-text-secondary);
+        font-size: var(--text-caption-medium-size);
+        line-height: var(--text-caption-medium-line-height);
+        font-weight: var(--text-caption-medium-weight);
+      }
+
+      .episode-table-row {
+        min-height: 96px;
+        border-bottom: 1px solid var(--color-border-subtle);
+      }
+
+      .episode-table-row:last-child {
+        border-bottom: 0;
+      }
+
+      .episode-table-row:hover {
+        background: var(--color-bg-subtle);
+      }
+
+      .episode-table-header > :nth-child(n + 2),
+      .episode-table-row > :nth-child(n + 2) {
+        justify-self: center;
+        text-align: center;
+      }
+
+      .episode-table-header > :first-child,
+      .episode-table-row > .episode-main {
+        position: sticky;
+        left: 16px;
+        z-index: 2;
+        align-self: stretch;
+        background: var(--color-bg-container);
+      }
+
+      .episode-table-header > :last-child,
+      .episode-table-row > .row-actions {
+        position: sticky;
+        right: 0;
+        z-index: 2;
+        width: 100%;
+        align-self: stretch;
+        justify-self: stretch;
+        justify-content: center;
+        background: var(--color-bg-container);
+      }
+
+      .episode-table-header > :first-child,
+      .episode-table-header > :last-child {
+        z-index: 21;
+        display: flex;
+        align-items: center;
+      }
+
+      .episode-table-header > :last-child {
+        box-shadow: 0 1px 0 var(--color-border-subtle);
+      }
+
+      .episode-table-row:not(:last-child) > .row-actions {
+        box-shadow: 0 1px 0 var(--color-border-subtle);
+      }
+
+      .episode-table-row:hover > .episode-main,
+      .episode-table-row:hover > .row-actions {
+        background: var(--color-bg-subtle);
+      }
+
+      .episode-card.is-scrolled-x::before,
+      .episode-card:not(.is-scroll-end)::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        z-index: 30;
+        width: 12px;
+        pointer-events: none;
+      }
+
+      .episode-card.is-scrolled-x::before {
+        left: var(--episode-sticky-first-edge, 0px);
+        background: linear-gradient(to right, color-mix(in srgb, var(--color-bg-inverse) 4%, transparent), transparent);
+      }
+
+      .episode-card:not(.is-scroll-end)::after {
+        left: calc(var(--episode-sticky-last-edge, 100%) - 12px);
+        background: linear-gradient(to right, transparent, color-mix(in srgb, var(--color-bg-inverse) 4%, transparent));
+      }
+
+      .episode-main {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .episode-thumb {
+        position: relative;
+        width: 112px;
+        aspect-ratio: 16 / 9;
+        flex: 0 0 auto;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        padding: 0;
+        border: 0;
+        border-radius: var(--radius-small);
+        background-color: var(--color-bg-subtle);
+        background-image: url("./assets/video-player-placeholder.png");
+        background-position: center;
+        background-size: cover;
+        color: var(--neutral-0);
+        cursor: pointer;
+      }
+
+      .episode-thumb::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--color-overlay-black-subtle);
+        opacity: 0;
+        transition: opacity var(--duration-fast) var(--easing-standard);
+      }
+
+      .episode-thumb-play {
+        position: relative;
+        z-index: 1;
+        width: 32px;
+        height: 32px;
+        display: grid;
+        place-items: center;
+        border: 1px solid color-mix(in srgb, var(--neutral-0) 44%, transparent);
+        border-radius: var(--radius-full);
+        background: var(--color-overlay-black-default);
+        opacity: 0;
+        transform: scale(0.86);
+        transition: opacity var(--duration-fast) var(--easing-standard), transform var(--duration-fast) var(--easing-standard);
+      }
+
+      .episode-thumb-play .icon {
+        width: 18px;
+        height: 18px;
+        transform: translateX(0.75px);
+      }
+
+      .episode-thumb:hover::before,
+      .episode-thumb:focus-visible::before,
+      .episode-thumb:hover .episode-thumb-play,
+      .episode-thumb:focus-visible .episode-thumb-play {
+        opacity: 1;
+      }
+
+      .episode-thumb:hover .episode-thumb-play,
+      .episode-thumb:focus-visible .episode-thumb-play {
+        transform: scale(1);
+      }
+
+      .episode-thumb:focus-visible {
+        outline: none;
+        box-shadow: var(--shadow-focus);
+      }
+
+      .episode-copy {
+        min-width: 0;
+      }
+
+      .episode-name,
+      .episode-id,
+      .episode-time {
+        margin: 0;
+      }
+
+      .episode-name {
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        color: var(--color-text-default);
+        font-size: var(--text-body-size);
+        line-height: var(--text-body-line-height);
+        font-weight: var(--text-body-medium-weight);
+        white-space: nowrap;
+      }
+
+      .episode-series-title {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .episode-number {
+        flex: 0 0 auto;
+        white-space: nowrap;
+      }
+
+      .episode-id {
+        margin-top: 7px;
+        overflow: hidden;
+        color: var(--color-text-secondary);
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+        font-weight: var(--text-caption-weight);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .episode-time {
+        display: grid;
+        justify-items: center;
+        gap: 0;
+        color: var(--color-text-default);
+        font-size: var(--text-body-size);
+        line-height: var(--text-body-line-height);
+        font-weight: var(--text-body-weight);
+        text-align: center;
+      }
+
+      .episode-time span {
+        white-space: nowrap;
+      }
+
+      .episode-table-row > .status-text {
+        color: var(--color-text-default);
+      }
+
+      .episode-table-row > .status-text,
+      .episode-table-row > .status-pill {
+        font-size: var(--text-body-size);
+        line-height: var(--text-body-line-height);
+        font-weight: var(--text-body-weight);
+        text-align: center;
+      }
+
+      .episode-table-row .row-action {
+        min-height: 32px;
+        padding: 0 12px;
+        font-size: var(--text-body-size);
+        line-height: var(--text-body-line-height);
       }
 
       .episode-list-item {
@@ -3046,6 +3899,565 @@
         box-shadow: var(--shadow-overlay);
       }
 
+      .episode-preview-modal {
+        width: min(880px, 100%);
+        overflow: hidden;
+        border: 1px solid var(--color-border-subtle);
+        border-radius: var(--radius-default);
+        background: var(--color-bg-elevated);
+        box-shadow: var(--shadow-overlay);
+      }
+
+      .episode-preview-modal .modal-header {
+        margin: 0;
+      }
+
+      .episode-preview-heading {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .episode-preview-heading .modal-title {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .preview-language-select {
+        position: relative;
+        flex: 0 0 auto;
+      }
+
+      .preview-language-select[hidden] { display: none; }
+
+      .preview-language-trigger {
+        position: relative;
+        min-width: 112px;
+        min-height: 30px;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 36px 0 12px;
+        border: 1px solid var(--color-border-default);
+        border-radius: var(--radius-default);
+        background: var(--color-bg-container);
+        color: var(--color-text-primary);
+        cursor: pointer;
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+        font-weight: var(--text-body-medium-weight);
+        text-align: left;
+      }
+
+      .preview-language-trigger:hover,
+      .preview-language-trigger[aria-expanded="true"] {
+        border-color: var(--color-action-primary);
+      }
+
+      .preview-language-trigger[aria-expanded="true"] {
+        box-shadow: var(--shadow-focus);
+      }
+
+      .preview-language-trigger:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+      .preview-language-trigger .icon { position: absolute; right: 8px; width: 16px; height: 16px; color: var(--color-text-disabled); transition: transform 150ms ease; }
+      .preview-language-trigger[aria-expanded="true"] .icon { transform: rotate(180deg); }
+
+      .preview-language-menu {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        z-index: 30;
+        width: 100%;
+        min-width: 128px;
+        display: grid;
+        gap: 2px;
+        margin: 0;
+        padding: 6px;
+        list-style: none;
+        border: 1px solid var(--color-border-subtle);
+        border-radius: var(--radius-xlarge);
+        background: var(--color-bg-elevated);
+        box-shadow: var(--shadow-overlay);
+      }
+
+      .preview-language-menu[hidden] { display: none; }
+      .preview-language-option { min-height: 32px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 0 9px; border: 0; border-radius: var(--radius-default); background: transparent; color: var(--color-text-secondary); cursor: pointer; font-size: var(--text-body-size); text-align: left; }
+      .preview-language-option:hover { background: var(--color-bg-overlay-hover); }
+      .preview-language-option[aria-selected="true"] { color: var(--color-action-primary); font-weight: var(--text-body-medium-weight); }
+      .preview-language-option[aria-selected="true"]::after { width: 16px; height: 16px; content: ""; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5L9.5 17.5L19.5 6.5'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4.5 12.5L9.5 17.5L19.5 6.5'/%3E%3C/svg%3E") center / contain no-repeat; }
+
+      .episode-preview-modal .modal-close {
+        width: 28px;
+        height: 28px;
+        flex: 0 0 auto;
+        border: 0;
+        background: transparent;
+        color: var(--color-text-tertiary);
+      }
+
+      .episode-preview-modal .modal-close:hover {
+        border: 0;
+        background: var(--color-bg-hover);
+        color: var(--color-text-primary);
+      }
+
+      .episode-preview-modal .modal-close .icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      .episode-preview-video {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        display: block;
+        background: var(--neutral-10);
+        object-fit: cover;
+      }
+
+      .episode-preview-player { position: relative; background: var(--neutral-10); }
+      .episode-preview-caption { position: absolute; right: 8%; bottom: 54px; left: 8%; z-index: 2; margin: 0; color: var(--neutral-0); font-size: 18px; line-height: 1.5; font-weight: 500; text-align: center; text-shadow: 0 1px 3px var(--neutral-10), 0 1px 8px var(--neutral-10); pointer-events: none; }
+      .episode-preview-caption[hidden] { display: none; }
+
+      .subtitle-drawer-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 140;
+        visibility: hidden;
+        background: transparent;
+        transition: background 200ms ease-out, visibility 0s linear 200ms;
+      }
+
+      .subtitle-drawer-overlay.is-open {
+        visibility: visible;
+        background: var(--color-overlay-modal);
+        transition: background 200ms ease-out;
+      }
+
+      .subtitle-drawer {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: min(780px, 100vw);
+        height: 100%;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        overflow: hidden;
+        background: var(--color-bg-elevated);
+        box-shadow: var(--shadow-overlay);
+        opacity: 0;
+        transform: translateX(100%);
+        transition: transform 200ms ease-out, opacity 200ms ease-out;
+      }
+
+      .subtitle-drawer-overlay.is-open .subtitle-drawer {
+        opacity: 1;
+        transform: translateX(0);
+      }
+
+      .subtitle-drawer-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 18px 12px 18px 20px;
+        border-bottom: 1px solid var(--color-border-subtle);
+      }
+
+      .subtitle-drawer-header .modal-close {
+        width: 28px;
+        height: 28px;
+        flex: 0 0 auto;
+        border: 0;
+        background: transparent;
+        color: var(--color-text-tertiary);
+      }
+
+      .subtitle-drawer-header .modal-close:hover {
+        border: 0;
+        background: var(--color-bg-hover);
+        color: var(--color-text-primary);
+      }
+
+      .subtitle-drawer-header .modal-close .icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      .subtitle-drawer-heading {
+        min-width: 0;
+        flex: 1 1 auto;
+      }
+
+      .subtitle-drawer-title {
+        margin: 0;
+        color: var(--color-text-primary);
+        font-size: var(--text-title-3-size);
+        line-height: 28px;
+        font-weight: var(--text-title-3-weight);
+      }
+
+      .subtitle-drawer-description {
+        margin: 2px 0 0;
+        overflow: hidden;
+        color: var(--color-text-tertiary);
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .subtitle-drawer-body {
+        min-height: 0;
+        overflow: auto;
+        padding: 20px;
+      }
+
+      .subtitle-drawer-tools {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .subtitle-format-note {
+        min-width: 0;
+      }
+
+      .subtitle-format-note-primary,
+      .subtitle-format-note-secondary {
+        margin: 0;
+      }
+
+      .subtitle-format-note-primary {
+        color: var(--color-text-default);
+        font-size: var(--text-body-size);
+        line-height: var(--text-body-line-height);
+      }
+
+      .subtitle-format-note-secondary {
+        margin-top: 0;
+        color: var(--color-text-tertiary);
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+      }
+
+      .subtitle-batch-upload { flex: 0 0 auto; }
+      .subtitle-batch-upload .icon { width: 16px; height: 16px; }
+
+      .subtitle-table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--color-border-subtle);
+        border-radius: var(--radius-default);
+      }
+
+      .subtitle-table {
+        width: 100%;
+        min-width: 620px;
+        border-collapse: collapse;
+        table-layout: fixed;
+        color: var(--color-text-default);
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+      }
+
+      .subtitle-table th,
+      .subtitle-table td {
+        height: 52px;
+        padding: 0 12px;
+        border-bottom: 1px solid var(--color-border-subtle);
+        text-align: left;
+        vertical-align: middle;
+      }
+
+      .subtitle-table th {
+        height: 42px;
+        background: var(--color-bg-subtle);
+        color: var(--color-text-secondary);
+        font-size: var(--text-caption-medium-size);
+        font-weight: var(--text-caption-medium-weight);
+      }
+
+      .subtitle-table tr:last-child td { border-bottom: 0; }
+      .subtitle-table th:nth-child(1) { width: 16%; }
+      .subtitle-table th:nth-child(2) { width: 25%; }
+      .subtitle-table th:nth-child(3) { width: 19%; }
+      .subtitle-table th:nth-child(4) { width: 19%; }
+      .subtitle-table th:nth-child(5) { width: 21%; }
+
+      .subtitle-table td:first-child {
+        font-size: var(--text-caption-medium-size);
+        line-height: var(--text-caption-medium-line-height);
+        font-weight: var(--text-caption-medium-weight);
+      }
+
+      .subtitle-table .row-action.small {
+        min-height: 28px;
+        padding: 0 10px;
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+      }
+
+      .subtitle-table .content-source-tag {
+        margin-left: 0;
+        white-space: nowrap;
+      }
+
+      .subtitle-row-actions {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+      }
+
+      .subtitle-preview-action {
+        position: relative;
+        width: 28px;
+        min-width: 28px;
+        height: 28px;
+        min-height: 28px;
+        order: -1;
+        padding: 0;
+      }
+
+      .subtitle-preview-action::after {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 50%;
+        z-index: 40;
+        padding: 5px 8px;
+        content: attr(aria-label);
+        border-radius: var(--radius-small);
+        background: var(--color-bg-inverse);
+        color: var(--color-text-inverse);
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, -2px);
+        transition: opacity 120ms ease 180ms, transform 120ms ease 180ms;
+      }
+
+      .subtitle-preview-action:hover::after,
+      .subtitle-preview-action:focus-visible::after {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
+      .subtitle-preview-action .icon {
+        display: none;
+      }
+
+      .subtitle-preview-action::before {
+        width: 16px;
+        height: 16px;
+        content: "";
+        background: currentColor;
+        -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E") center / contain no-repeat;
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E") center / contain no-repeat;
+      }
+
+      [data-episode-preview-modal].subtitle-preview-active { z-index: 200; }
+
+      .subtitle-table .spec-btn.danger-secondary {
+        min-height: 28px;
+        padding: 0 10px;
+        border: 1px solid var(--color-status-error);
+        border-radius: var(--radius-default);
+        background: transparent;
+        color: var(--color-status-error);
+        cursor: pointer;
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+      }
+
+      .subtitle-table .spec-btn.danger-secondary:hover {
+        border-color: var(--color-status-error-hover);
+        background: var(--color-status-error-bg);
+        color: var(--color-status-error-hover);
+      }
+
+      .subtitle-upload-progress {
+        display: grid;
+        gap: 4px;
+        min-width: 92px;
+        color: var(--color-text-secondary);
+      }
+
+      .subtitle-progress-track {
+        width: 100%;
+        height: 4px;
+        overflow: hidden;
+        border-radius: var(--radius-full);
+        background: var(--color-bg-disabled);
+      }
+
+      .subtitle-progress-bar {
+        display: block;
+        width: 0;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--color-action-primary);
+        transition: width 160ms ease-out;
+      }
+
+      .subtitle-confirm-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 180;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        background: var(--color-overlay-modal);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 300ms ease-out, visibility 0s linear 300ms;
+      }
+
+      .subtitle-confirm-backdrop[hidden] { display: none; }
+
+      .subtitle-confirm-backdrop.is-open {
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 300ms ease-out;
+      }
+
+      .subtitle-confirm-dialog {
+        position: relative;
+        width: min(400px, calc(100vw - 48px));
+        max-height: 90vh;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr) auto;
+        overflow: hidden;
+        border: 1px solid var(--color-border-subtle);
+        border-radius: var(--radius-xlarge);
+        background: var(--color-bg-elevated);
+        box-shadow: var(--shadow-overlay);
+        opacity: 0;
+        transform: scale(.9);
+        transition: opacity 200ms ease-out, transform 200ms ease-out;
+      }
+
+      .subtitle-confirm-backdrop.is-open .subtitle-confirm-dialog { opacity: 1; transform: scale(1); }
+      .subtitle-confirm-dialog .modal-header { min-height: 0; margin: 0; padding: 24px 52px 12px 20px; border: 0; }
+      .subtitle-confirm-dialog .modal-title { margin: 0; color: var(--color-text-primary); font-size: var(--text-title-3-size); line-height: var(--text-title-3-line-height); font-weight: var(--text-title-3-weight); }
+      .subtitle-confirm-dialog .modal-body { min-height: 0; overflow: auto; padding: 4px 20px 20px; color: var(--color-text-secondary); font-size: var(--text-body-size); line-height: var(--text-body-line-height); }
+      .subtitle-confirm-dialog .modal-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 0 20px 20px; }
+      .subtitle-confirm-dialog .spec-btn { min-height: 32px; display: inline-flex; align-items: center; justify-content: center; padding: 0 14px; border: 1px solid var(--color-border-default); border-radius: var(--radius-default); background: var(--color-bg-container); color: var(--color-text-default); cursor: pointer; font-size: var(--text-body-size); }
+      .subtitle-confirm-dialog .spec-btn.secondary { border-color: transparent; background: color-mix(in srgb, var(--color-text-primary) 10%, transparent); color: var(--color-text-primary); }
+      .subtitle-confirm-dialog .spec-btn.secondary:hover { background: color-mix(in srgb, var(--color-text-primary) 20%, transparent); }
+      .subtitle-confirm-dialog .spec-btn.primary { border-color: var(--color-action-primary); background: var(--color-action-primary); color: var(--color-text-inverse); }
+      .subtitle-confirm-dialog .spec-btn.primary:hover { border-color: var(--color-action-primary-hover); background: var(--color-action-primary-hover); }
+      .subtitle-confirm-dialog .spec-btn.danger { border-color: var(--color-status-error); background: var(--color-status-error); color: var(--color-text-inverse); }
+      .subtitle-confirm-dialog .spec-btn.danger:hover { border-color: var(--color-status-error-hover); background: var(--color-status-error-hover); }
+      .subtitle-confirm-dialog .close-btn {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 32px;
+        height: 32px;
+        display: grid;
+        padding: 0;
+        place-items: center;
+        border: 0;
+        border-radius: var(--radius-default);
+        background: transparent;
+        color: var(--color-text-tertiary);
+        cursor: pointer;
+      }
+      .subtitle-confirm-dialog .close-btn:hover { background: var(--color-bg-hover); color: var(--color-text-primary); }
+      .subtitle-confirm-dialog .close-btn:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+      .subtitle-confirm-dialog .close-btn .icon { width: 20px; height: 20px; }
+
+      .subtitle-message-portal {
+        position: fixed;
+        top: 36px;
+        left: 50%;
+        z-index: 220;
+        pointer-events: none;
+        transform: translateX(-50%);
+      }
+
+      .subtitle-feedback-message {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 40px;
+        padding: 9px 16px;
+        border: 1px solid var(--color-border-subtle);
+        border-radius: var(--radius-xlarge);
+        background: var(--color-bg-elevated);
+        color: var(--color-text-primary);
+        box-shadow: var(--shadow-overlay);
+        font-size: var(--text-body-size);
+        animation: subtitle-message-enter 200ms ease-out;
+      }
+
+      .subtitle-feedback-message .message-icon { width: 18px; height: 18px; display: grid; place-items: center; border-radius: var(--radius-full); background: var(--color-status-error); color: var(--neutral-0); }
+      .subtitle-feedback-message.success .message-icon { background: var(--color-status-success); }
+      .subtitle-feedback-message .message-icon svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; }
+      .subtitle-drawer-save-loading { pointer-events: none; }
+      .edit-action.primary.subtitle-drawer-save-loading:disabled {
+        border-color: var(--color-action-primary);
+        background: var(--color-action-primary);
+        color: var(--color-text-inverse);
+        opacity: .72;
+      }
+      .subtitle-confirm-dialog .spec-btn.primary.subtitle-drawer-save-loading:disabled {
+        border-color: var(--color-action-primary);
+        background: var(--color-action-primary);
+        color: var(--color-text-inverse);
+        opacity: .72;
+      }
+      .subtitle-confirm-dialog .subtitle-drawer-save-loading {
+        gap: 6px;
+      }
+      .subtitle-button-spinner { width: 14px; height: 14px; flex: 0 0 auto; border: 2px solid color-mix(in srgb, currentColor 32%, transparent); border-top-color: currentColor; border-radius: var(--radius-full); animation: subtitle-button-spin 700ms linear infinite; }
+      @keyframes subtitle-message-enter { from { opacity: 0; transform: translateY(-8px); } }
+      @keyframes subtitle-button-spin { to { transform: rotate(360deg); } }
+
+      @media (prefers-reduced-motion: reduce) {
+        .subtitle-confirm-backdrop,
+        .subtitle-confirm-dialog { transition-duration: 0s; }
+      }
+
+      .subtitle-file-name {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .subtitle-upload-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      .subtitle-upload-status::before {
+        width: 7px;
+        height: 7px;
+        flex: 0 0 auto;
+        content: "";
+        border-radius: var(--radius-full);
+        background: var(--color-status-success);
+      }
+
+      .subtitle-drawer-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 20px;
+        border-top: 1px solid var(--color-border-subtle);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .subtitle-drawer-overlay,
+        .subtitle-drawer { transition-duration: 0s; }
+      }
+
       .modal-header {
         min-height: 64px;
         display: flex;
@@ -3104,6 +4516,25 @@
       .modal-close .icon {
         width: 18px;
         height: 18px;
+      }
+
+      .translation-modal .modal-close {
+        width: 32px;
+        height: 32px;
+        border: 0;
+        background: transparent;
+        color: var(--color-text-tertiary);
+      }
+
+      .translation-modal .modal-close:hover {
+        border: 0;
+        background: var(--color-bg-hover);
+        color: var(--color-text-primary);
+      }
+
+      .translation-modal .modal-close .icon {
+        width: 20px;
+        height: 20px;
       }
 
       .translation-list {
@@ -3375,6 +4806,12 @@
         line-height: var(--text-body-line-height);
         font-weight: var(--text-body-weight);
         text-align: center;
+        transition: border-color 150ms ease;
+      }
+
+      .translation-input:not(:disabled):not(.is-invalid):hover,
+      .translation-textarea:not(:disabled):not(.is-invalid):hover {
+        border-color: var(--color-action-primary);
       }
 
       .translation-input {
@@ -3519,7 +4956,7 @@
 
         .cover-preview-grid {
           width: 100%;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
         .cover-slot {
@@ -3529,6 +4966,11 @@
 
       @media (min-width: 1024px) and (max-width: 1279px) {
         .sidebar {
+          width: 72px;
+          padding: 16px 12px;
+        }
+
+        .edit-page .sidebar {
           width: 72px;
           padding: 16px 12px;
         }
@@ -3555,8 +4997,16 @@
           padding-left: 72px;
         }
 
+        .edit-page .shell {
+          padding-left: 72px;
+        }
+
         .main-loading {
           inset: 60px 0 0 72px;
+        }
+
+        .edit-page .main-loading {
+          inset: 60px 0 0 240px;
         }
 
         .workspace {
@@ -3653,7 +5103,7 @@
 
         .cover-preview-grid {
           width: 100%;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
         .cover-slot {
@@ -3663,6 +5113,11 @@
 
       @media (min-width: 768px) and (max-width: 1023px) {
         .sidebar {
+          width: 72px;
+          padding: 16px 12px;
+        }
+
+        .edit-page .sidebar {
           width: 72px;
           padding: 16px 12px;
         }
@@ -3679,6 +5134,10 @@
           display: none;
         }
 
+        .edit-page .shell {
+          padding-left: 72px;
+        }
+
         .nav-link {
           min-height: 48px;
           justify-content: center;
@@ -3691,6 +5150,10 @@
 
         .main-loading {
           inset: 60px 0 0 72px;
+        }
+
+        .edit-page .main-loading {
+          inset: 60px 0 0 240px;
         }
 
         .workspace {
@@ -3728,7 +5191,7 @@
 
         .cover-preview-grid {
           width: 100%;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
         .cover-slot {
@@ -3780,7 +5243,7 @@
 
         .cover-preview-grid {
           width: 100%;
-          grid-template-columns: repeat(3, minmax(0, 1fr));
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
 
@@ -3816,6 +5279,26 @@
           border-bottom: 1px solid var(--color-border-subtle);
         }
 
+        .edit-page .sidebar {
+          display: grid;
+          gap: 12px;
+          padding: 12px 16px;
+        }
+
+        .edit-secondary-tabs-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .secondary-video-link {
+          grid-template-columns: 96px minmax(0, 1fr);
+          align-items: center;
+        }
+
+        .edit-secondary-tab {
+          justify-content: center;
+          text-align: center;
+        }
+
         .sidebar-profile { flex-direction: row; justify-content: center; padding: 0 12px 8px; margin-bottom: 0; text-align: left; }
         .sidebar-profile-avatar { width: 64px; height: 64px; }
         .sidebar-profile-copy { width: auto; }
@@ -3837,7 +5320,15 @@
           padding: 272px 0 0;
         }
 
+        .edit-page .shell {
+          padding-top: 272px;
+        }
+
         .main-loading {
+          inset: 272px 0 0;
+        }
+
+        .edit-page .main-loading {
           inset: 272px 0 0;
         }
 
@@ -3896,10 +5387,6 @@
 
         .edit-page .workspace-inner {
           padding: 0 0 80px;
-        }
-
-        .breadcrumb {
-          order: 1;
         }
 
         .edit-heading-row,
@@ -3971,7 +5458,7 @@
       }
     </style>
   </head>
-  <body class="edit-page">
+  <body class="edit-page" data-edit-section="details">
     <div class="page-message" hidden data-cover-message role="status" aria-live="polite">修改成功</div>
     <header class="topbar">
       <a class="brand" href="index.html" aria-label="IQ Studio home">
@@ -4068,87 +5555,39 @@
         <img class="sidebar-profile-avatar" src="assets/avatar.png?v=2" alt="" />
         <div class="sidebar-profile-copy"><p class="sidebar-profile-name" data-i18n="userName">Mia Studio</p><p class="sidebar-profile-id" data-i18n="iqId">IQ ID：1461926038</p></div>
       </section>
-
       <button class="upload-button" type="button">
-        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 15V3" />
-          <path d="M7 8l5-5 5 5" />
-          <path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" />
-        </svg>
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3" /><path d="M7 8l5-5 5 5" /><path d="M4 15v4a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4" /></svg>
         <span data-i18n="upload">Upload</span>
       </button>
-
       <nav>
         <ul class="nav-list">
-          <li>
-            <a class="nav-link" href="index.html">
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                <rect x="3" y="3" width="7" height="7" rx="1" />
-                <rect x="14" y="3" width="7" height="7" rx="1" />
-                <rect x="14" y="14" width="7" height="7" rx="1" />
-                <rect x="3" y="14" width="7" height="7" rx="1" />
-              </svg>
-              <span data-i18n="dashboard">Home</span>
-            </a>
-          </li>
-          <li>
-            <a class="nav-link" href="content.html" aria-current="page">
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                <rect x="3" y="5" width="18" height="14" rx="2" />
-                <path d="m10 9 6 3-6 3V9Z" />
-              </svg>
-              <span data-i18n="content">Content</span>
-            </a>
-          </li>
-          <li>
-            <a class="nav-link" href="analytics.html">
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M4 19V5" />
-                <path d="M4 19h16" />
-                <path d="M8 16v-5" />
-                <path d="M12 16V8" />
-                <path d="M16 16v-9" />
-              </svg>
-              <span data-i18n="analytics">Analytics</span>
-            </a>
-          </li>
-          <li>
-            <a class="nav-link" href="#">
-              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                <rect x="3" y="5" width="18" height="14" rx="2" />
-                <path d="M7 11h4" />
-                <path d="M13 11h4" />
-                <path d="M7 15h10" />
-              </svg>
-              <span data-i18n="subtitles">Subtitles</span>
-            </a>
-          </li>
+          <li><a class="nav-link" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /></svg><span data-i18n="dashboard">Home</span></a></li>
+          <li><a class="nav-link" href="content.html" aria-current="page"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m10 9 6 3-6 3V9Z" /></svg><span data-i18n="content">Content</span></a></li>
+          <li><a class="nav-link" href="analytics.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5" /><path d="M4 19h16" /><path d="M8 16v-5" /><path d="M12 16V8" /><path d="M16 16v-9" /></svg><span data-i18n="analytics">Analytics</span></a></li>
+          <li><a class="nav-link" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M7 11h4" /><path d="M13 11h4" /><path d="M7 15h10" /></svg><span data-i18n="subtitles">Subtitles</span></a></li>
         </ul>
       </nav>
     </aside>
 
     <main class="shell is-loading">
       <div class="main-loading" role="status" aria-live="polite" aria-label="Loading">
-        <span class="loading-ring" aria-hidden="true"></span>
+        <div class="main-loading-content">
+          <span class="loading-ring" aria-hidden="true"></span>
+          <p class="main-loading-tip" data-publish-loading-tip data-i18n="publishingSubmission" hidden>Submitting for publication</p>
+        </div>
       </div>
       <section class="workspace" aria-label="Workspace">
         <div class="workspace-inner">
-          <nav aria-label="Breadcrumb">
-            <ol class="breadcrumb">
-              <li><a href="content.html" data-i18n="content">Content</a></li>
-              <li aria-hidden="true">
-                <svg class="breadcrumb-separator" viewBox="0 0 24 24">
-                  <path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </li>
-              <li aria-current="page" data-edit-page-title>Edit Album details</li>
-            </ol>
-          </nav>
-
+          <a class="edit-backbutton" href="content.html">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5" /><path d="m12 19-7-7 7-7" /></svg>
+            <span data-i18n="backToContentManagement">Back to Content Management</span>
+          </a>
           <div class="edit-heading-row">
             <div class="edit-title-group">
-              <h1 class="edit-title" data-edit-page-title>Edit Album details</h1>
-              <span class="edit-category-tag type-tag comic-drama" data-edit-category>ComicDrama</span>
+              <div class="edit-title-tabs" role="tablist" aria-label="Edit sections" data-i18n-aria-label="editSections">
+                <button class="edit-title-tab" type="button" role="tab" id="edit-details-tab" aria-selected="true" aria-controls="edit-details-panel" tabindex="0" data-edit-section-tab="details"><span data-i18n="editAlbumDetails">Album details</span></button>
+                <button class="edit-title-tab" type="button" role="tab" id="edit-episodes-tab" aria-selected="false" aria-controls="edit-episodes-panel" tabindex="-1" data-edit-section-tab="episodes"><span data-i18n="viewEpisodes">Episode details</span></button>
+              </div>
             </div>
             <div class="edit-actions" aria-label="Edit actions">
               <button class="edit-action" type="button" data-reset-action>
@@ -4184,22 +5623,38 @@
           </div>
 
           <div class="edit-layout">
-            <form class="edit-form" aria-label="Edit content details" data-i18n-aria-label="editContentDetails">
+            <form class="edit-form" id="edit-details-panel" role="tabpanel" aria-labelledby="edit-details-tab" aria-label="Edit content details" data-i18n-aria-label="editContentDetails">
               <section class="form-section" aria-labelledby="basic-info-title">
-                <h2 class="section-title" id="basic-info-title" data-i18n="basicInformation">Basic information</h2>
+                <div class="section-heading-row">
+                  <h2 class="section-title" id="basic-info-title" data-i18n="basicInformation">Basic information</h2>
+                  <div class="filter-group content-language-filter" data-content-language-filter>
+                    <button class="filter-control" type="button" aria-haspopup="listbox" aria-expanded="false" data-content-language-trigger>
+                      <span class="filter-label-frame">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <rect x="3" y="3" width="18" height="18" rx="3" />
+                          <path d="m7.5 17 3.3-10h2.4l3.3 10M9 13h6" />
+                        </svg>
+                        <span class="filter-label">多语言</span>
+                      </span>
+                      <span class="filter-value" data-content-language-value>英文</span>
+                    </button>
+                    <div class="filter-menu" role="listbox" aria-label="Content language" hidden data-content-language-menu>
+                      <button class="filter-option" type="button" role="option" aria-selected="true" data-content-language-option="0">英文</button>
+                      <button class="filter-option" type="button" role="option" aria-selected="false" data-content-language-option="1">繁体中文</button>
+                      <button class="filter-option" type="button" role="option" aria-selected="false" data-content-language-option="2">泰文</button>
+                      <button class="filter-option" type="button" role="option" aria-selected="false" data-content-language-option="3">马来语</button>
+                      <button class="filter-option" type="button" role="option" aria-selected="false" data-content-language-option="4">印尼语</button>
+                      <button class="filter-option" type="button" role="option" aria-selected="false" data-content-language-option="5">越南语</button>
+                      <button class="filter-option" type="button" role="option" aria-selected="false" data-content-language-option="6">韩语</button>
+                      <button class="filter-option" type="button" role="option" aria-selected="false" data-content-language-option="7">日语</button>
+                      <button class="filter-option" type="button" role="option" aria-selected="false" data-content-language-option="8">西班牙语</button>
+                    </div>
+                  </div>
+                </div>
                 <div class="form-grid">
                   <div class="form-field full">
                     <div class="field-label-row">
-                      <label class="field-label required" for="album-title" data-i18n="title">Title</label>
-                      <button class="multilingual-button" type="button" data-translation-open data-translation-field="title">
-                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                          <circle cx="12" cy="12" r="9" />
-                          <path d="M3 12h18" />
-                          <path d="M12 3c2.3 2.5 3.5 5.5 3.5 9S14.3 18.5 12 21" />
-                          <path d="M12 3c-2.3 2.5-3.5 5.5-3.5 9s1.2 6.5 3.5 9" />
-                        </svg>
-                        <span data-i18n="multilingual">Multilingual</span>
-                      </button>
+                      <span class="field-label-group"><label class="field-label required" for="album-title" data-i18n="title">Title</label><span class="content-source-tag" data-source-tag="title"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4 5 5L8 21l-5-5L15 4Z" /><path d="m6 3 .7 1.3L8 5l-1.3.7L6 7l-.7-1.3L4 5l1.3-.7L6 3Z" /><path d="m19 15 .7 1.3 1.3.7-1.3.7L19 19l-.7-1.3L17 17l1.3-.7L19 15Z" /></svg><span>AI生成</span></span></span>
                     </div>
                     <div class="limited-field">
                       <input class="field-control" id="album-title" name="title" value="Moonlit Bistro" aria-describedby="album-title-count album-title-error" data-edit-title-input />
@@ -4211,16 +5666,17 @@
                   </div>
                   <div class="form-field full">
                     <div class="field-label-row">
-                      <label class="field-label required" for="album-description" data-i18n="description">Description</label>
-                      <button class="multilingual-button" type="button" data-translation-open data-translation-field="description">
-                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                          <circle cx="12" cy="12" r="9" />
-                          <path d="M3 12h18" />
-                          <path d="M12 3c2.3 2.5 3.5 5.5 3.5 9S14.3 18.5 12 21" />
-                          <path d="M12 3c-2.3 2.5-3.5 5.5-3.5 9s1.2 6.5 3.5 9" />
-                        </svg>
-                        <span data-i18n="multilingual">Multilingual</span>
-                      </button>
+                      <span class="field-label-group"><label class="field-label required" for="album-tagline" data-i18n="oneLineDescription">One-line description</label><span class="content-source-tag" data-source-tag="tagline"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4 5 5L8 21l-5-5L15 4Z" /><path d="m6 3 .7 1.3L8 5l-1.3.7L6 7l-.7-1.3L4 5l1.3-.7L6 3Z" /><path d="m19 15 .7 1.3 1.3.7-1.3.7L19 19l-.7-1.3L17 17l1.3-.7L19 15Z" /></svg><span>AI生成</span></span></span>
+                    </div>
+                    <div class="limited-field">
+                      <input class="field-control" id="album-tagline" name="tagline" value="Episode six begins at a turning point" maxlength="40" aria-describedby="album-tagline-count album-tagline-error" data-edit-tagline-input />
+                      <div class="field-meta"><span class="char-count" id="album-tagline-count" data-tagline-count>0/40</span></div>
+                    </div>
+                    <span class="field-error limit-error" id="album-tagline-error" data-tagline-error hidden></span>
+                  </div>
+                  <div class="form-field full">
+                    <div class="field-label-row">
+                      <span class="field-label-group"><label class="field-label required" for="album-description" data-i18n="description">Description</label><span class="content-source-tag" data-source-tag="description"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4 5 5L8 21l-5-5L15 4Z" /><path d="m6 3 .7 1.3L8 5l-1.3.7L6 7l-.7-1.3L4 5l1.3-.7L6 3Z" /><path d="m19 15 .7 1.3 1.3.7-1.3.7L19 19l-.7-1.3L17 17l1.3-.7L19 15Z" /></svg><span>AI生成</span></span></span>
                     </div>
                     <div class="limited-field">
                       <textarea class="textarea-control" id="album-description" name="description" aria-describedby="album-description-count album-description-error" data-edit-description-input>A late-night comedy drama preview featuring the turning point before episode six goes live.</textarea>
@@ -4232,16 +5688,7 @@
                   </div>
                   <div class="form-field full">
                     <div class="field-label-row">
-                      <span class="field-label required" data-i18n="cover">Cover</span>
-                      <button class="multilingual-button" type="button" data-cover-translation-open>
-                        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                          <circle cx="12" cy="12" r="9" />
-                          <path d="M3 12h18" />
-                          <path d="M12 3c2.3 2.5 3.5 5.5 3.5 9S14.3 18.5 12 21" />
-                          <path d="M12 3c-2.3 2.5-3.5 5.5-3.5 9s1.2 6.5 3.5 9" />
-                        </svg>
-                        <span data-i18n="multilingual">Multilingual</span>
-                      </button>
+                      <span class="field-label-group"><span class="field-label required" data-i18n="cover">Cover</span><span class="content-source-tag" data-source-tag="cover"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4 5 5L8 21l-5-5L15 4Z" /><path d="m6 3 .7 1.3L8 5l-1.3.7L6 7l-.7-1.3L4 5l1.3-.7L6 3Z" /><path d="m19 15 .7 1.3 1.3.7-1.3.7L19 19l-.7-1.3L17 17l1.3-.7L19 15Z" /></svg><span>AI生成</span></span></span>
                     </div>
                     <div class="cover-uploader" data-cover-uploader>
                       <div class="cover-preview-grid" aria-label="Cover previews">
@@ -4252,7 +5699,6 @@
                             </span>
                             <div class="cover-overlay" aria-label="16:9 cover actions">
                               <button class="cover-hover-action" type="button" data-cover-upload data-i18n="reupload">Re-upload</button>
-                              <button class="cover-hover-action" type="button" data-cover-title-toggle data-i18n="titleWrap">Title wrap</button>
                             </div>
                             <input class="cover-file-input" type="file" accept="image/*" data-cover-file />
                           </div>
@@ -4265,59 +5711,14 @@
                             </span>
                             <div class="cover-overlay" aria-label="3:4 cover actions">
                               <button class="cover-hover-action" type="button" data-cover-upload data-i18n="reupload">Re-upload</button>
-                              <button class="cover-hover-action" type="button" data-cover-title-toggle data-i18n="titleWrap">Title wrap</button>
                             </div>
                             <input class="cover-file-input" type="file" accept="image/*" data-cover-file />
                           </div>
                           <span class="cover-label" data-i18n="coverPortrait">3:4 Portrait</span>
                         </div>
-                        <div class="cover-slot" data-cover-slot>
-                          <div class="cover-preview square" aria-label="1:1 square cover preview">
-                            <span class="cover-art" aria-hidden="true">
-                              <span class="cover-title-art" data-cover-title-art></span>
-                            </span>
-                            <div class="cover-overlay" aria-label="1:1 cover actions">
-                              <button class="cover-hover-action" type="button" data-cover-upload data-i18n="reupload">Re-upload</button>
-                              <button class="cover-hover-action" type="button" data-cover-title-toggle data-i18n="titleWrap">Title wrap</button>
-                            </div>
-                            <input class="cover-file-input" type="file" accept="image/*" data-cover-file />
-                          </div>
-                          <span class="cover-label" data-i18n="coverSquare">1:1 Square</span>
-                        </div>
-                      </div>
-                      <div class="cover-title-panel" hidden data-cover-title-panel>
-                        <div class="cover-title-panel-head">
-                          <span class="cover-title-panel-title" data-cover-title-panel-title>Title wrap</span>
-                        </div>
-                        <textarea class="cover-title-textarea" rows="3" spellcheck="false" data-cover-title-panel-input></textarea>
-                        <div class="cover-title-panel-actions">
-                          <div class="cover-title-panel-actions-left">
-                            <button class="edit-action" type="button" data-cover-title-cancel data-i18n="cancel">Cancel</button>
-                            <button class="edit-action" type="button" data-cover-title-restore data-i18n="restoreDefault">Restore default</button>
-                          </div>
-                          <div class="cover-title-panel-actions-right">
-                            <button class="edit-action" type="button" data-cover-title-apply-all data-i18n="applyAll">Apply to all</button>
-                            <button class="edit-action primary" type="button" data-cover-title-apply-current data-i18n="applyCurrent">Apply current</button>
-                          </div>
-                        </div>
                       </div>
                     </div>
                     <span class="field-error limit-error" id="album-cover-error" data-cover-error hidden></span>
-                  </div>
-                  <div class="form-field full">
-                    <span class="field-label" data-i18n="tags">Tags</span>
-                    <div class="tag-checkbox-grid tag-choice-grid" aria-label="Select tags" data-i18n-aria-label="selectTags">
-                      <label class="iqb-checkbox tag-choice"><input class="iqb-checkbox-input" type="checkbox" name="tags" value="Drama" checked /><span class="iqb-checkbox-box"><svg class="iqb-checkbox-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.2 6.5 11 12.5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg></span><span>Drama</span></label>
-                      <label class="iqb-checkbox tag-choice"><input class="iqb-checkbox-input" type="checkbox" name="tags" value="Comedy" checked /><span class="iqb-checkbox-box"><svg class="iqb-checkbox-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.2 6.5 11 12.5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg></span><span>Comedy</span></label>
-                      <label class="iqb-checkbox tag-choice"><input class="iqb-checkbox-input" type="checkbox" name="tags" value="Preview" checked /><span class="iqb-checkbox-box"><svg class="iqb-checkbox-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.2 6.5 11 12.5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg></span><span>Preview</span></label>
-                      <label class="iqb-checkbox tag-choice"><input class="iqb-checkbox-input" type="checkbox" name="tags" value="Romance" /><span class="iqb-checkbox-box"><svg class="iqb-checkbox-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.2 6.5 11 12.5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg></span><span>Romance</span></label>
-                      <label class="iqb-checkbox tag-choice"><input class="iqb-checkbox-input" type="checkbox" name="tags" value="Action" /><span class="iqb-checkbox-box"><svg class="iqb-checkbox-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.2 6.5 11 12.5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg></span><span>Action</span></label>
-                      <label class="iqb-checkbox tag-choice"><input class="iqb-checkbox-input" type="checkbox" name="tags" value="Suspense" /><span class="iqb-checkbox-box"><svg class="iqb-checkbox-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.2 6.5 11 12.5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg></span><span>Suspense</span></label>
-                      <label class="iqb-checkbox tag-choice"><input class="iqb-checkbox-input" type="checkbox" name="tags" value="Fantasy" /><span class="iqb-checkbox-box"><svg class="iqb-checkbox-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.2 6.5 11 12.5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg></span><span>Fantasy</span></label>
-                      <label class="iqb-checkbox tag-choice"><input class="iqb-checkbox-input" type="checkbox" name="tags" value="Family" /><span class="iqb-checkbox-box"><svg class="iqb-checkbox-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.2 6.5 11 12.5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg></span><span>Family</span></label>
-                      <label class="iqb-checkbox tag-choice"><input class="iqb-checkbox-input" type="checkbox" name="tags" value="Original" /><span class="iqb-checkbox-box"><svg class="iqb-checkbox-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.2 6.5 11 12.5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg></span><span>Original</span></label>
-                      <label class="iqb-checkbox tag-choice"><input class="iqb-checkbox-input" type="checkbox" name="tags" value="Exclusive" /><span class="iqb-checkbox-box"><svg class="iqb-checkbox-check" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.2 6.5 11 12.5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg></span><span>Exclusive</span></label>
-                    </div>
                   </div>
                 </div>
               </section>
@@ -4329,19 +5730,20 @@
                     <span class="field-label required" data-i18n="freePaidStatusLabel">Free/Paid status</span>
                     <div class="iqb-radio-group" role="radiogroup" aria-label="Free/Paid status" data-i18n-aria-label="freePaidStatusLabel" aria-describedby="album-paid-status-error" data-paid-status-group>
                       <label class="iqb-radio">
-                        <input class="iqb-radio-input" type="radio" name="paidStatus" value="Free" checked />
+                        <input class="iqb-radio-input" type="radio" name="paidStatus" value="Free" checked disabled />
                         <span class="iqb-radio-mark" aria-hidden="true"></span>
                         <span data-i18n="free">Free</span>
                       </label>
                       <label class="iqb-radio">
-                        <input class="iqb-radio-input" type="radio" name="paidStatus" value="Paid" />
+                        <input class="iqb-radio-input" type="radio" name="paidStatus" value="Paid" disabled />
                         <span class="iqb-radio-mark" aria-hidden="true"></span>
                         <span data-i18n="paid">Paid</span>
                       </label>
                     </div>
+                    <p class="field-help-text" data-i18n="paidStatusLockedHint">Consistent with the domestic iQIYI account; changes are currently unavailable.</p>
                     <span class="field-error limit-error" id="album-paid-status-error" data-paid-status-error hidden></span>
                   </div>
-                  <div class="form-field">
+                  <div class="form-field" style="display: none" aria-hidden="true" data-removed-rating-field>
                     <span class="field-label required" data-i18n="ratingInformation">Rating information</span>
                     <span class="iqb-select" data-rating-select>
                       <input type="hidden" name="rating" value="13+" data-rating-value />
@@ -4360,7 +5762,7 @@
                     </span>
                     <span class="field-error limit-error" id="album-rating-error" data-rating-error hidden></span>
                   </div>
-                  <div class="form-field full">
+                  <div class="form-field full" style="display: none" aria-hidden="true" data-removed-regions-field>
                     <div class="field-label-row">
                       <span class="field-label required" data-i18n="launchRegions">Launch regions</span>
                       <label class="iqb-checkbox">
@@ -4393,49 +5795,108 @@
             </form>
 
             <aside class="preview-column" aria-label="Content preview" data-i18n-aria-label="contentPreview">
+              <div data-edit-preview-home></div>
               <section class="preview-card" data-edit-preview-card>
-                <div class="video-player">
-                  <button class="play-button" type="button" aria-label="Play preview" data-i18n-aria-label="playPreview">
-                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="m8 5 11 7-11 7V5Z" />
-                    </svg>
-                  </button>
-                  <div class="player-meta">
-                    <span data-edit-format>1080p</span>
-                    <span data-edit-player-duration>03:18</span>
-                  </div>
+                <div class="video-player" data-edit-video-player>
+                  <a class="player-external-link" href="#" target="_blank" rel="noopener noreferrer" data-edit-player-link data-i18n-aria-label="watchOnIq">
+                    <span class="player-external-icon">
+                      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M15 3h6v6" />
+                        <path d="m10 14 11-11" />
+                        <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
+                      </svg>
+                    </span>
+                    <span class="player-external-tooltip" data-i18n="watchOnIq">View on iq.com</span>
+                  </a>
                 </div>
                 <div class="preview-details">
-                  <h2 class="preview-title" data-edit-preview-title>Moonlit Bistro</h2>
-                  <p class="preview-id preview-link-row">
-                    <a href="#" data-edit-video-link>https://www.iq.com/play/VID-2408-0187</a>
-                    <button class="preview-copy-button" type="button" aria-label="Copy video link" data-i18n-aria-label="copyVideoLink" data-copy-video-link>
-                      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <rect x="9" y="9" width="11" height="11" rx="2" />
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                      </svg>
-                    </button>
-                    <span class="copy-tooltip" hidden data-copy-tooltip role="status" aria-live="polite"></span>
-                  </p>
+                  <div class="preview-title-row">
+                    <h2 class="preview-title" data-edit-preview-title>Moonlit Bistro</h2>
+                    <span class="edit-category-tag type-tag comic-drama" data-edit-category>ComicDrama</span>
+                  </div>
                   <div class="meta-list">
-                    <div class="meta-row"><span data-i18n="fileName">File Name</span><strong data-edit-file-name>feature.mp4</strong></div>
+                    <div class="meta-row" data-edit-file-name-row><span data-i18n="fileName">File Name</span><strong data-edit-file-name>feature.mp4</strong></div>
+                    <div class="meta-row"><span data-i18n="videoId">Video ID</span><strong data-edit-video-id>VID-2408-0187</strong></div>
                     <div class="meta-row"><span data-i18n="publication">Publication</span><strong class="status-pill draft" data-edit-publication><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" /><path d="M14 3v6h6" /><path d="M8 15h4" /></svg><span>Draft</span></strong></div>
-                    <div class="meta-row"><span data-i18n="updated">Updated</span><strong data-edit-updated>Yesterday 18:40</strong></div>
+                    <div class="meta-row"><span data-i18n="updated">Updated</span><strong data-edit-updated>Yesterday 18:40:00</strong></div>
+                    <div class="meta-row"><span data-i18n="firstPublished">First published</span><strong data-edit-first-published>Aug 1, 2026, 00:00:00</strong></div>
                   </div>
                 </div>
               </section>
 
-              <section class="episode-card" data-edit-episode-card>
-                <h2 class="episode-card-title" data-i18n="episodeInformation">Episode information</h2>
-                <div class="episode-list" data-edit-episode-list>
-                  <div class="episode-item"><span>Episode 1</span><span class="episode-status">Ready</span></div>
-                  <div class="episode-item"><span>Episode 2</span><span class="episode-status">Ready</span></div>
-                  <div class="episode-item"><span>Episode 3</span><span class="episode-status">Ready</span></div>
-                  <div class="episode-item"><span>Episode 4</span><span class="episode-status">Ready</span></div>
-                  <div class="episode-item"><span>Episode 5</span><span class="episode-status">Ready</span></div>
-                  <div class="episode-item"><span>Episode 6</span><span class="episode-status">Draft</span></div>
+              <div class="episode-toolbar" data-edit-episode-toolbar>
+                <div class="content-filters" aria-label="Content filters" data-i18n-aria-label="contentFiltersAria">
+                  <div class="filter-group">
+                    <button class="filter-control" type="button" aria-haspopup="listbox" aria-expanded="false" data-filter-field="freePaidStatus" data-episode-filter-trigger="freePaidStatus">
+                      <span class="filter-label-frame"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16" /><path d="M7 12h10" /><path d="M10 17h4" /></svg><span class="filter-label" data-i18n="freePaid">Free/Paid</span></span>
+                      <span class="filter-value" data-episode-filter-label>All</span>
+                    </button>
+                    <div class="filter-menu" role="listbox" aria-label="Free/Paid" data-i18n-aria-label="freePaid" data-episode-filter-menu="freePaidStatus" hidden>
+                      <button class="filter-option" type="button" role="option" data-episode-filter-option="freePaidStatus" data-value="" data-i18n="all" aria-selected="true">All</button>
+                      <button class="filter-option" type="button" role="option" data-episode-filter-option="freePaidStatus" data-value="Free" data-i18n="free" aria-selected="false">Free</button>
+                      <button class="filter-option" type="button" role="option" data-episode-filter-option="freePaidStatus" data-value="Paid" data-i18n="paid" aria-selected="false">Paid</button>
+                    </div>
+                  </div>
+                  <div class="filter-group">
+                    <button class="filter-control" type="button" aria-haspopup="listbox" aria-expanded="false" data-filter-field="publicationStatus" data-episode-filter-trigger="publicationStatus">
+                      <span class="filter-label-frame"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16" /><path d="M7 12h10" /><path d="M10 17h4" /></svg><span class="filter-label" data-i18n="publication">Publication</span></span>
+                      <span class="filter-value" data-episode-filter-label>All</span>
+                    </button>
+                    <div class="filter-menu" role="listbox" aria-label="Publication" data-i18n-aria-label="publication" data-episode-filter-menu="publicationStatus" hidden>
+                      <button class="filter-option" type="button" role="option" data-episode-filter-option="publicationStatus" data-value="" data-i18n="all" aria-selected="true">All</button>
+                      <button class="filter-option" type="button" role="option" data-episode-filter-option="publicationStatus" data-value="Online" data-i18n="online" aria-selected="false">Online</button>
+                      <button class="filter-option" type="button" role="option" data-episode-filter-option="publicationStatus" data-value="Offline" data-i18n="offline" aria-selected="false">Offline</button>
+                      <button class="filter-option" type="button" role="option" data-episode-filter-option="publicationStatus" data-value="Draft" data-i18n="draft" aria-selected="false">Draft</button>
+                    </div>
+                  </div>
+                </div>
+                <button class="edit-action primary" type="button">
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                    <path d="M7 11h4" />
+                    <path d="M13 11h4" />
+                    <path d="M7 15h10" />
+                  </svg>
+                  <span data-i18n="batchEditSubtitles">Batch edit subtitles</span>
+                </button>
+              </div>
+              <section class="episode-card" id="edit-episodes-panel" role="tabpanel" aria-labelledby="edit-episodes-tab" data-edit-episode-card>
+                <div class="episode-table-scroll">
+                  <div class="episode-table-header" role="row">
+                    <span data-i18n="episodeName">Episode name</span>
+                    <span data-i18n="freePaidStatus">Free/Paid Status</span>
+                    <span data-i18n="publicationStatus">Publication Status</span>
+                    <span data-i18n="updated">Updated</span>
+                    <span data-i18n="firstPublished">First published</span>
+                    <span data-i18n="action">Action</span>
+                  </div>
+                  <div class="episode-list" data-edit-episode-list></div>
                 </div>
               </section>
+              <div class="pagination episode-pagination" aria-label="Pagination" data-i18n-aria-label="pagination" data-edit-episode-pagination>
+                  <span class="pagination-range" data-episode-pagination-range>共 20 条</span>
+                  <div class="pagination-controls">
+                    <button class="pagination-button" type="button" aria-label="Previous page" data-i18n-aria-label="previousPage" data-episode-page-prev>
+                      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+                    </button>
+                    <span class="pagination-pages" data-episode-page-numbers></span>
+                    <button class="pagination-button" type="button" aria-label="Next page" data-i18n-aria-label="nextPage" data-episode-page-next>
+                      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+                    </button>
+                  </div>
+                  <span class="page-size-select" data-episode-page-size>
+                    <button class="page-size-trigger" type="button" aria-label="Rows per page" data-i18n-aria-label="rowsPerPage" aria-haspopup="menu" aria-controls="episode-page-size-menu" aria-expanded="false" data-episode-page-size-trigger>
+                      <span data-episode-page-size-label>10 条/页</span>
+                      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+                    </button>
+                    <span class="page-size-menu" id="episode-page-size-menu" role="menu" aria-label="Rows per page" data-i18n-aria-label="rowsPerPage" data-episode-page-size-menu hidden>
+                      <button class="page-size-option selected" type="button" role="menuitemradio" aria-checked="true" data-episode-page-size-option="10">10 条/页</button>
+                      <button class="page-size-option" type="button" role="menuitemradio" aria-checked="false" data-episode-page-size-option="20">20 条/页</button>
+                      <button class="page-size-option" type="button" role="menuitemradio" aria-checked="false" data-episode-page-size-option="50">50 条/页</button>
+                      <button class="page-size-option" type="button" role="menuitemradio" aria-checked="false" data-episode-page-size-option="100">100 条/页</button>
+                    </span>
+                  </span>
+              </div>
             </aside>
           </div>
 
@@ -4587,6 +6048,86 @@
         <div class="poster-list" data-cover-translation-list></div>
       </section>
     </div>
+    <div class="modal-backdrop" data-episode-preview-modal hidden>
+      <section class="episode-preview-modal" role="dialog" aria-modal="true" aria-labelledby="episode-preview-modal-title">
+        <header class="modal-header">
+          <div class="episode-preview-heading">
+            <h2 class="modal-title" id="episode-preview-modal-title" data-episode-preview-title>Episode preview</h2>
+            <div class="preview-language-select" data-preview-language-select hidden>
+              <button class="preview-language-trigger" type="button" aria-haspopup="listbox" aria-expanded="false" data-preview-language-trigger><span data-preview-language-value>简体中文</span><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></button>
+              <div class="preview-language-menu" role="listbox" data-preview-language-menu hidden>
+                <button class="preview-language-option" type="button" role="option" data-preview-language-option="simplifiedChinese" aria-selected="true"><span data-i18n="simplifiedChinese">Simplified Chinese</span></button>
+                <button class="preview-language-option" type="button" role="option" data-preview-language-option="english" aria-selected="false"><span data-i18n="english">English</span></button>
+                <button class="preview-language-option" type="button" role="option" data-preview-language-option="thai" aria-selected="false"><span data-i18n="thai">Thai</span></button>
+                <button class="preview-language-option" type="button" role="option" data-preview-language-option="malay" aria-selected="false"><span data-i18n="malay">Malay</span></button>
+              </div>
+            </div>
+          </div>
+          <button class="modal-close" type="button" aria-label="Close" data-i18n-aria-label="close" data-episode-preview-close>
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10" /><path d="M17 7 7 17" /></svg>
+          </button>
+        </header>
+        <div class="episode-preview-player">
+          <video class="episode-preview-video" controls playsinline preload="metadata" poster="./assets/video-player-placeholder.png" data-episode-preview-video><source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4" /></video>
+          <p class="episode-preview-caption" data-episode-preview-caption hidden></p>
+        </div>
+      </section>
+    </div>
+    <div class="subtitle-drawer-overlay" data-subtitle-drawer-overlay aria-hidden="true">
+      <section class="subtitle-drawer" role="dialog" aria-modal="true" aria-labelledby="subtitle-drawer-title" tabindex="-1">
+        <header class="subtitle-drawer-header">
+          <div class="subtitle-drawer-heading">
+            <h2 class="subtitle-drawer-title" id="subtitle-drawer-title" data-i18n="editSubtitles">Edit subtitles</h2>
+            <p class="subtitle-drawer-description" data-subtitle-drawer-description></p>
+          </div>
+          <button class="modal-close" type="button" aria-label="Close" data-i18n-aria-label="close" data-subtitle-drawer-close>
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10" /><path d="M17 7 7 17" /></svg>
+          </button>
+        </header>
+        <main class="subtitle-drawer-body">
+          <div class="subtitle-drawer-tools">
+            <div class="subtitle-format-note">
+              <p class="subtitle-format-note-primary" data-i18n="subtitleFileNameHint">The language code in the file name will be matched automatically, e.g. episode01.zh-CN.srt</p>
+              <p class="subtitle-format-note-secondary" data-i18n="subtitleFormatNote">Only .srt, .vtt, .ass and .ssa formats are supported</p>
+            </div>
+            <button class="edit-action primary subtitle-batch-upload" type="button" data-subtitle-batch-upload>
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4" /><path d="m7 9 5-5 5 5" /><path d="M5 14v5h14v-5" /></svg>
+              <span data-i18n="batchUploadSubtitles">Batch upload subtitles</span>
+            </button>
+          </div>
+          <div class="subtitle-table-wrap">
+            <table class="subtitle-table">
+              <thead><tr><th data-i18n="subtitleLanguage">Language</th><th data-i18n="subtitleFile">Subtitle file</th><th data-i18n="fileSource">File source</th><th data-i18n="uploadStatus">Upload status</th><th data-i18n="action">Action</th></tr></thead>
+              <tbody>
+                <tr><td data-i18n="simplifiedChinese">Simplified Chinese</td><td><span class="subtitle-file-name">episode01.zh-CN.srt</span></td><td><span class="content-source-tag"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4 5 5L8 21l-5-5L15 4Z" /><path d="m6 3 .7 1.3L8 5l-1.3.7L6 7l-.7-1.3L4 5l1.3-.7L6 3Z" /><path d="m19 15 .7 1.3 1.3.7-1.3.7L19 19l-.7-1.3L17 17l1.3-.7L19 15Z" /></svg><span data-i18n="aiGenerated">AI generated</span></span></td><td><span class="subtitle-upload-status" data-i18n="uploaded">Uploaded</span></td><td><span class="subtitle-row-actions"><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="modify">Modify</button><button class="row-action subtitle-preview-action" type="button" data-subtitle-preview aria-label="Preview"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8.5 6.5 9.5 5.5-9.5 5.5v-11Z" /></svg></button></span></td></tr>
+                <tr><td data-i18n="english">English</td><td><span class="subtitle-file-name">episode01.en-US.srt</span></td><td><span class="content-source-tag"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4 5 5L8 21l-5-5L15 4Z" /><path d="m6 3 .7 1.3L8 5l-1.3.7L6 7l-.7-1.3L4 5l1.3-.7L6 3Z" /><path d="m19 15 .7 1.3 1.3.7-1.3.7L19 19l-.7-1.3L17 17l1.3-.7L19 15Z" /></svg><span data-i18n="aiGenerated">AI generated</span></span></td><td><span class="subtitle-upload-status" data-i18n="uploaded">Uploaded</span></td><td><span class="subtitle-row-actions"><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="modify">Modify</button><button class="row-action subtitle-preview-action" type="button" data-subtitle-preview aria-label="Preview"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8.5 6.5 9.5 5.5-9.5 5.5v-11Z" /></svg></button></span></td></tr>
+                <tr><td data-i18n="traditionalChinese">Traditional Chinese</td><td>—</td><td>—</td><td>—</td><td><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="upload">Upload</button></td></tr>
+                <tr><td data-i18n="thai">Thai</td><td><span class="subtitle-file-name">episode01.th-TH.srt</span></td><td><span class="content-source-tag manual"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" /></svg><span data-i18n="manualLabel">Manual</span></span></td><td><span class="subtitle-upload-status" data-i18n="uploaded">Uploaded</span></td><td><span class="subtitle-row-actions"><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="modify">Modify</button><button class="row-action subtitle-preview-action" type="button" data-subtitle-preview aria-label="Preview"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8.5 6.5 9.5 5.5-9.5 5.5v-11Z" /></svg></button><button class="spec-btn danger-secondary small" type="button" data-subtitle-delete-row data-i18n="delete">Delete</button></span></td></tr>
+                <tr><td data-i18n="malay">Malay</td><td><span class="subtitle-file-name">episode01.ms-MY.srt</span></td><td><span class="content-source-tag manual"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" /></svg><span data-i18n="manualLabel">Manual</span></span></td><td><span class="subtitle-upload-status" data-i18n="uploaded">Uploaded</span></td><td><span class="subtitle-row-actions"><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="modify">Modify</button><button class="row-action subtitle-preview-action" type="button" data-subtitle-preview aria-label="Preview"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8.5 6.5 9.5 5.5-9.5 5.5v-11Z" /></svg></button><button class="spec-btn danger-secondary small" type="button" data-subtitle-delete-row data-i18n="delete">Delete</button></span></td></tr>
+                <tr><td data-i18n="indonesian">Indonesian</td><td>—</td><td>—</td><td>—</td><td><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="upload">Upload</button></td></tr>
+                <tr><td data-i18n="vietnamese">Vietnamese</td><td>—</td><td>—</td><td>—</td><td><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="upload">Upload</button></td></tr>
+                <tr><td data-i18n="korean">Korean</td><td>—</td><td>—</td><td>—</td><td><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="upload">Upload</button></td></tr>
+                <tr><td data-i18n="japanese">Japanese</td><td>—</td><td>—</td><td>—</td><td><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="upload">Upload</button></td></tr>
+                <tr><td data-i18n="spanish">Spanish</td><td>—</td><td>—</td><td>—</td><td><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="upload">Upload</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <input type="file" accept=".srt,.vtt,.ass,.ssa" multiple hidden data-subtitle-file-input />
+        </main>
+        <footer class="subtitle-drawer-footer">
+          <button class="edit-action secondary" type="button" data-subtitle-drawer-close data-i18n="cancel">Cancel</button>
+          <button class="edit-action primary" type="button" data-subtitle-drawer-save data-i18n="save">Save</button>
+        </footer>
+      </section>
+    </div>
+    <div class="subtitle-confirm-backdrop" data-subtitle-confirm hidden>
+      <section class="subtitle-confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="subtitle-confirm-title" aria-describedby="subtitle-confirm-description" tabindex="-1">
+        <div class="modal-header"><div class="modal-heading"><h2 class="modal-title" id="subtitle-confirm-title" data-subtitle-confirm-title></h2></div><button class="close-btn" type="button" aria-label="Close" data-i18n-aria-label="close" data-subtitle-confirm-close><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l10 10" /><path d="M17 7 7 17" /></svg></button></div>
+        <div class="modal-body" id="subtitle-confirm-description" data-subtitle-confirm-description></div>
+        <footer class="modal-footer" data-subtitle-confirm-footer></footer>
+      </section>
+    </div>
+    <div class="subtitle-message-portal" data-subtitle-message-portal aria-live="polite"></div>
     <script>
       const messages = {
         en: {
@@ -4631,6 +6172,7 @@
           freePaidStatus: "Free/Paid Status",
           publicationStatus: "Publication Status",
           updated: "Updated",
+          firstPublished: "First published",
           action: "Action",
           pagination: "Pagination",
           previousPage: "Previous page",
@@ -4654,12 +6196,62 @@
           titleRequired: "Please enter a title",
           coverRequired: "Please upload a cover",
           paidStatusRequired: "Please select a Free/Paid status",
+          paidStatusLockedHint: "Consistent with the domestic iQIYI account; changes are currently unavailable.",
           ratingRequired: "Please select a rating",
           regionsRequired: "Please select at least one launch region",
           fixRequiredFields: "Please complete the required fields before submitting",
           saveSuccess: "Saved",
           publishSuccess: "Published",
-          editAlbumDetails: "Edit Album details",
+          publishingSubmission: "Submitting for publication",
+          publishReviewSuccess: "Submitted successfully. Please wait for review.",
+          editAlbumDetails: "Album details",
+          backToContentManagement: "Back to Content Management",
+          watchOnIq: "View on iq.com",
+          episodeCountShort: (count) => `${count} eps`,
+          viewEpisodes: "Episode details",
+          episodeName: "Episode name",
+          editSubtitles: "Edit subtitles",
+          batchEditSubtitles: "Batch edit subtitles",
+          subtitleFileNameHint: "The language code in the file name will be matched automatically, e.g. episode01.zh-CN.srt",
+          subtitleFormatNote: "Only .srt, .vtt, .ass and .ssa formats are supported",
+          batchUploadSubtitles: "Batch upload subtitles",
+          subtitleLanguage: "Language",
+          subtitleFile: "Subtitle file",
+          fileSource: "File source",
+          uploadStatus: "Upload status",
+          aiGenerated: "AI generated",
+          manualLabel: "Manual",
+          uploaded: "Uploaded",
+          uploading: "Uploading",
+          invalidSubtitleFormat: "Upload failed. Only .srt, .vtt, .ass and .ssa files are supported.",
+          uploadFailedRetry: "Upload failed. Please try again.",
+          saving: "Saving",
+          deleteSubtitleTitle: "Delete subtitle?",
+          deleteSubtitleDescription: "The subtitle file will be removed after saving.",
+          unsavedSubtitleTitle: "Save changes before closing?",
+          unsavedSubtitleDescription: "If you exit, all changes made this time will be discarded.",
+          confirmExit: "Exit without saving",
+          saveChanges: "Save changes",
+          unpublishedChangesTitle: "You have unpublished changes. Publish them?",
+          unpublishedChangesDescription: "Publishing will apply the changes before returning to Content Management.",
+          discardChanges: "Don't save",
+          saveAndClose: "Save and close",
+          modify: "Modify",
+          simplifiedChinese: "Simplified Chinese",
+          english: "English",
+          traditionalChinese: "Traditional Chinese",
+          thai: "Thai",
+          malay: "Malay",
+          indonesian: "Indonesian",
+          vietnamese: "Vietnamese",
+          korean: "Korean",
+          japanese: "Japanese",
+          spanish: "Spanish",
+          episodePreview: "Episode preview",
+          subtitlePreview: "Subtitle preview",
+          playEpisodePreview: "Play episode preview",
+          editNavigation: "Edit navigation",
+          editSections: "Edit sections",
           save: "Save",
           publish: "Publish",
           republish: "Republish",
@@ -4668,6 +6260,7 @@
           editContentDetails: "Edit content details",
           basicInformation: "Basic information",
           title: "Title",
+          oneLineDescription: "One-line description",
           description: "Description",
           cover: "Cover",
           multilingual: "Multilingual",
@@ -4692,6 +6285,7 @@
           playPreview: "Play preview",
           copyVideoLink: "Copy video link",
           fileName: "File Name",
+          videoId: "Video ID",
           episodeInformation: "Episode information",
           ready: "Ready",
           expand: "Expand",
@@ -4754,6 +6348,7 @@
           freePaidStatus: "免费/付费状态",
           publicationStatus: "发布状态",
           updated: "更新时间",
+          firstPublished: "首次发布时间",
           action: "操作",
           pagination: "分页",
           previousPage: "上一页",
@@ -4777,12 +6372,62 @@
           titleRequired: "请输入标题",
           coverRequired: "请上传封面",
           paidStatusRequired: "请选择免费/付费状态",
+          paidStatusLockedHint: "同国内爱奇艺号保持一致，暂不支持修改",
           ratingRequired: "请选择分级信息",
           regionsRequired: "请至少选择一个上线地区",
           fixRequiredFields: "请完善必填项后再提交",
           saveSuccess: "保存成功",
           publishSuccess: "发布成功",
-          editAlbumDetails: "编辑专辑详情",
+          publishingSubmission: "提交发布中",
+          publishReviewSuccess: "提交发布成功，请等待审核",
+          editAlbumDetails: "专辑详情",
+          backToContentManagement: "返回内容管理",
+          watchOnIq: "iq.com查看",
+          episodeCountShort: (count) => `${count}集`,
+          viewEpisodes: "剧集详情",
+          episodeName: "剧集名称",
+          editSubtitles: "修改字幕",
+          batchEditSubtitles: "批量修改字幕",
+          subtitleFileNameHint: "文件名中的语种码将自动匹配，例如 episode01.zh-CN.srt",
+          subtitleFormatNote: "仅支持 .srt、.vtt、.ass、.ssa 格式",
+          batchUploadSubtitles: "批量上传字幕",
+          subtitleLanguage: "语种",
+          subtitleFile: "字幕文件",
+          fileSource: "文件来源",
+          uploadStatus: "上传状态",
+          aiGenerated: "AI生成",
+          manualLabel: "人工",
+          uploaded: "已上传",
+          uploading: "上传中",
+          invalidSubtitleFormat: "上传失败，仅支持 .srt、.vtt、.ass、.ssa 格式文件",
+          uploadFailedRetry: "上传失败，请重试",
+          saving: "保存中",
+          deleteSubtitleTitle: "确认删除字幕？",
+          deleteSubtitleDescription: "保存后将移除该字幕文件。",
+          unsavedSubtitleTitle: "关闭前保存更改？",
+          unsavedSubtitleDescription: "退出后，本次所有修改将不会保存。",
+          confirmExit: "确认退出",
+          saveChanges: "保存修改",
+          unpublishedChangesTitle: "您有修改的内容未发布，是否发布",
+          unpublishedChangesDescription: "发布后将应用本次修改并返回内容管理。",
+          discardChanges: "不保存",
+          saveAndClose: "保存并关闭",
+          modify: "修改",
+          simplifiedChinese: "简体中文",
+          english: "英语",
+          traditionalChinese: "繁体中文",
+          thai: "泰文",
+          malay: "马来语",
+          indonesian: "印尼语",
+          vietnamese: "越南语",
+          korean: "韩语",
+          japanese: "日语",
+          spanish: "西班牙语",
+          episodePreview: "剧集预览",
+          subtitlePreview: "字幕预览",
+          playEpisodePreview: "播放剧集预览",
+          editNavigation: "编辑导航",
+          editSections: "编辑分区",
           save: "保存",
           publish: "发布",
           republish: "重新发布",
@@ -4791,6 +6436,7 @@
           editContentDetails: "编辑内容详情",
           basicInformation: "基本信息",
           title: "标题",
+          oneLineDescription: "一句话描述",
           description: "描述",
           cover: "封面",
           multilingual: "多语言",
@@ -4815,6 +6461,7 @@
           playPreview: "播放预览",
           copyVideoLink: "复制视频链接",
           fileName: "文件名",
+          videoId: "视频 ID",
           episodeInformation: "剧集信息",
           ready: "就绪",
           expand: "展开",
@@ -5252,6 +6899,34 @@
         }).format(timestamp);
       }
 
+      function getPreciseDateTimeLabel(value) {
+        const relativeMatch = value.match(/^(Today|Yesterday)(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
+        if (relativeMatch) {
+          const [, relativeDay, hour = "00", minute = "00", second = "00"] = relativeMatch;
+          return `${t(relativeDay.toLowerCase())} ${hour.padStart(2, "0")}:${minute}:${second}`;
+        }
+        const timestamp = Date.parse(value);
+        if (Number.isNaN(timestamp)) {
+          return value;
+        }
+        return new Intl.DateTimeFormat(currentLanguage === "zh" ? "zh-CN" : "en-US", {
+          year: "numeric",
+          month: currentLanguage === "zh" ? "numeric" : "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hourCycle: "h23"
+        }).format(timestamp);
+      }
+
+      function renderEpisodeDateTime(value) {
+        const label = getPreciseDateTimeLabel(value);
+        const match = label.match(/^(.*?)(?:,?\s+)(\d{2}:\d{2}:\d{2})$/);
+        if (!match) return `<p class="episode-time"><span>${label}</span></p>`;
+        return `<p class="episode-time"><span>${match[1]}</span><span>${match[2]}</span></p>`;
+      }
+
       function syncFilterLabels() {
         filterTriggers.forEach((filterTrigger) => {
           const field = filterTrigger.dataset.filterField;
@@ -5299,6 +6974,9 @@
         });
         document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
           node.setAttribute("placeholder", t(node.dataset.i18nPlaceholder));
+        });
+        document.querySelectorAll("[data-subtitle-preview]").forEach((node) => {
+          node.setAttribute("aria-label", t("subtitlePreview"));
         });
         options.forEach((option) => {
           option.setAttribute("aria-selected", String(option.dataset.lang === nextLang));
@@ -5763,30 +7441,69 @@
         const params = new URLSearchParams(window.location.search);
         const contentId = params.get("contentId");
         const urlType = params.get("type");
+        const initialEditTab = params.get("tab");
         const item = videoItems.find((video) => video.id === contentId) || videoItems.find((video) => video.type === urlType) || videoItems[4];
         if (!item) return;
 
         const editPageTitleNodes = document.querySelectorAll("[data-edit-page-title]");
+        const editTitleTabs = document.querySelector(".edit-title-tabs");
         const titleInput = document.querySelector("[data-edit-title-input]");
+        const taglineInput = document.querySelector("[data-edit-tagline-input]");
         const descriptionInput = document.querySelector("[data-edit-description-input]");
+        const contentLanguageFilter = document.querySelector("[data-content-language-filter]");
+        const contentLanguageTrigger = document.querySelector("[data-content-language-trigger]");
+        const contentLanguageValue = document.querySelector("[data-content-language-value]");
+        const contentLanguageMenu = document.querySelector("[data-content-language-menu]");
+        const contentLanguageOptions = Array.from(document.querySelectorAll("[data-content-language-option]"));
+        const titleSourceTag = document.querySelector('[data-source-tag="title"]');
+        const taglineSourceTag = document.querySelector('[data-source-tag="tagline"]');
+        const descriptionSourceTag = document.querySelector('[data-source-tag="description"]');
+        const coverSourceTag = document.querySelector('[data-source-tag="cover"]');
         const previewTitle = document.querySelector("[data-edit-preview-title]");
         const previewCard = document.querySelector("[data-edit-preview-card]");
+        const videoPlayer = document.querySelector("[data-edit-video-player]");
         const category = document.querySelector("[data-edit-category]");
         const durationNodes = document.querySelectorAll("[data-edit-duration], [data-edit-player-duration]");
         const formatNode = document.querySelector("[data-edit-format]");
+        const playerExternalLink = document.querySelector("[data-edit-player-link]");
         const publicationNode = document.querySelector("[data-edit-publication]");
         const videoLinkNode = document.querySelector("[data-edit-video-link]");
         const fileNameNode = document.querySelector("[data-edit-file-name]");
+        const fileNameRow = document.querySelector("[data-edit-file-name-row]");
+        const videoIdNode = document.querySelector("[data-edit-video-id]");
         const copyVideoLinkButton = document.querySelector("[data-copy-video-link]");
         const copyTooltip = document.querySelector("[data-copy-tooltip]");
         const updatedNode = document.querySelector("[data-edit-updated]");
+        const firstPublishedNode = document.querySelector("[data-edit-first-published]");
         const episodeCard = document.querySelector("[data-edit-episode-card]");
         const episodeList = document.querySelector("[data-edit-episode-list]");
+        const episodeTableScroll = document.querySelector(".episode-table-scroll");
+        const episodePaginationRange = document.querySelector("[data-episode-pagination-range]");
+        const episodePageNumbers = document.querySelector("[data-episode-page-numbers]");
+        const episodePrevPageButton = document.querySelector("[data-episode-page-prev]");
+        const episodeNextPageButton = document.querySelector("[data-episode-page-next]");
+        const episodePageSizeSelect = document.querySelector("[data-episode-page-size]");
+        const episodePageSizeTrigger = document.querySelector("[data-episode-page-size-trigger]");
+        const episodePageSizeLabel = document.querySelector("[data-episode-page-size-label]");
+        const episodePageSizeMenu = document.querySelector("[data-episode-page-size-menu]");
+        const episodePageSizeOptions = Array.from(document.querySelectorAll("[data-episode-page-size-option]"));
+        const episodeFilterTriggers = Array.from(document.querySelectorAll("[data-episode-filter-trigger]"));
+        const episodeFilterOptions = Array.from(document.querySelectorAll("[data-episode-filter-option]"));
+        const episodeFilters = { freePaidStatus: "", publicationStatus: "" };
+        let episodeCurrentPage = 1;
+        let episodePageSize = 10;
+        const editSectionTabs = Array.from(document.querySelectorAll("[data-edit-section-tab]"));
+        const previewHome = document.querySelector("[data-edit-preview-home]");
+        const secondaryVideoLink = document.querySelector("[data-secondary-video-link]");
+        const secondaryVideoTitle = document.querySelector("[data-secondary-video-title]");
+        const secondaryVideoId = document.querySelector("[data-secondary-video-id]");
+        const secondaryVideoBadge = document.querySelector("[data-secondary-video-badge]");
         const resetAction = document.querySelector("[data-reset-action]");
         const resetActionLabel = document.querySelector("[data-reset-action-label]");
         const saveAction = document.querySelector("[data-save-action]");
         const publishAction = document.querySelector("[data-publish-action]");
         const publishActionLabel = document.querySelector("[data-publish-action-label]");
+        const publishLoadingTip = document.querySelector("[data-publish-loading-tip]");
         const translationModal = document.querySelector("[data-translation-modal]");
         const translationModalTitle = document.querySelector("[data-translation-modal-title]");
         const translationList = document.querySelector("[data-translation-list]");
@@ -5796,8 +7513,39 @@
         const coverTranslationModal = document.querySelector("[data-cover-translation-modal]");
         const coverTranslationClose = document.querySelector("[data-cover-translation-close]");
         const coverTranslationList = document.querySelector("[data-cover-translation-list]");
+        const episodePreviewModal = document.querySelector("[data-episode-preview-modal]");
+        const episodePreviewClose = document.querySelector("[data-episode-preview-close]");
+        const episodePreviewTitle = document.querySelector("[data-episode-preview-title]");
+        const episodePreviewVideo = document.querySelector("[data-episode-preview-video]");
+        const previewLanguageSelect = document.querySelector("[data-preview-language-select]");
+        const previewLanguageTrigger = document.querySelector("[data-preview-language-trigger]");
+        const previewLanguageValue = document.querySelector("[data-preview-language-value]");
+        const previewLanguageMenu = document.querySelector("[data-preview-language-menu]");
+        const previewLanguageOptions = Array.from(document.querySelectorAll("[data-preview-language-option]"));
+        const episodePreviewCaption = document.querySelector("[data-episode-preview-caption]");
+        const subtitleDrawerOverlay = document.querySelector("[data-subtitle-drawer-overlay]");
+        const subtitleDrawer = subtitleDrawerOverlay?.querySelector(".subtitle-drawer");
+        const subtitleDrawerDescription = document.querySelector("[data-subtitle-drawer-description]");
+        const subtitleDrawerCloseButtons = Array.from(document.querySelectorAll("[data-subtitle-drawer-close]"));
+        const subtitleDrawerSave = document.querySelector("[data-subtitle-drawer-save]");
+        const subtitleBatchUpload = document.querySelector("[data-subtitle-batch-upload]");
+        const subtitleFileInput = document.querySelector("[data-subtitle-file-input]");
+        const subtitleTableBody = document.querySelector(".subtitle-table tbody");
+        const subtitleConfirm = document.querySelector("[data-subtitle-confirm]");
+        const subtitleConfirmTitle = document.querySelector("[data-subtitle-confirm-title]");
+        const subtitleConfirmDescription = document.querySelector("[data-subtitle-confirm-description]");
+        const subtitleConfirmFooter = document.querySelector("[data-subtitle-confirm-footer]");
+        const subtitleConfirmClose = document.querySelector("[data-subtitle-confirm-close]");
+        const subtitleMessagePortal = document.querySelector("[data-subtitle-message-portal]");
+        let subtitleDrawerReturnFocus = null;
+        let activeSubtitleEpisodeLabel = "";
+        let subtitleDrawerDirty = false;
+        let subtitleDrawerSnapshot = "";
+        let activeSubtitleUploadRow = null;
         const titleCount = document.querySelector("[data-title-count]");
         const titleError = document.querySelector("[data-title-error]");
+        const taglineCount = document.querySelector("[data-tagline-count]");
+        const taglineError = document.querySelector("[data-tagline-error]");
         const descriptionCount = document.querySelector("[data-description-count]");
         const descriptionError = document.querySelector("[data-description-error]");
         const ratingSelect = document.querySelector("[data-rating-select]");
@@ -5840,6 +7588,10 @@
           title: {
             max: 20,
             labelKey: "title"
+          },
+          tagline: {
+            max: 40,
+            labelKey: "oneLineDescription"
           },
           description: {
             max: 300,
@@ -5884,6 +7636,7 @@
         function getCurrentFormSnapshot() {
           return {
             title: titleInput.value,
+            tagline: taglineInput.value,
             description: descriptionInput.value,
             paidStatus: getSelectedPaidStatus(),
             rating: ratingValue?.value || "",
@@ -5911,6 +7664,7 @@
               button.disabled = !isDirty;
             }
           });
+          publishAction?.classList.toggle("is-highlighted", isDirty);
         }
 
         function markDynamicDirty() {
@@ -5927,6 +7681,7 @@
         function restoreInitialFormState() {
           if (!initialFormSnapshot) return;
           titleInput.value = initialFormSnapshot.title;
+          taglineInput.value = initialFormSnapshot.tagline;
           descriptionInput.value = initialFormSnapshot.description;
           previewTitle.textContent = initialFormSnapshot.title;
           document.querySelectorAll('input[name="paidStatus"]').forEach((input) => {
@@ -5953,6 +7708,7 @@
           restoreTranslationState(initialFormSnapshot.translations);
           closeCoverTitlePanel();
           syncFieldLimit(titleInput, titleCount, titleError, "title");
+          syncFieldLimit(taglineInput, taglineCount, taglineError, "tagline");
           syncFieldLimit(descriptionInput, descriptionCount, descriptionError, "description");
           validateCover();
           validatePaidStatus();
@@ -6030,6 +7786,9 @@
         }
 
         function syncPreviewVideoCard() {
+          if (playerExternalLink) {
+            playerExternalLink.href = getPreviewVideoLink();
+          }
           if (videoLinkNode) {
             const videoLink = getPreviewVideoLink();
             videoLinkNode.textContent = videoLink;
@@ -6038,6 +7797,19 @@
           if (fileNameNode) {
             fileNameNode.textContent = getPreviewFileName();
           }
+          if (videoIdNode) {
+            videoIdNode.textContent = item.id;
+          }
+        }
+
+        function syncSecondaryVideo() {
+          if (secondaryVideoLink) {
+            secondaryVideoLink.href = getPreviewVideoLink();
+            secondaryVideoLink.setAttribute("aria-label", `${t("watchOnIq")}: ${item.title}`);
+          }
+          if (secondaryVideoTitle) secondaryVideoTitle.textContent = item.title;
+          if (secondaryVideoId) secondaryVideoId.textContent = item.id;
+          if (secondaryVideoBadge) secondaryVideoBadge.textContent = t("episodeCountShort", item.episodes || 1);
         }
 
         function showCopyTooltip(message) {
@@ -6117,6 +7889,8 @@
           slot.dataset.coverTitleEdited = value === titleInput.value ? "false" : "true";
           slot.dataset.coverTitleValue = value;
           syncCoverSlotTitle(slot, value);
+          translationSources[activeTranslationIndex].cover = "manual";
+          syncSourceTag(coverSourceTag, "manual");
         }
 
         function applyCoverTitleToAll(value) {
@@ -6221,10 +7995,9 @@
         function initCoverTools() {
           coverSlots.forEach((slot) => {
             const uploadButton = slot.querySelector("[data-cover-upload]");
-            const titleToggle = slot.querySelector("[data-cover-title-toggle]");
             const fileInput = slot.querySelector("[data-cover-file]");
             const coverArt = slot.querySelector(".cover-art");
-            if (!uploadButton || !titleToggle || !fileInput || !coverArt) return;
+            if (!uploadButton || !fileInput || !coverArt) return;
 
             slot.dataset.coverPresent = "true";
             slot.dataset.coverTitleValue = item.title;
@@ -6244,6 +8017,8 @@
               const nextUrl = URL.createObjectURL(file);
               coverObjectUrls.set(coverArt, nextUrl);
               slot.dataset.coverUploaded = "true";
+              translationSources[activeTranslationIndex].cover = "manual";
+              syncSourceTag(coverSourceTag, "manual");
               coverArt.style.backgroundImage = `url("${nextUrl}")`;
               coverArt.style.backgroundSize = "cover";
               coverArt.style.backgroundPosition = "center";
@@ -6251,9 +8026,6 @@
               markDynamicDirty();
             });
 
-            titleToggle.addEventListener("click", () => {
-              openCoverTitlePanel(slot);
-            });
           });
 
           coverTitlePanelInput?.addEventListener("keydown", handleCoverTitleKeydown);
@@ -6314,6 +8086,7 @@
         function focusFirstInvalidField() {
           const target =
             titleInput.classList.contains("is-invalid") ? titleInput :
+            taglineInput.classList.contains("is-invalid") ? taglineInput :
             descriptionInput.classList.contains("is-invalid") ? descriptionInput :
             coverUploader?.classList.contains("is-invalid") ? coverUploader :
             paidStatusGroup?.classList.contains("is-invalid") ? paidStatusGroup.querySelector("input") :
@@ -6328,11 +8101,10 @@
         function validateRequiredForm(showDangerMessage = false) {
           const checks = [
             syncFieldLimit(titleInput, titleCount, titleError, "title"),
+            syncFieldLimit(taglineInput, taglineCount, taglineError, "tagline"),
             syncFieldLimit(descriptionInput, descriptionCount, descriptionError, "description"),
             validateCover(),
-            validatePaidStatus(),
-            validateRating(),
-            validateRegions()
+            validatePaidStatus()
           ];
           const isValid = checks.every(Boolean);
           if (!isValid && showDangerMessage) {
@@ -6358,11 +8130,15 @@
         function syncEditMeta() {
           syncPublicationNode(publicationNode, item.publicationStatus);
           if (updatedNode) {
-            updatedNode.textContent = getUpdatedLabel(item.updated);
+            updatedNode.textContent = getPreciseDateTimeLabel(item.updated);
+          }
+          if (firstPublishedNode) {
+            firstPublishedNode.textContent = getPreciseDateTimeLabel(item.firstPublished || item.updated);
           }
         }
 
         function getEditPageTitle() {
+          if (document.body.dataset.editSection === "episodes") return t("viewEpisodes");
           return item.type === "movie" ? t("movieDetails") : t("editAlbumDetails");
         }
 
@@ -6374,26 +8150,92 @@
           document.title = `${editPageTitle} - Studio`;
         }
 
+        function syncEditTabIndicator(animate = true) {
+          if (!editTitleTabs) return;
+          const selectedTab = editTitleTabs.querySelector('[data-edit-section-tab][aria-selected="true"]');
+          if (!selectedTab) return;
+          editTitleTabs.classList.toggle("is-measuring", !animate);
+          editTitleTabs.style.setProperty("--edit-tab-indicator-x", `${selectedTab.offsetLeft}px`);
+          editTitleTabs.style.setProperty("--edit-tab-indicator-width", `${selectedTab.offsetWidth}px`);
+          if (!animate) window.requestAnimationFrame(() => editTitleTabs.classList.remove("is-measuring"));
+        }
+
         syncEditPageTitle();
 
         titleInput.value = item.title;
         previewTitle.textContent = item.title;
         syncEditCategoryTag();
         syncPreviewVideoCard();
+        syncSecondaryVideo();
         durationNodes.forEach((node) => {
           node.textContent = item.duration;
         });
-        formatNode.textContent = item.format || (item.type === "short" ? "1080 x 1920" : "1080p");
+        if (formatNode) formatNode.textContent = item.format || (item.type === "short" ? "1080 x 1920" : "1080p");
         syncEditMeta();
         const isMovie = item.type === "movie";
+        if (videoPlayer) {
+          videoPlayer.hidden = false;
+          videoPlayer.style.display = "";
+        }
+        if (fileNameRow) {
+          fileNameRow.hidden = !isMovie;
+          fileNameRow.style.display = isMovie ? "" : "none";
+        }
         if (episodeCard) {
           episodeCard.hidden = isMovie;
         }
+        const episodeSectionTab = editSectionTabs.find((tab) => tab.dataset.editSectionTab === "episodes");
+        if (episodeSectionTab) {
+          episodeSectionTab.hidden = isMovie;
+          const episodeSectionItem = episodeSectionTab.closest("li");
+          if (episodeSectionItem) episodeSectionItem.hidden = isMovie;
+        }
+
+        function setEditSection(nextSection, shouldFocus = false) {
+          const section = nextSection === "episodes" && !isMovie ? "episodes" : "details";
+          document.body.dataset.editSection = section;
+          syncEditPageTitle();
+          editSectionTabs.forEach((tab) => {
+            const isSelected = tab.dataset.editSectionTab === section;
+            tab.setAttribute("aria-selected", String(isSelected));
+            tab.tabIndex = isSelected ? 0 : -1;
+            if (isSelected && shouldFocus) tab.focus();
+          });
+          window.requestAnimationFrame(() => syncEditTabIndicator(true));
+          titleInput.closest(".edit-form")?.setAttribute("aria-hidden", String(section !== "details"));
+          episodeCard?.setAttribute("aria-hidden", String(section !== "episodes"));
+          if (section === "details" && previewCard && previewHome) {
+            previewHome.after(previewCard);
+            previewCard.hidden = false;
+          } else if (section === "episodes" && previewCard) {
+            const expandedAnchor = episodeList?.querySelector(".is-expanded [data-edit-preview-anchor]");
+            if (expandedAnchor) expandedAnchor.appendChild(previewCard);
+          }
+          if (workspace) workspace.scrollTo({ top: 0, left: workspace.scrollLeft });
+        }
+
+        editSectionTabs.forEach((tab, index) => {
+          tab.addEventListener("click", () => setEditSection(tab.dataset.editSectionTab));
+          tab.addEventListener("keydown", (event) => {
+            if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)) return;
+            event.preventDefault();
+            const offset = event.key === "ArrowDown" || event.key === "ArrowRight" ? 1 : -1;
+            const availableTabs = editSectionTabs.filter((item) => !item.hidden);
+            const currentIndex = availableTabs.indexOf(tab);
+            const nextTab = availableTabs[(currentIndex + offset + availableTabs.length) % availableTabs.length];
+            setEditSection(nextTab.dataset.editSectionTab, true);
+          });
+        });
+        setEditSection(initialEditTab === "episodes" ? "episodes" : "details");
+        window.addEventListener("resize", () => syncEditTabIndicator(false));
         window.addEventListener("studio:languagechange", () => {
           syncEditPageTitle();
+          window.requestAnimationFrame(() => syncEditTabIndicator(false));
           syncEditMeta();
+          syncSecondaryVideo();
           syncActionLabels();
           syncFieldLimit(titleInput, titleCount, titleError, "title");
+          syncFieldLimit(taglineInput, taglineCount, taglineError, "tagline");
           syncFieldLimit(descriptionInput, descriptionCount, descriptionError, "description");
           validateCover();
           validatePaidStatus();
@@ -6435,89 +8277,162 @@
         function renderEpisodeList() {
           if (isMovie || !episodeList) return;
           const count = item.episodes || 1;
-          const previousExpandedIndex = Number(episodeList.querySelector(".is-expanded")?.dataset.episodeIndex ?? 0);
-          episodeList.innerHTML = Array.from({ length: count }, (_, index) => {
+          const episodeIndices = Array.from({ length: count }, (_, index) => index).filter((index) => {
+            const publicationStatus = index === count - 1 ? "Draft" : index % 4 === 3 ? "Offline" : "Online";
+            return (!episodeFilters.freePaidStatus || item.freePaidStatus === episodeFilters.freePaidStatus)
+              && (!episodeFilters.publicationStatus || publicationStatus === episodeFilters.publicationStatus);
+          });
+          const totalRows = episodeIndices.length;
+          const totalPages = Math.max(1, Math.ceil(totalRows / episodePageSize));
+          episodeCurrentPage = Math.min(episodeCurrentPage, totalPages);
+          const startIndex = (episodeCurrentPage - 1) * episodePageSize;
+          const visibleEpisodeIndices = episodeIndices.slice(startIndex, startIndex + episodePageSize);
+          if (episodePaginationRange) episodePaginationRange.textContent = t("rowsTotal", totalRows);
+          if (episodePageSizeLabel) episodePageSizeLabel.textContent = t("rowsPerPageLabel", episodePageSize);
+          episodePageSizeOptions.forEach((option) => {
+            option.textContent = t("rowsPerPageLabel", Number(option.dataset.episodePageSizeOption));
+          });
+          if (episodePageNumbers) {
+            episodePageNumbers.innerHTML = Array.from({ length: totalPages }, (_, index) => {
+              const page = index + 1;
+              return `<button class="pagination-button${page === episodeCurrentPage ? " current" : ""}" type="button" aria-label="${t("pageLabel", page)}"${page === episodeCurrentPage ? ' aria-current="page"' : ""} data-episode-page-number="${page}">${page}</button>`;
+            }).join("");
+          }
+          if (episodePrevPageButton) episodePrevPageButton.disabled = episodeCurrentPage <= 1;
+          if (episodeNextPageButton) episodeNextPageButton.disabled = episodeCurrentPage >= totalPages;
+          episodeFilterTriggers.forEach((trigger) => {
+            const field = trigger.dataset.episodeFilterTrigger;
+            const value = episodeFilters[field];
+            const label = trigger.querySelector("[data-episode-filter-label]");
+            if (label) {
+              if (field === "publicationStatus" && value) label.innerHTML = renderPublicationStatus(value);
+              else label.textContent = value ? getStatusLabel(value) : t("all");
+            }
+          });
+          episodeList.innerHTML = visibleEpisodeIndices.map((index) => {
             const label = item.episodes ? t("episodeLabel", index + 1) : t("featureFilm");
-            const episodeEditUrl = `edit2.html?contentId=${encodeURIComponent(item.id)}&type=${encodeURIComponent(item.type)}&episode=${index + 1}`;
+            const episodeId = `${item.id}-E${String(index + 1).padStart(2, "0")}`;
+            const publicationStatus = index === count - 1 ? "Draft" : index % 4 === 3 ? "Offline" : "Online";
+            const updated = index === 0 ? item.updated : `Aug ${Math.max(1, 14 - index)}, 2026 ${String(18 - (index % 8)).padStart(2, "0")}:20:00`;
+            const firstPublished = `Aug ${Math.max(1, 8 - Math.floor(index / 2))}, 2026 10:${String((index * 7) % 60).padStart(2, "0")}:00`;
             return `
-              <div class="episode-list-item" data-edit-episode-item data-episode-index="${index}">
-                <div class="episode-item" role="button" tabindex="0" aria-expanded="false" data-episode-trigger>
-                  <span class="episode-label">${label}</span>
-                  <span class="episode-row-actions">
-                    <a class="spec-btn solid icon-only episode-icon-action" href="${episodeEditUrl}" aria-label="${t("editEpisodeLabel", label)}">
-                      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 20h9" />
-                        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
-                      </svg>
-                    </a>
-                    <button class="spec-btn solid icon-only episode-toggle" type="button" aria-label="${t("expand")}" aria-expanded="false" data-episode-toggle>
-                      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="m6 9 6 6 6-6" />
-                      </svg>
-                    </button>
-                  </span>
+              <article class="episode-table-row" role="row">
+                <div class="episode-main">
+                  <button class="episode-thumb ${item.type}" type="button" aria-label="${t("playEpisodePreview")}: ${label}" data-episode-preview-trigger data-episode-preview-label="${label}">
+                    <span class="episode-thumb-play" aria-hidden="true">
+                      <svg class="icon" viewBox="0 0 24 24"><path d="m8.5 6.5 9.5 5.5-9.5 5.5v-11Z" /></svg>
+                    </span>
+                  </button>
+                  <div class="episode-copy">
+                    <p class="episode-name"><span class="episode-series-title">${item.title}</span><span class="episode-number">&nbsp;· ${label}</span></p>
+                    <p class="episode-id">${episodeId}</p>
+                  </div>
                 </div>
-                <div class="episode-preview-slot" hidden data-edit-episode-preview-slot>
-                  <div data-edit-preview-anchor></div>
-                  <button class="spec-btn primary episode-edit-action" type="button">${t("episodeEditLink")}</button>
-                </div>
-              </div>
+                <span class="status-text">${getStatusLabel(item.freePaidStatus)}</span>
+                ${renderPublicationStatus(publicationStatus)}
+                ${renderEpisodeDateTime(updated)}
+                ${renderEpisodeDateTime(firstPublished)}
+                <div class="row-actions"><button class="row-action" type="button" data-subtitle-drawer-open data-episode-label="${label}">${t("editSubtitles")}</button></div>
+              </article>
             `;
           }).join("");
-
-          function setExpandedEpisode(nextIndex) {
-            const rows = Array.from(episodeList.querySelectorAll("[data-edit-episode-item]"));
-            rows.forEach((row) => {
-              const isExpanded = Number(row.dataset.episodeIndex) === nextIndex;
-              const toggle = row.querySelector("[data-episode-toggle]");
-              const trigger = row.querySelector("[data-episode-trigger]");
-              const slot = row.querySelector("[data-edit-episode-preview-slot]");
-              const previewAnchor = row.querySelector("[data-edit-preview-anchor]");
-              row.classList.toggle("is-expanded", isExpanded);
-              trigger?.setAttribute("aria-expanded", String(isExpanded));
-              toggle?.setAttribute("aria-expanded", String(isExpanded));
-              if (toggle) {
-                toggle.setAttribute("aria-label", isExpanded ? t("collapse") : t("expand"));
-              }
-              if (slot) {
-                slot.hidden = !isExpanded;
-              }
-              if (isExpanded && previewCard && previewAnchor) {
-                previewCard.hidden = false;
-                previewAnchor.appendChild(previewCard);
-              }
-            });
-            if (nextIndex < 0 && previewCard) {
-              previewCard.hidden = true;
-            }
-          }
-
-          if (episodeList.dataset.episodeEventsBound !== "true") {
-            episodeList.addEventListener("click", (event) => {
-              if (event.target.closest("a")) return;
-              const trigger = event.target.closest("[data-episode-trigger]");
-              if (!trigger) return;
-              const row = trigger.closest("[data-edit-episode-item]");
-              if (!row) return;
-              const nextIndex = trigger?.getAttribute("aria-expanded") === "true" ? -1 : Number(row.dataset.episodeIndex);
-              setExpandedEpisode(nextIndex);
-            });
-
-            episodeList.addEventListener("keydown", (event) => {
-              if (!["Enter", " "].includes(event.key)) return;
-              const trigger = event.target.closest("[data-episode-trigger]");
-              if (!trigger) return;
-              event.preventDefault();
-              const row = trigger.closest("[data-edit-episode-item]");
-              if (!row) return;
-              const nextIndex = trigger.getAttribute("aria-expanded") === "true" ? -1 : Number(row.dataset.episodeIndex);
-              setExpandedEpisode(nextIndex);
-            });
-            episodeList.dataset.episodeEventsBound = "true";
-          }
-
-          setExpandedEpisode(Math.min(previousExpandedIndex, count - 1));
+          window.requestAnimationFrame(syncEpisodeStickyColumns);
         }
+
+        function closeEpisodeFilterMenus() {
+          episodeFilterTriggers.forEach((trigger) => trigger.setAttribute("aria-expanded", "false"));
+          document.querySelectorAll("[data-episode-filter-menu]").forEach((menu) => { menu.hidden = true; });
+        }
+
+        episodeFilterTriggers.forEach((trigger) => trigger.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const menu = document.querySelector(`[data-episode-filter-menu="${trigger.dataset.episodeFilterTrigger}"]`);
+          const shouldOpen = menu?.hidden;
+          closeEpisodeFilterMenus();
+          if (menu && shouldOpen) {
+            menu.hidden = false;
+            trigger.setAttribute("aria-expanded", "true");
+          }
+        }));
+
+        episodeFilterOptions.forEach((option) => option.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const field = option.dataset.episodeFilterOption;
+          episodeFilters[field] = option.dataset.value;
+          episodeFilterOptions.filter((item) => item.dataset.episodeFilterOption === field).forEach((item) => {
+            item.setAttribute("aria-selected", String(item === option));
+          });
+          episodeCurrentPage = 1;
+          closeEpisodeFilterMenus();
+          renderEpisodeList();
+        }));
+
+        function closeEpisodePageSizeMenu() {
+          if (!episodePageSizeSelect || !episodePageSizeTrigger || !episodePageSizeMenu) return;
+          episodePageSizeSelect.classList.remove("open");
+          episodePageSizeTrigger.setAttribute("aria-expanded", "false");
+          episodePageSizeMenu.hidden = true;
+        }
+
+        episodePageSizeTrigger?.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const shouldOpen = episodePageSizeMenu.hidden;
+          closeEpisodePageSizeMenu();
+          if (shouldOpen) {
+            episodePageSizeSelect.classList.add("open");
+            episodePageSizeTrigger.setAttribute("aria-expanded", "true");
+            episodePageSizeMenu.hidden = false;
+          }
+        });
+
+        episodePageSizeOptions.forEach((option) => option.addEventListener("click", (event) => {
+          event.stopPropagation();
+          episodePageSize = Number(option.dataset.episodePageSizeOption);
+          episodeCurrentPage = 1;
+          episodePageSizeOptions.forEach((item) => {
+            const selected = item === option;
+            item.classList.toggle("selected", selected);
+            item.setAttribute("aria-checked", String(selected));
+          });
+          closeEpisodePageSizeMenu();
+          renderEpisodeList();
+        }));
+
+        episodePageNumbers?.addEventListener("click", (event) => {
+          const button = event.target.closest("[data-episode-page-number]");
+          if (!button) return;
+          episodeCurrentPage = Number(button.dataset.episodePageNumber);
+          renderEpisodeList();
+        });
+        episodePrevPageButton?.addEventListener("click", () => {
+          episodeCurrentPage = Math.max(1, episodeCurrentPage - 1);
+          renderEpisodeList();
+        });
+        episodeNextPageButton?.addEventListener("click", () => {
+          episodeCurrentPage += 1;
+          renderEpisodeList();
+        });
+        episodePageSizeSelect?.addEventListener("click", (event) => event.stopPropagation());
+        document.addEventListener("click", closeEpisodePageSizeMenu);
+        document.addEventListener("click", closeEpisodeFilterMenus);
+
+        function syncEpisodeStickyColumns() {
+          if (!episodeCard || !episodeTableScroll) return;
+          const scrollLeft = episodeTableScroll.scrollLeft;
+          const isAtEnd = scrollLeft + episodeTableScroll.clientWidth >= episodeTableScroll.scrollWidth - 1;
+          const cardRect = episodeCard.getBoundingClientRect();
+          const firstHeaderCell = episodeCard.querySelector(".episode-table-header > :first-child");
+          const lastHeaderCell = episodeCard.querySelector(".episode-table-header > :last-child");
+          if (firstHeaderCell && lastHeaderCell) {
+            episodeCard.style.setProperty("--episode-sticky-first-edge", `${firstHeaderCell.getBoundingClientRect().right - cardRect.left}px`);
+            episodeCard.style.setProperty("--episode-sticky-last-edge", `${lastHeaderCell.getBoundingClientRect().left - cardRect.left}px`);
+          }
+          episodeCard.classList.toggle("is-scrolled-x", scrollLeft > 0);
+          episodeCard.classList.toggle("is-scroll-end", isAtEnd);
+        }
+
+        episodeTableScroll?.addEventListener("scroll", () => window.requestAnimationFrame(syncEpisodeStickyColumns), { passive: true });
+        window.addEventListener("resize", syncEpisodeStickyColumns);
         renderEpisodeList();
 
         function setRatingMenuOpen(isOpen) {
@@ -6608,6 +8523,7 @@
         }
 
         syncFieldLimit(titleInput, titleCount, titleError, "title");
+        syncFieldLimit(taglineInput, taglineCount, taglineError, "tagline");
         syncFieldLimit(descriptionInput, descriptionCount, descriptionError, "description");
         initRatingSelect();
         initRegionSelectAll();
@@ -6618,7 +8534,20 @@
         validateRegions();
         copyVideoLinkButton?.addEventListener("click", copyVideoLink);
         saveAction?.addEventListener("click", () => handlePrimaryAction(t("saveSuccess")));
-        publishAction?.addEventListener("click", () => handlePrimaryAction(t("publishSuccess")));
+        function submitPublication(destination = "") {
+          if (!isFormDirty() || !validateRequiredForm(true)) return;
+          const shell = document.querySelector(".shell");
+          if (publishLoadingTip) publishLoadingTip.hidden = false;
+          shell?.classList.add("is-loading", "is-publishing");
+          window.setTimeout(() => {
+            commitFormState();
+            shell?.classList.remove("is-loading", "is-publishing");
+            if (publishLoadingTip) publishLoadingTip.hidden = true;
+            showSubtitleMessage(t("publishReviewSuccess"), "success");
+            if (destination) window.setTimeout(() => { window.location.href = destination; }, 900);
+          }, 1500);
+        }
+        publishAction?.addEventListener("click", () => submitPublication());
         resetAction?.addEventListener("click", () => {
           if (!isFormDirty()) return;
           restoreInitialFormState();
@@ -6628,12 +8557,21 @@
           syncFieldLimit(titleInput, titleCount, titleError, "title");
           syncCoverTitlesFromAlbumTitle();
           syncSourceTranslation("title");
+          syncSourceTag(titleSourceTag, "manual");
+          syncActionDirtyState();
+        });
+
+        taglineInput.addEventListener("input", () => {
+          syncFieldLimit(taglineInput, taglineCount, taglineError, "tagline");
+          syncSourceTranslation("tagline");
+          syncSourceTag(taglineSourceTag, "manual");
           syncActionDirtyState();
         });
 
         descriptionInput.addEventListener("input", () => {
           syncFieldLimit(descriptionInput, descriptionCount, descriptionError, "description");
           syncSourceTranslation("description");
+          syncSourceTag(descriptionSourceTag, "manual");
           syncActionDirtyState();
         });
 
@@ -6684,18 +8622,34 @@
             description: "Una comedia dramatica nocturna sobre el giro clave antes del estreno del sexto episodio."
           }
         ];
+        translationEntries.forEach((entry, index) => {
+          entry.tagline = index === 0 ? taglineInput.value : Array.from(entry.description).slice(0, 40).join("");
+        });
         const generatedTranslationEntries = translationEntries.map((entry) => ({
           title: entry.title,
+          tagline: entry.tagline,
           description: entry.description
         }));
+        let activeTranslationIndex = 0;
+        const translationSources = translationEntries.map(() => ({ title: "ai", tagline: "ai", description: "ai", cover: "ai" }));
+        const baseCoverStyles = coverSlots.map((slot) => slot.querySelector(".cover-art")?.getAttribute("style") || "");
+        const languageCoverStates = translationEntries.map((entry) =>
+          coverSlots.map((slot, index) => ({
+            title: entry.title,
+            style: baseCoverStyles[index] || "",
+            uploaded: false
+          }))
+        );
         getTranslationState = () => translationEntries.map((entry) => ({
           title: entry.title,
+          tagline: entry.tagline,
           description: entry.description
         }));
         restoreTranslationState = (entries = []) => {
           entries.forEach((entry, index) => {
             if (!translationEntries[index]) return;
             translationEntries[index].title = entry.title;
+            translationEntries[index].tagline = entry.tagline;
             translationEntries[index].description = entry.description;
           });
           if (!translationModal.hidden) {
@@ -6704,14 +8658,99 @@
         };
 
         function syncSourceTranslation(fieldKey) {
-          const value = fieldKey === "description" ? descriptionInput.value : titleInput.value;
-          translationEntries[0][fieldKey] = value;
-          generatedTranslationEntries[0][fieldKey] = value;
+          const value = fieldKey === "description" ? descriptionInput.value : fieldKey === "tagline" ? taglineInput.value : titleInput.value;
+          translationEntries[activeTranslationIndex][fieldKey] = value;
+          translationSources[activeTranslationIndex][fieldKey] = "manual";
           if (translationModal.hidden || currentTranslationField !== fieldKey) return;
           const editingRow = translationList.querySelector(".translation-row.is-editing");
           const editingIndex = editingRow ? Number(editingRow.dataset.translationIndex) : -1;
           renderTranslations(editingIndex);
         }
+
+        function syncSourceTag(tag, source) {
+          if (!tag) return;
+          const isManual = source === "manual";
+          tag.classList.toggle("manual", isManual);
+          tag.innerHTML = isManual
+            ? '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg><span>人工</span>'
+            : '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4 5 5L8 21l-5-5L15 4Z" /><path d="m6 3 .7 1.3L8 5l-1.3.7L6 7l-.7-1.3L4 5l1.3-.7L6 3Z" /><path d="m19 15 .7 1.3 1.3.7-1.3.7L19 19l-.7-1.3L17 17l1.3-.7L19 15Z" /></svg><span>AI生成</span>';
+        }
+
+        function saveActiveLanguageCoverState() {
+          languageCoverStates[activeTranslationIndex] = coverSlots.map((slot) => ({
+            title: slot.dataset.coverTitleValue || titleInput.value,
+            style: slot.querySelector(".cover-art")?.getAttribute("style") || "",
+            uploaded: slot.dataset.coverUploaded === "true"
+          }));
+        }
+
+        function loadContentLanguage(nextIndex) {
+          if (!translationEntries[nextIndex] || nextIndex === activeTranslationIndex) return;
+          translationEntries[activeTranslationIndex].title = titleInput.value;
+          translationEntries[activeTranslationIndex].tagline = taglineInput.value;
+          translationEntries[activeTranslationIndex].description = descriptionInput.value;
+          saveActiveLanguageCoverState();
+          closeCoverTitlePanel();
+          activeTranslationIndex = nextIndex;
+          const entry = translationEntries[nextIndex];
+          titleInput.value = entry.title;
+          taglineInput.value = entry.tagline;
+          descriptionInput.value = entry.description;
+          previewTitle.textContent = entry.title;
+          languageCoverStates[nextIndex].forEach((state, index) => {
+            const slot = coverSlots[index];
+            if (!slot) return;
+            slot.dataset.coverTitleValue = state.title;
+            slot.dataset.coverUploaded = String(state.uploaded);
+            const art = slot.querySelector(".cover-art");
+            if (art) art.setAttribute("style", state.style);
+            syncCoverSlotTitle(slot, state.title);
+          });
+          syncFieldLimit(titleInput, titleCount, titleError, "title");
+          syncFieldLimit(taglineInput, taglineCount, taglineError, "tagline");
+          syncFieldLimit(descriptionInput, descriptionCount, descriptionError, "description");
+          syncSourceTag(titleSourceTag, translationSources[nextIndex].title);
+          syncSourceTag(taglineSourceTag, translationSources[nextIndex].tagline);
+          syncSourceTag(descriptionSourceTag, translationSources[nextIndex].description);
+          syncSourceTag(coverSourceTag, translationSources[nextIndex].cover);
+        }
+
+        function closeContentLanguageMenu() {
+          if (!contentLanguageMenu || !contentLanguageTrigger) return;
+          contentLanguageMenu.hidden = true;
+          contentLanguageTrigger.setAttribute("aria-expanded", "false");
+        }
+
+        contentLanguageTrigger?.addEventListener("click", () => {
+          const willOpen = contentLanguageMenu.hidden;
+          contentLanguageMenu.hidden = !willOpen;
+          contentLanguageTrigger.setAttribute("aria-expanded", String(willOpen));
+        });
+
+        contentLanguageOptions.forEach((option) => {
+          option.addEventListener("click", () => {
+            const nextIndex = Number(option.dataset.contentLanguageOption);
+            loadContentLanguage(nextIndex);
+            contentLanguageValue.textContent = option.textContent.trim();
+            contentLanguageOptions.forEach((item) => {
+              item.setAttribute("aria-selected", String(item === option));
+            });
+            closeContentLanguageMenu();
+            contentLanguageTrigger.focus();
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (contentLanguageFilter && !contentLanguageFilter.contains(event.target)) {
+            closeContentLanguageMenu();
+          }
+        });
+
+        contentLanguageTrigger?.addEventListener("keydown", (event) => {
+          if (event.key === "Escape") {
+            closeContentLanguageMenu();
+          }
+        });
 
         function escapeHtml(value) {
           return String(value)
@@ -6862,19 +8901,6 @@
                       <input class="cover-file-input" type="file" accept="image/*" data-poster-file />
                     </div>
                     <span class="poster-preview-label">${t("coverPortrait")}</span>
-                  </div>
-                  <div class="poster-preview-item square" data-poster-item data-poster-title-value="${escapeHtml(entry.title)}" data-poster-default-title="${escapeHtml(entry.title)}">
-                    <div class="poster-frame">
-                      <span class="poster-art" aria-hidden="true">
-                        <span class="poster-title-art" data-poster-title="${escapeHtml(entry.title)}">${escapeHtml(entry.title)}</span>
-                      </span>
-                      <div class="cover-overlay" aria-label="${languageLabel} 1:1 poster actions">
-                        <button class="cover-hover-action" type="button" data-poster-upload>${t("reupload")}</button>
-                        <button class="cover-hover-action" type="button" data-poster-title-toggle>${t("titleWrap")}</button>
-                      </div>
-                      <input class="cover-file-input" type="file" accept="image/*" data-poster-file />
-                    </div>
-                    <span class="poster-preview-label">${t("coverSquare")}</span>
                   </div>
                 </div>
                 <div class="cover-title-panel poster-title-panel" hidden data-poster-title-panel>
@@ -7194,6 +9220,277 @@
           }
         });
 
+        function closeEpisodePreviewModal() {
+          if (!episodePreviewModal) return;
+          episodePreviewModal.hidden = true;
+          episodePreviewModal.classList.remove("subtitle-preview-active");
+          if (previewLanguageSelect) previewLanguageSelect.hidden = true;
+          if (previewLanguageMenu) previewLanguageMenu.hidden = true;
+          previewLanguageTrigger?.setAttribute("aria-expanded", "false");
+          if (episodePreviewCaption) episodePreviewCaption.hidden = true;
+          episodePreviewVideo?.pause();
+          if (episodePreviewVideo) episodePreviewVideo.currentTime = 0;
+        }
+
+        const previewSubtitleSamples = {
+          simplifiedChinese: "月光下的餐厅，今晚终于重新开门了。",
+          english: "The Moonlit Bistro is finally open again tonight.",
+          thai: "ร้านอาหารใต้แสงจันทร์กลับมาเปิดอีกครั้งในคืนนี้",
+          malay: "Moonlit Bistro akhirnya dibuka semula malam ini."
+        };
+
+        function setPreviewSubtitleLanguage(language) {
+          const nextLanguage = previewSubtitleSamples[language] ? language : "simplifiedChinese";
+          if (previewLanguageValue) previewLanguageValue.textContent = t(nextLanguage);
+          if (episodePreviewCaption) {
+            episodePreviewCaption.textContent = previewSubtitleSamples[nextLanguage];
+            episodePreviewCaption.hidden = false;
+          }
+          previewLanguageOptions.forEach((option) => option.setAttribute("aria-selected", String(option.dataset.previewLanguageOption === nextLanguage)));
+        }
+
+        previewLanguageTrigger?.addEventListener("click", (event) => {
+          event.stopPropagation();
+          const shouldOpen = previewLanguageMenu?.hidden;
+          if (previewLanguageMenu) previewLanguageMenu.hidden = !shouldOpen;
+          previewLanguageTrigger.setAttribute("aria-expanded", String(Boolean(shouldOpen)));
+        });
+
+        previewLanguageOptions.forEach((option) => option.addEventListener("click", () => {
+          setPreviewSubtitleLanguage(option.dataset.previewLanguageOption);
+          if (previewLanguageMenu) previewLanguageMenu.hidden = true;
+          previewLanguageTrigger?.setAttribute("aria-expanded", "false");
+          previewLanguageTrigger?.focus();
+        }));
+
+        function openSubtitleDrawer(trigger) {
+          if (!subtitleDrawerOverlay || !subtitleDrawer) return;
+          subtitleDrawerReturnFocus = trigger;
+          subtitleDrawerDirty = false;
+          subtitleDrawerSnapshot = subtitleTableBody?.innerHTML || "";
+          const episodeLabel = trigger.dataset.episodeLabel || t("episodeLabel", 1);
+          activeSubtitleEpisodeLabel = episodeLabel;
+          if (subtitleDrawerDescription) subtitleDrawerDescription.textContent = `${item.title} · ${episodeLabel}`;
+          subtitleDrawerOverlay.setAttribute("aria-hidden", "false");
+          window.requestAnimationFrame(() => {
+            subtitleDrawerOverlay.classList.add("is-open");
+            subtitleDrawer.focus();
+          });
+        }
+
+        function closeSubtitleDrawer() {
+          if (!subtitleDrawerOverlay?.classList.contains("is-open")) return;
+          subtitleDrawerOverlay.classList.remove("is-open");
+          subtitleDrawerOverlay.setAttribute("aria-hidden", "true");
+          const returnFocus = subtitleDrawerReturnFocus;
+          window.setTimeout(() => returnFocus?.focus(), 200);
+        }
+
+        function showSubtitleMessage(content, type = "error") {
+          if (!subtitleMessagePortal) return;
+          const iconPath = type === "success" ? '<path d="m4 12 5 5L20 6" />' : '<path d="M7 7l10 10M17 7 7 17" />';
+          subtitleMessagePortal.innerHTML = `<div class="subtitle-feedback-message ${type}" role="${type === "error" ? "alert" : "status"}"><span class="message-icon" aria-hidden="true"><svg viewBox="0 0 24 24">${iconPath}</svg></span><span>${content}</span></div>`;
+          window.setTimeout(() => { subtitleMessagePortal.innerHTML = ""; }, 3200);
+        }
+
+        function hideSubtitleConfirm() {
+          if (!subtitleConfirm) return;
+          subtitleConfirm.classList.remove("is-open");
+          window.setTimeout(() => { if (!subtitleConfirm.classList.contains("is-open")) subtitleConfirm.hidden = true; }, 300);
+        }
+
+        function showSubtitleConfirm({ title, description, actions }) {
+          if (!subtitleConfirm || !subtitleConfirmFooter) return;
+          subtitleConfirmTitle.textContent = title;
+          subtitleConfirmDescription.textContent = description;
+          subtitleConfirmFooter.innerHTML = "";
+          actions.forEach(({ label, className, action, deferClose = false }) => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.className = className;
+            button.textContent = label;
+            button.addEventListener("click", () => {
+              if (!deferClose) hideSubtitleConfirm();
+              action?.(button);
+            });
+            subtitleConfirmFooter.append(button);
+          });
+          subtitleConfirm.hidden = false;
+          window.requestAnimationFrame(() => {
+            subtitleConfirm.classList.add("is-open");
+            subtitleConfirm.querySelector(".subtitle-confirm-dialog")?.focus();
+          });
+        }
+
+        subtitleConfirmClose?.addEventListener("click", hideSubtitleConfirm);
+
+        function requestCloseSubtitleDrawer() {
+          if (!subtitleDrawerDirty) { closeSubtitleDrawer(); return; }
+          showSubtitleConfirm({
+            title: t("unsavedSubtitleTitle"),
+            description: t("unsavedSubtitleDescription"),
+            actions: [
+              { label: t("confirmExit"), className: "spec-btn secondary", action: () => { if (subtitleTableBody) subtitleTableBody.innerHTML = subtitleDrawerSnapshot; subtitleDrawerDirty = false; closeSubtitleDrawer(); } },
+              { label: t("saveAndClose"), className: "spec-btn primary", deferClose: true, action: (button) => saveSubtitleChanges(button, true) }
+            ]
+          });
+        }
+
+        function manualSourceTag() {
+          return `<span class="content-source-tag manual"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg><span>${t("manualLabel")}</span></span>`;
+        }
+
+        function escapeSubtitleText(value) {
+          return String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
+        }
+
+        function setSubtitleRowUploaded(row, file) {
+          const cells = row?.cells;
+          if (!cells) return;
+          cells[1].innerHTML = `<span class="subtitle-file-name">${escapeSubtitleText(file.name)}</span>`;
+          cells[2].innerHTML = manualSourceTag();
+          cells[3].innerHTML = `<span class="subtitle-upload-status">${t("uploaded")}</span>`;
+          cells[4].innerHTML = `<span class="subtitle-row-actions"><button class="row-action small" type="button" data-subtitle-upload-row>${t("modify")}</button><button class="row-action subtitle-preview-action" type="button" data-subtitle-preview aria-label="${t("subtitlePreview")}"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8.5 6.5 9.5 5.5-9.5 5.5v-11Z" /></svg></button><button class="spec-btn danger-secondary small" type="button" data-subtitle-delete-row>${t("delete")}</button></span>`;
+          subtitleDrawerDirty = true;
+        }
+
+        function uploadSubtitleFile(row, file) {
+          const extension = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
+          if (![".srt", ".vtt", ".ass", ".ssa"].includes(extension)) { showSubtitleMessage(t("invalidSubtitleFormat")); return; }
+          subtitleDrawerDirty = true;
+          const statusCell = row.cells[3];
+          statusCell.innerHTML = `<span class="subtitle-upload-progress"><span>${t("uploading")} 0%</span><span class="subtitle-progress-track"><i class="subtitle-progress-bar"></i></span></span>`;
+          let progress = 0;
+          const timer = window.setInterval(() => {
+            progress = Math.min(100, progress + 20);
+            const label = statusCell.querySelector(".subtitle-upload-progress > span");
+            const bar = statusCell.querySelector(".subtitle-progress-bar");
+            if (label) label.textContent = `${t("uploading")} ${progress}%`;
+            if (bar) bar.style.width = `${progress}%`;
+            if (progress < 100) return;
+            window.clearInterval(timer);
+            const language = row.querySelector("td[data-i18n]")?.dataset.i18n;
+            if (language === "indonesian" || file.name.toLowerCase().includes("fail")) {
+              statusCell.textContent = "—";
+              showSubtitleMessage(t("uploadFailedRetry"));
+              return;
+            }
+            setSubtitleRowUploaded(row, file);
+          }, 180);
+        }
+
+        function findSubtitleRowForFile(file) {
+          const codes = { simplifiedChinese: ["zh-cn"], english: ["en-us", ".en."], traditionalChinese: ["zh-tw", "zh-hk"], thai: ["th-th", ".th."], malay: ["ms-my", ".ms."], indonesian: ["id-id", ".id."], vietnamese: ["vi-vn", ".vi."], korean: ["ko-kr", ".ko."], japanese: ["ja-jp", ".ja."], spanish: ["es-es", ".es."] };
+          const name = file.name.toLowerCase();
+          const key = Object.keys(codes).find((language) => codes[language].some((code) => name.includes(code)));
+          return key ? subtitleTableBody?.querySelector(`td[data-i18n="${key}"]`)?.closest("tr") : null;
+        }
+
+        episodeList?.addEventListener("click", (event) => {
+          const trigger = event.target.closest("[data-subtitle-drawer-open]");
+          if (trigger) openSubtitleDrawer(trigger);
+        });
+        subtitleDrawerCloseButtons.forEach((button) => button.addEventListener("click", requestCloseSubtitleDrawer));
+        function saveSubtitleChanges(button, closeConfirm = false) {
+          if (!button || button.disabled) return;
+          const hadChanges = subtitleDrawerDirty;
+          button.disabled = true;
+          button.classList.add("subtitle-drawer-save-loading");
+          button.innerHTML = `<span class="subtitle-button-spinner" aria-hidden="true"></span><span>${t("saving")}</span>`;
+          window.setTimeout(() => {
+            subtitleDrawerDirty = false;
+            if (hadChanges) markDynamicDirty();
+            if (closeConfirm) hideSubtitleConfirm();
+            closeSubtitleDrawer();
+            button.disabled = false;
+            button.classList.remove("subtitle-drawer-save-loading");
+            button.textContent = closeConfirm ? t("saveAndClose") : t("save");
+            window.setTimeout(() => showSubtitleMessage(t("saveSuccess"), "success"), closeConfirm ? 300 : 200);
+          }, 1500);
+        }
+
+        subtitleDrawerSave?.addEventListener("click", () => saveSubtitleChanges(subtitleDrawerSave));
+
+        const guardedContentLinks = [
+          document.querySelector(".edit-backbutton[href='content.html']"),
+          document.querySelector(".sidebar .nav-link[href='content.html']")
+        ].filter(Boolean);
+
+        guardedContentLinks.forEach((link) => link.addEventListener("click", (event) => {
+          if (!isFormDirty()) return;
+          event.preventDefault();
+          const destination = link.href;
+          const shouldPublishBeforeLeaving = hidesSaveAction;
+          showSubtitleConfirm({
+            title: t("unpublishedChangesTitle"),
+            description: t("unpublishedChangesDescription"),
+            actions: [
+              { label: t("confirmExit"), className: "spec-btn secondary", action: () => { window.location.href = destination; } },
+              { label: shouldPublishBeforeLeaving ? t("publish") : t("saveChanges"), className: "spec-btn primary", action: () => {
+                if (shouldPublishBeforeLeaving) {
+                  submitPublication(destination);
+                  return;
+                }
+                if (!validateRequiredForm(true)) return;
+                commitFormState();
+                showSubtitleMessage(t("saveSuccess"), "success");
+                window.setTimeout(() => { window.location.href = destination; }, 700);
+              } }
+            ]
+          });
+        }));
+        subtitleBatchUpload?.addEventListener("click", () => { activeSubtitleUploadRow = null; subtitleFileInput?.setAttribute("multiple", ""); subtitleFileInput?.click(); });
+        subtitleTableBody?.addEventListener("click", (event) => {
+          const previewButton = event.target.closest("[data-subtitle-preview]");
+          if (previewButton && episodePreviewModal) {
+            const row = previewButton.closest("tr");
+            const languageKey = row?.cells[0]?.dataset.i18n || "simplifiedChinese";
+            if (episodePreviewTitle) episodePreviewTitle.textContent = `${t("episodePreview")} · ${activeSubtitleEpisodeLabel || t("episodeLabel", 1)}`;
+            episodePreviewModal.classList.add("subtitle-preview-active");
+            if (previewLanguageSelect) previewLanguageSelect.hidden = false;
+            setPreviewSubtitleLanguage(languageKey);
+            episodePreviewModal.hidden = false;
+            episodePreviewVideo?.play().catch(() => {});
+            return;
+          }
+          const uploadButton = event.target.closest("[data-subtitle-upload-row]");
+          if (uploadButton) { activeSubtitleUploadRow = uploadButton.closest("tr"); subtitleFileInput?.removeAttribute("multiple"); subtitleFileInput?.click(); return; }
+          const deleteButton = event.target.closest("[data-subtitle-delete-row]");
+          if (!deleteButton) return;
+          const row = deleteButton.closest("tr");
+          showSubtitleConfirm({ title: t("deleteSubtitleTitle"), description: t("deleteSubtitleDescription"), actions: [
+            { label: t("cancel"), className: "spec-btn secondary" },
+            { label: t("delete"), className: "spec-btn danger", action: () => { row.cells[1].textContent = "—"; row.cells[2].textContent = "—"; row.cells[3].textContent = "—"; row.cells[4].innerHTML = `<button class="row-action small" type="button" data-subtitle-upload-row>${t("upload")}</button>`; subtitleDrawerDirty = true; } }
+          ] });
+        });
+        subtitleFileInput?.addEventListener("change", () => {
+          Array.from(subtitleFileInput.files || []).forEach((file) => {
+            const row = activeSubtitleUploadRow || findSubtitleRowForFile(file);
+            if (row) uploadSubtitleFile(row, file); else showSubtitleMessage(t("invalidSubtitleFormat"));
+          });
+          subtitleFileInput.value = "";
+        });
+
+        episodeList?.addEventListener("click", (event) => {
+          const trigger = event.target.closest("[data-episode-preview-trigger]");
+          if (!trigger || !episodePreviewModal) return;
+          if (episodePreviewTitle) episodePreviewTitle.textContent = `${t("episodePreview")} · ${trigger.dataset.episodePreviewLabel}`;
+          if (previewLanguageSelect) previewLanguageSelect.hidden = false;
+          setPreviewSubtitleLanguage("simplifiedChinese");
+          episodePreviewModal.hidden = false;
+          episodePreviewVideo?.play().catch(() => {});
+        });
+        episodePreviewClose?.addEventListener("click", closeEpisodePreviewModal);
+        episodePreviewModal?.addEventListener("click", (event) => {
+          if (event.target === episodePreviewModal) closeEpisodePreviewModal();
+        });
+        document.addEventListener("click", (event) => {
+          if (!event.target.closest("[data-preview-language-select]")) {
+            if (previewLanguageMenu) previewLanguageMenu.hidden = true;
+            previewLanguageTrigger?.setAttribute("aria-expanded", "false");
+          }
+        });
+
         translationClose.addEventListener("click", closeTranslationModal);
         translationModal.addEventListener("click", (event) => {
           if (event.target === translationModal) {
@@ -7250,6 +9547,12 @@
           }
           if (event.key === "Escape" && coverTranslationModal && !coverTranslationModal.hidden) {
             closeCoverTranslationModal();
+          }
+          if (event.key === "Escape" && episodePreviewModal && !episodePreviewModal.hidden) {
+            closeEpisodePreviewModal();
+          }
+          if (event.key === "Escape" && subtitleDrawerOverlay?.classList.contains("is-open")) {
+            requestCloseSubtitleDrawer();
           }
         });
         commitFormState();

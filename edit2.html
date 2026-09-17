@@ -977,7 +977,6 @@
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface);
-        box-shadow: 0 1px 2px rgba(20, 23, 26, 0.04);
       }
 
       .video-list-header-scroll {
@@ -1548,47 +1547,6 @@
         padding: 28px 0 120px;
       }
 
-      .breadcrumb {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 8px;
-        margin: 0;
-        padding: 0;
-        color: var(--color-text-disabled);
-        font-size: var(--text-caption-size);
-        line-height: var(--text-caption-line-height);
-        font-weight: var(--text-body-medium-weight);
-        list-style: none;
-      }
-
-      .breadcrumb li,
-      .breadcrumb a {
-        min-height: 20px;
-        display: inline-flex;
-        align-items: center;
-      }
-
-      .breadcrumb a {
-        color: var(--color-text-disabled);
-        text-decoration: none;
-      }
-
-      .breadcrumb a:hover {
-        color: var(--color-text-tertiary);
-      }
-
-      .breadcrumb li[aria-current="page"] {
-        color: var(--text);
-      }
-
-      .breadcrumb-separator {
-        display: block;
-        width: 14px;
-        height: 14px;
-        color: var(--color-text-disabled);
-      }
-
       .edit-heading-row {
         display: flex;
         align-items: center;
@@ -1725,7 +1683,6 @@
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface);
-        box-shadow: 0 1px 2px rgba(20, 23, 26, 0.04);
       }
 
       .form-section {
@@ -3684,8 +3641,6 @@
       html[data-theme="dark"] .content-menu-link,
       html[data-theme="dark"] .language-option,
       html[data-theme="dark"] .account-option,
-      html[data-theme="dark"] .breadcrumb,
-      html[data-theme="dark"] .breadcrumb a,
       html[data-theme="dark"] .edit-action,
       html[data-theme="dark"] .multilingual-button,
       html[data-theme="dark"] .field-label,
@@ -3997,17 +3952,6 @@
 
       html[data-theme="dark"] .status-pill.draft {
         color: var(--color-text-secondary);
-      }
-
-      html[data-theme="dark"] .breadcrumb,
-      html[data-theme="dark"] .breadcrumb a,
-      html[data-theme="dark"] .breadcrumb-separator {
-        color: var(--color-text-disabled);
-      }
-
-      html[data-theme="dark"] .breadcrumb a:hover,
-      html[data-theme="dark"] .breadcrumb li[aria-current="page"] {
-        color: var(--color-text-primary);
       }
 
       html[data-theme="dark"] .preview-column .preview-copy-button {
@@ -4470,10 +4414,6 @@
           padding: 0 0 80px;
         }
 
-        .breadcrumb {
-          order: 1;
-        }
-
         .episode-tabs-frame {
           order: 2;
           min-width: 0;
@@ -4760,24 +4700,6 @@
       </div>
       <section class="workspace" aria-label="Workspace">
         <div class="workspace-inner">
-          <nav aria-label="Breadcrumb">
-            <ol class="breadcrumb">
-              <li><a href="content.html" data-i18n="content">Content</a></li>
-              <li aria-hidden="true">
-                <svg class="breadcrumb-separator" viewBox="0 0 24 24">
-                  <path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </li>
-              <li><a href="edit.html" data-edit-album-link data-i18n="editAlbumDetails">Edit Album details</a></li>
-              <li aria-hidden="true">
-                <svg class="breadcrumb-separator" viewBox="0 0 24 24">
-                  <path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-              </li>
-              <li aria-current="page" data-edit-page-title>Edit Episode 01 details</li>
-            </ol>
-          </nav>
-
           <nav class="episode-tabs-frame" aria-label="Episode edit navigation">
             <ul class="content-menu" role="tablist" data-episode-tabs></ul>
           </nav>
@@ -6534,7 +6456,6 @@
         const publicationNode = document.querySelector("[data-edit-publication]");
         const videoLinkNode = document.querySelector("[data-edit-video-link]");
         const fileNameNode = document.querySelector("[data-edit-file-name]");
-        const editAlbumLink = document.querySelector("[data-edit-album-link]");
         const copyVideoLinkButton = document.querySelector("[data-copy-video-link]");
         const copyTooltip = document.querySelector("[data-copy-tooltip]");
         const subtitleAddOpen = document.querySelector("[data-subtitle-add-open]");
@@ -6872,10 +6793,10 @@
           return `
             <svg class="spec-icon" viewBox="0 0 24 24" aria-hidden="true">
               <path d="M3 6h18" />
-              <path d="M8 6V4h8v2" />
-              <path d="m19 6-1 14H6L5 6" />
-              <path d="M10 11v5" />
-              <path d="M14 11v5" />
+              <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+              <path d="M10 11v6" />
+              <path d="M14 11v6" />
             </svg>
           `;
         }
@@ -7548,9 +7469,6 @@
         });
         formatNode.textContent = item.format || (item.type === "short" ? "1080 x 1920" : "1080p");
         syncEditMeta();
-        if (editAlbumLink) {
-          editAlbumLink.href = `edit.html?contentId=${encodeURIComponent(item.id)}&type=${encodeURIComponent(item.type)}`;
-        }
         const isMovie = item.type === "movie";
         if (episodesRow) {
           episodesRow.hidden = true;

@@ -398,6 +398,7 @@ AI Coding 不得跳过目标组件 Contract，不得从截图推断已在 Contra
 - 日期与时间组件应同时照顾单值、范围、空状态和错误状态。
 - 上传组件应展示文件队列、进度、成功、失败和删除能力。
 - Button 基础变体只包含 Primary、Secondary、Brand Outline、Neutral Outline、Neutral Dashed、Text，不提供 Filled 基础变体。Secondary、Neutral Outline（灰色实线）与 Neutral Dashed（灰色虚线）的常态背景统一为 `color-text-primary` 10% 透明混合色，Hover 统一为 20%；Neutral Dashed 保留 `color-border-default` 虚线描边，适合“添加标签”等轻量创建入口。
+- Button 的 Secondary 变体统一且仅使用 `spec-btn secondary` 类名，不再提供历史别名。
 - Button Success 状态使用 Brand / Action Token 并跟随 Brand Theme：Outline 为 50% 品牌色描边，Hover 为 60% 描边与 10% 背景；Subtle 为 10% 背景，Hover 为 20%；Text Hover 为 10% 背景。透明色必须通过 `color-mix()` 生成。
 - 无边框灰色纯文字按钮和 ICON 按钮的 Hover 背景统一使用 `color-action-neutral-bg-hover`，由 `color-mix(in srgb, var(--color-text-primary) 10%, transparent)` 生成；不得直接引用 Primitive 灰阶或复用容器 Hover 色。
 - 按钮应根据任务优先级区分主按钮、次按钮、描边按钮、文本按钮、危险按钮和加载状态。
