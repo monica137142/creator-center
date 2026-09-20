@@ -846,6 +846,7 @@
       .filter-control[data-filter-field="publicationStatus"] .filter-value .status-pill {
         width: auto;
         color: var(--color-text-default);
+        font-weight: var(--text-body-medium-weight);
       }
 
       .filter-control[data-filter-field="publicationStatus"] .filter-value .status-pill .icon {
@@ -893,6 +894,15 @@
 
       .filter-option[aria-selected="true"] {
         color: var(--color-action-primary);
+      }
+
+      .episode-toolbar .filter-label {
+        font-weight: var(--text-body-weight);
+      }
+
+      .episode-toolbar .filter-value,
+      .episode-toolbar .filter-option[aria-selected="true"] {
+        font-weight: var(--text-body-medium-weight);
       }
 
       .search-control {
@@ -1168,9 +1178,8 @@
       }
 
       .video-copy {
-        width: 168px;
         min-width: 0;
-        flex: 0 1 168px;
+        flex: 1 1 0;
       }
 
       .video-title {
@@ -1178,7 +1187,7 @@
         overflow: hidden;
         color: var(--color-text-default);
         font-size: var(--text-body-size);
-        line-height: var(--text-body-line-height);
+        line-height: 20px;
         font-weight: var(--text-body-medium-weight);
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -1256,9 +1265,10 @@
         width: fit-content;
         padding: 0;
         background: transparent;
-        color: var(--color-action-primary-hover);
-        font-size: var(--text-caption-size);
-        line-height: var(--text-caption-line-height);
+        color: var(--color-action-primary);
+        font-size: var(--text-body-size);
+        line-height: var(--text-body-line-height);
+        font-weight: var(--text-body-weight);
         text-align: center;
         white-space: nowrap;
       }
@@ -1274,11 +1284,46 @@
         width: 100%;
       }
 
+      .episode-table-row > .publication-status {
+        justify-self: stretch;
+        width: 100%;
+      }
+
+      .publication-status {
+        display: grid;
+        justify-items: center;
+        gap: 2px;
+      }
+
+      .publication-status-note {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: var(--color-text-tertiary);
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+        white-space: nowrap;
+      }
+
+      .publication-status-note .icon {
+        width: 14px;
+        height: 14px;
+        stroke-width: 2;
+      }
+
+      .publication-status-note.review-pending { color: var(--color-status-warning); }
+      .publication-status-note.review-rejected { color: var(--color-status-error); }
+      .publication-status-note.review-approved { color: var(--color-status-success); }
+
       .filter-value .status-pill,
       .filter-option .status-pill {
         min-height: 20px;
         font-size: var(--text-body-size);
         line-height: var(--text-body-line-height);
+      }
+
+      .filter-control[data-filter-field="publicationStatus"] .filter-value .status-pill {
+        font-weight: var(--text-body-medium-weight);
       }
 
       .status-pill.draft {
@@ -1288,12 +1333,17 @@
 
       .status-pill.publish {
         background: transparent;
-        color: var(--color-action-primary-hover);
+        color: var(--color-action-primary);
+      }
+
+      .status-pill.publishing {
+        background: transparent;
+        color: var(--color-text-default);
       }
 
       .status-pill.offline {
         background: transparent;
-        color: var(--color-status-warning);
+        color: var(--color-text-default);
       }
 
       .status-text,
@@ -2176,6 +2226,13 @@
         content: "*";
         margin-left: 4px;
         color: var(--color-status-error);
+      }
+
+      .cover-title-hint {
+        color: var(--color-text-tertiary);
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+        font-weight: var(--text-caption-weight);
       }
 
       .field-label-row {
@@ -3146,14 +3203,7 @@
       }
 
       .video-player::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        background: var(--color-overlay-black-default);
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity var(--duration-fast) var(--easing-standard);
+        display: none;
       }
 
       .video-player:hover::after,
@@ -4042,7 +4092,7 @@
         width: min(780px, 100vw);
         height: 100%;
         display: grid;
-        grid-template-rows: auto minmax(0, 1fr) auto;
+        grid-template-rows: auto minmax(0, 1fr);
         overflow: hidden;
         background: var(--color-bg-elevated);
         box-shadow: var(--shadow-overlay);
@@ -4111,6 +4161,14 @@
         min-height: 0;
         overflow: auto;
         padding: 20px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .subtitle-drawer-body::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+        background: transparent;
       }
 
       .subtitle-drawer-tools {
@@ -4143,13 +4201,53 @@
         line-height: var(--text-caption-line-height);
       }
 
-      .subtitle-batch-upload { flex: 0 0 auto; }
+      .subtitle-batch-upload {
+        position: relative;
+        flex: 0 0 auto;
+      }
       .subtitle-batch-upload .icon { width: 16px; height: 16px; }
+
+      .subtitle-batch-upload-tooltip {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        z-index: 30;
+        width: max-content;
+        max-width: 320px;
+        padding: 5px 8px;
+        border-radius: var(--radius-small);
+        background: var(--color-bg-inverse);
+        color: var(--color-text-inverse);
+        box-shadow: var(--shadow-overlay);
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+        font-weight: var(--text-caption-weight);
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(2px);
+        transition: opacity 120ms ease, transform 120ms ease;
+      }
+
+      .subtitle-batch-upload:hover .subtitle-batch-upload-tooltip,
+      .subtitle-batch-upload:focus-visible .subtitle-batch-upload-tooltip {
+        opacity: 1;
+        transform: translateY(0);
+      }
 
       .subtitle-table-wrap {
         overflow-x: auto;
+        overflow-y: hidden;
         border: 1px solid var(--color-border-subtle);
         border-radius: var(--radius-default);
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .subtitle-table-wrap::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+        background: transparent;
       }
 
       .subtitle-table {
@@ -5247,7 +5345,7 @@
         }
       }
 
-      @media (max-width: 767px) {
+      @media (min-width: 768px) and (max-width: 767px) {
         body {
           overflow: auto;
         }
@@ -5466,21 +5564,6 @@
         <span class="brand-title" data-i18n="studio">Studio</span>
       </a>
       <div class="topbar-actions">
-        <div class="language-switch">
-          <button class="icon-button language-trigger" type="button" aria-label="Switch language" data-i18n-aria-label="switchLanguage" aria-haspopup="listbox" aria-expanded="false">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M3 12h18" />
-              <path d="M12 3c2.3 2.5 3.5 5.5 3.5 9S14.3 18.5 12 21" />
-              <path d="M12 3c-2.3 2.5-3.5 5.5-3.5 9s1.2 6.5 3.5 9" />
-            </svg>
-          </button>
-          <span class="language-tooltip" role="tooltip" data-i18n="languageTooltip">Language</span>
-          <div class="language-menu" role="listbox" aria-label="Language" data-i18n-aria-label="languageTooltip" hidden>
-            <button class="language-option" type="button" role="option" data-lang="en" aria-selected="true">English</button>
-            <button class="language-option" type="button" role="option" data-lang="zh" aria-selected="false">中文</button>
-          </div>
-        </div>
         <div class="theme-switch">
           <button class="icon-button theme-toggle" type="button" aria-label="Switch to light mode" data-theme-toggle>
             <svg class="icon theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true" data-theme-toggle-icon>
@@ -5562,7 +5645,7 @@
       <nav>
         <ul class="nav-list">
           <li><a class="nav-link" href="index.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /></svg><span data-i18n="dashboard">Home</span></a></li>
-          <li><a class="nav-link" href="content.html" aria-current="page"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m10 9 6 3-6 3V9Z" /></svg><span data-i18n="content">Content</span></a></li>
+          <li><a class="nav-link" href="content.html" aria-current="page"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="m10 9 6 3-6 3V9Z" /></svg><span data-i18n="content">Content Management</span></a></li>
           <li><a class="nav-link" href="analytics.html"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19V5" /><path d="M4 19h16" /><path d="M8 16v-5" /><path d="M12 16V8" /><path d="M16 16v-9" /></svg><span data-i18n="analytics">Analytics</span></a></li>
           <li><a class="nav-link" href="#"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" /><path d="M7 11h4" /><path d="M13 11h4" /><path d="M7 15h10" /></svg><span data-i18n="subtitles">Subtitles</span></a></li>
         </ul>
@@ -5590,34 +5673,12 @@
               </div>
             </div>
             <div class="edit-actions" aria-label="Edit actions">
-              <button class="edit-action" type="button" data-reset-action>
-                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M3 7v6h6" />
-                  <path d="M21 17a9 9 0 0 0-15-6.7L3 13" />
-                </svg>
-                <span data-reset-action-label>Undo Changes</span>
-              </button>
-              <button class="edit-action" type="button" data-save-action>
-                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" />
-                  <path d="M17 21v-8H7v8" />
-                  <path d="M7 3v5h8" />
-                </svg>
-                <span data-i18n="save">Save</span>
-              </button>
               <button class="edit-action primary" type="button" data-publish-action>
                 <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M5 12h14" />
                   <path d="m12 5 7 7-7 7" />
                 </svg>
-                <span data-publish-action-label>Publish</span>
-              </button>
-              <button class="edit-action icon-only" type="button" aria-label="More actions" data-i18n-aria-label="moreActions">
-                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                  <circle cx="5" cy="12" r="1" />
-                  <circle cx="12" cy="12" r="1" />
-                  <circle cx="19" cy="12" r="1" />
-                </svg>
+                <span data-publish-action-label>重新发布</span>
               </button>
             </div>
           </div>
@@ -5688,14 +5749,13 @@
                   </div>
                   <div class="form-field full">
                     <div class="field-label-row">
-                      <span class="field-label-group"><span class="field-label required" data-i18n="cover">Cover</span><span class="content-source-tag" data-source-tag="cover"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4 5 5L8 21l-5-5L15 4Z" /><path d="m6 3 .7 1.3L8 5l-1.3.7L6 7l-.7-1.3L4 5l1.3-.7L6 3Z" /><path d="m19 15 .7 1.3 1.3.7-1.3.7L19 19l-.7-1.3L17 17l1.3-.7L19 15Z" /></svg><span>AI生成</span></span></span>
+                      <span class="field-label-group"><span class="field-label required" data-i18n="cover">Cover</span><span class="cover-title-hint" data-i18n="coverTitleHint">The title in the poster must match the title</span><span class="content-source-tag" data-source-tag="cover"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4 5 5L8 21l-5-5L15 4Z" /><path d="m6 3 .7 1.3L8 5l-1.3.7L6 7l-.7-1.3L4 5l1.3-.7L6 3Z" /><path d="m19 15 .7 1.3 1.3.7-1.3.7L19 19l-.7-1.3L17 17l1.3-.7L19 15Z" /></svg><span>AI生成</span></span></span>
                     </div>
                     <div class="cover-uploader" data-cover-uploader>
                       <div class="cover-preview-grid" aria-label="Cover previews">
                         <div class="cover-slot" data-cover-slot>
                           <div class="cover-preview landscape" aria-label="16:9 landscape cover preview">
                             <span class="cover-art" aria-hidden="true">
-                              <span class="cover-title-art" data-cover-title-art></span>
                             </span>
                             <div class="cover-overlay" aria-label="16:9 cover actions">
                               <button class="cover-hover-action" type="button" data-cover-upload data-i18n="reupload">Re-upload</button>
@@ -5707,7 +5767,6 @@
                         <div class="cover-slot" data-cover-slot>
                           <div class="cover-preview portrait" aria-label="3:4 portrait cover preview">
                             <span class="cover-art" aria-hidden="true">
-                              <span class="cover-title-art" data-cover-title-art></span>
                             </span>
                             <div class="cover-overlay" aria-label="3:4 cover actions">
                               <button class="cover-hover-action" type="button" data-cover-upload data-i18n="reupload">Re-upload</button>
@@ -5798,16 +5857,6 @@
               <div data-edit-preview-home></div>
               <section class="preview-card" data-edit-preview-card>
                 <div class="video-player" data-edit-video-player>
-                  <a class="player-external-link" href="#" target="_blank" rel="noopener noreferrer" data-edit-player-link data-i18n-aria-label="watchOnIq">
-                    <span class="player-external-icon">
-                      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M15 3h6v6" />
-                        <path d="m10 14 11-11" />
-                        <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5" />
-                      </svg>
-                    </span>
-                    <span class="player-external-tooltip" data-i18n="watchOnIq">View on iq.com</span>
-                  </a>
                 </div>
                 <div class="preview-details">
                   <div class="preview-title-row">
@@ -5817,7 +5866,7 @@
                   <div class="meta-list">
                     <div class="meta-row" data-edit-file-name-row><span data-i18n="fileName">File Name</span><strong data-edit-file-name>feature.mp4</strong></div>
                     <div class="meta-row"><span data-i18n="videoId">Video ID</span><strong data-edit-video-id>VID-2408-0187</strong></div>
-                    <div class="meta-row"><span data-i18n="publication">Publication</span><strong class="status-pill draft" data-edit-publication><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" /><path d="M14 3v6h6" /><path d="M8 15h4" /></svg><span>Draft</span></strong></div>
+                    <div class="meta-row"><span data-i18n="publication">Publication</span><strong class="status-pill offline" data-edit-publication><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="m8.5 8.5 7 7" /></svg><span>已下线</span></strong></div>
                     <div class="meta-row"><span data-i18n="updated">Updated</span><strong data-edit-updated>Yesterday 18:40:00</strong></div>
                     <div class="meta-row"><span data-i18n="firstPublished">First published</span><strong data-edit-first-published>Aug 1, 2026, 00:00:00</strong></div>
                   </div>
@@ -5828,8 +5877,9 @@
                 <div class="content-filters" aria-label="Content filters" data-i18n-aria-label="contentFiltersAria">
                   <div class="filter-group">
                     <button class="filter-control" type="button" aria-haspopup="listbox" aria-expanded="false" data-filter-field="freePaidStatus" data-episode-filter-trigger="freePaidStatus">
-                      <span class="filter-label-frame"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16" /><path d="M7 12h10" /><path d="M10 17h4" /></svg><span class="filter-label" data-i18n="freePaid">Free/Paid</span></span>
+                      <span class="filter-label-frame"><span class="filter-label" data-i18n="freePaid">Free/Paid</span></span>
                       <span class="filter-value" data-episode-filter-label>All</span>
+                      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16" /><path d="M7 12h10" /><path d="M10 17h4" /></svg>
                     </button>
                     <div class="filter-menu" role="listbox" aria-label="Free/Paid" data-i18n-aria-label="freePaid" data-episode-filter-menu="freePaidStatus" hidden>
                       <button class="filter-option" type="button" role="option" data-episode-filter-option="freePaidStatus" data-value="" data-i18n="all" aria-selected="true">All</button>
@@ -5839,26 +5889,18 @@
                   </div>
                   <div class="filter-group">
                     <button class="filter-control" type="button" aria-haspopup="listbox" aria-expanded="false" data-filter-field="publicationStatus" data-episode-filter-trigger="publicationStatus">
-                      <span class="filter-label-frame"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16" /><path d="M7 12h10" /><path d="M10 17h4" /></svg><span class="filter-label" data-i18n="publication">Publication</span></span>
+                      <span class="filter-label-frame"><span class="filter-label" data-i18n="publication">Publication</span></span>
                       <span class="filter-value" data-episode-filter-label>All</span>
+                      <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16" /><path d="M7 12h10" /><path d="M10 17h4" /></svg>
                     </button>
                     <div class="filter-menu" role="listbox" aria-label="Publication" data-i18n-aria-label="publication" data-episode-filter-menu="publicationStatus" hidden>
                       <button class="filter-option" type="button" role="option" data-episode-filter-option="publicationStatus" data-value="" data-i18n="all" aria-selected="true">All</button>
                       <button class="filter-option" type="button" role="option" data-episode-filter-option="publicationStatus" data-value="Online" data-i18n="online" aria-selected="false">Online</button>
+                      <button class="filter-option" type="button" role="option" data-episode-filter-option="publicationStatus" data-value="Publishing" data-i18n="publishing" aria-selected="false">Publishing</button>
                       <button class="filter-option" type="button" role="option" data-episode-filter-option="publicationStatus" data-value="Offline" data-i18n="offline" aria-selected="false">Offline</button>
-                      <button class="filter-option" type="button" role="option" data-episode-filter-option="publicationStatus" data-value="Draft" data-i18n="draft" aria-selected="false">Draft</button>
                     </div>
                   </div>
                 </div>
-                <button class="edit-action primary" type="button">
-                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <rect x="3" y="5" width="18" height="14" rx="2" />
-                    <path d="M7 11h4" />
-                    <path d="M13 11h4" />
-                    <path d="M7 15h10" />
-                  </svg>
-                  <span data-i18n="batchEditSubtitles">Batch edit subtitles</span>
-                </button>
               </div>
               <section class="episode-card" id="edit-episodes-panel" role="tabpanel" aria-labelledby="edit-episodes-tab" data-edit-episode-card>
                 <div class="episode-table-scroll">
@@ -5945,8 +5987,8 @@
                 <div class="filter-menu" role="listbox" aria-label="Publication" data-i18n-aria-label="publication" hidden>
                   <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="" data-i18n="all" aria-selected="true">All</button>
                   <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="Online" data-i18n="online" aria-selected="false">Online</button>
+                  <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="Publishing" data-i18n="publishing" aria-selected="false">Publishing</button>
                   <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="Offline" data-i18n="offline" aria-selected="false">Offline</button>
-                  <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="Draft" data-i18n="draft" aria-selected="false">Draft</button>
                 </div>
               </div>
               <div class="search-control">
@@ -6093,6 +6135,7 @@
             <button class="edit-action primary subtitle-batch-upload" type="button" data-subtitle-batch-upload>
               <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4" /><path d="m7 9 5-5 5 5" /><path d="M5 14v5h14v-5" /></svg>
               <span data-i18n="batchUploadSubtitles">Batch upload subtitles</span>
+              <span class="subtitle-batch-upload-tooltip" role="tooltip" data-i18n="batchUploadNamingHint">The system identifies the language from the file name. Please follow the naming convention.</span>
             </button>
           </div>
           <div class="subtitle-table-wrap">
@@ -6102,8 +6145,8 @@
                 <tr><td data-i18n="simplifiedChinese">Simplified Chinese</td><td><span class="subtitle-file-name">episode01.zh-CN.srt</span></td><td><span class="content-source-tag"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4 5 5L8 21l-5-5L15 4Z" /><path d="m6 3 .7 1.3L8 5l-1.3.7L6 7l-.7-1.3L4 5l1.3-.7L6 3Z" /><path d="m19 15 .7 1.3 1.3.7-1.3.7L19 19l-.7-1.3L17 17l1.3-.7L19 15Z" /></svg><span data-i18n="aiGenerated">AI generated</span></span></td><td><span class="subtitle-upload-status" data-i18n="uploaded">Uploaded</span></td><td><span class="subtitle-row-actions"><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="modify">Modify</button><button class="row-action subtitle-preview-action" type="button" data-subtitle-preview aria-label="Preview"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8.5 6.5 9.5 5.5-9.5 5.5v-11Z" /></svg></button></span></td></tr>
                 <tr><td data-i18n="english">English</td><td><span class="subtitle-file-name">episode01.en-US.srt</span></td><td><span class="content-source-tag"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4 5 5L8 21l-5-5L15 4Z" /><path d="m6 3 .7 1.3L8 5l-1.3.7L6 7l-.7-1.3L4 5l1.3-.7L6 3Z" /><path d="m19 15 .7 1.3 1.3.7-1.3.7L19 19l-.7-1.3L17 17l1.3-.7L19 15Z" /></svg><span data-i18n="aiGenerated">AI generated</span></span></td><td><span class="subtitle-upload-status" data-i18n="uploaded">Uploaded</span></td><td><span class="subtitle-row-actions"><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="modify">Modify</button><button class="row-action subtitle-preview-action" type="button" data-subtitle-preview aria-label="Preview"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8.5 6.5 9.5 5.5-9.5 5.5v-11Z" /></svg></button></span></td></tr>
                 <tr><td data-i18n="traditionalChinese">Traditional Chinese</td><td>—</td><td>—</td><td>—</td><td><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="upload">Upload</button></td></tr>
-                <tr><td data-i18n="thai">Thai</td><td><span class="subtitle-file-name">episode01.th-TH.srt</span></td><td><span class="content-source-tag manual"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" /></svg><span data-i18n="manualLabel">Manual</span></span></td><td><span class="subtitle-upload-status" data-i18n="uploaded">Uploaded</span></td><td><span class="subtitle-row-actions"><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="modify">Modify</button><button class="row-action subtitle-preview-action" type="button" data-subtitle-preview aria-label="Preview"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8.5 6.5 9.5 5.5-9.5 5.5v-11Z" /></svg></button><button class="spec-btn danger-secondary small" type="button" data-subtitle-delete-row data-i18n="delete">Delete</button></span></td></tr>
-                <tr><td data-i18n="malay">Malay</td><td><span class="subtitle-file-name">episode01.ms-MY.srt</span></td><td><span class="content-source-tag manual"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" /></svg><span data-i18n="manualLabel">Manual</span></span></td><td><span class="subtitle-upload-status" data-i18n="uploaded">Uploaded</span></td><td><span class="subtitle-row-actions"><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="modify">Modify</button><button class="row-action subtitle-preview-action" type="button" data-subtitle-preview aria-label="Preview"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8.5 6.5 9.5 5.5-9.5 5.5v-11Z" /></svg></button><button class="spec-btn danger-secondary small" type="button" data-subtitle-delete-row data-i18n="delete">Delete</button></span></td></tr>
+                <tr><td data-i18n="thai">Thai</td><td><span class="subtitle-file-name">episode01.th-TH.srt</span></td><td><span class="content-source-tag manual"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" /></svg><span data-i18n="manualLabel">Manual</span></span></td><td><span class="subtitle-upload-status" data-i18n="uploaded">Uploaded</span></td><td><span class="subtitle-row-actions"><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="modify">Modify</button><button class="row-action subtitle-preview-action" type="button" data-subtitle-preview aria-label="Preview"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8.5 6.5 9.5 5.5-9.5 5.5v-11Z" /></svg></button></span></td></tr>
+                <tr><td data-i18n="malay">Malay</td><td><span class="subtitle-file-name">episode01.ms-MY.srt</span></td><td><span class="content-source-tag manual"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" /></svg><span data-i18n="manualLabel">Manual</span></span></td><td><span class="subtitle-upload-status" data-i18n="uploaded">Uploaded</span></td><td><span class="subtitle-row-actions"><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="modify">Modify</button><button class="row-action subtitle-preview-action" type="button" data-subtitle-preview aria-label="Preview"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8.5 6.5 9.5 5.5-9.5 5.5v-11Z" /></svg></button></span></td></tr>
                 <tr><td data-i18n="indonesian">Indonesian</td><td>—</td><td>—</td><td>—</td><td><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="upload">Upload</button></td></tr>
                 <tr><td data-i18n="vietnamese">Vietnamese</td><td>—</td><td>—</td><td>—</td><td><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="upload">Upload</button></td></tr>
                 <tr><td data-i18n="korean">Korean</td><td>—</td><td>—</td><td>—</td><td><button class="row-action small" type="button" data-subtitle-upload-row data-i18n="upload">Upload</button></td></tr>
@@ -6114,10 +6157,6 @@
           </div>
           <input type="file" accept=".srt,.vtt,.ass,.ssa" multiple hidden data-subtitle-file-input />
         </main>
-        <footer class="subtitle-drawer-footer">
-          <button class="edit-action secondary" type="button" data-subtitle-drawer-close data-i18n="cancel">Cancel</button>
-          <button class="edit-action primary" type="button" data-subtitle-drawer-save data-i18n="save">Save</button>
-        </footer>
       </section>
     </div>
     <div class="subtitle-confirm-backdrop" data-subtitle-confirm hidden>
@@ -6143,7 +6182,7 @@
           iqId: "IQ ID: 1461926038",
           upload: "Upload",
           dashboard: "Home",
-          content: "Content",
+          content: "Content Management",
           analytics: "Analytics",
           subtitles: "Subtitles",
           settings: "Settings",
@@ -6162,8 +6201,12 @@
           free: "Free",
           paid: "Paid",
           online: "Online",
+          publishing: "Publishing",
           offline: "Offline",
           draft: "Draft",
+          reviewPending: "Under review",
+          reviewRejected: "Review rejected",
+          reviewApproved: "Review passed",
           public: "Public",
           private: "Private",
           searchPlaceholder: "Search title or Content ID",
@@ -6195,6 +6238,7 @@
           complete: "Done",
           titleRequired: "Please enter a title",
           coverRequired: "Please upload a cover",
+          coverTitleHint: "The title in the poster must match the title",
           paidStatusRequired: "Please select a Free/Paid status",
           paidStatusLockedHint: "Consistent with the domestic iQIYI account; changes are currently unavailable.",
           ratingRequired: "Please select a rating",
@@ -6215,6 +6259,7 @@
           subtitleFileNameHint: "The language code in the file name will be matched automatically, e.g. episode01.zh-CN.srt",
           subtitleFormatNote: "Only .srt, .vtt, .ass and .ssa formats are supported",
           batchUploadSubtitles: "Batch upload subtitles",
+          batchUploadNamingHint: "The system identifies the language from the file name. Please follow the naming convention.",
           subtitleLanguage: "Language",
           subtitleFile: "Subtitle file",
           fileSource: "File source",
@@ -6225,6 +6270,7 @@
           uploading: "Uploading",
           invalidSubtitleFormat: "Upload failed. Only .srt, .vtt, .ass and .ssa files are supported.",
           uploadFailedRetry: "Upload failed. Please try again.",
+          subtitleUploadEffectiveAfterPublish: "Uploaded. Changes take effect after publishing.",
           saving: "Saving",
           deleteSubtitleTitle: "Delete subtitle?",
           deleteSubtitleDescription: "The subtitle file will be removed after saving.",
@@ -6319,7 +6365,7 @@
           iqId: "IQ ID：1461926038",
           upload: "上传",
           dashboard: "首页",
-          content: "内容",
+          content: "内容管理",
           analytics: "数据分析",
           subtitles: "字幕",
           settings: "设置",
@@ -6337,9 +6383,13 @@
           visibility: "可见性",
           free: "免费",
           paid: "付费",
-          online: "上线",
+          online: "已上线",
+          publishing: "发布中",
           offline: "已下线",
           draft: "草稿",
+          reviewPending: "审核中",
+          reviewRejected: "审核不通过",
+          reviewApproved: "审核通过",
           public: "公开",
           private: "私密",
           searchPlaceholder: "搜索标题或 Content ID",
@@ -6371,6 +6421,7 @@
           complete: "完成",
           titleRequired: "请输入标题",
           coverRequired: "请上传封面",
+          coverTitleHint: "海报内标题须与标题一致",
           paidStatusRequired: "请选择免费/付费状态",
           paidStatusLockedHint: "同国内爱奇艺号保持一致，暂不支持修改",
           ratingRequired: "请选择分级信息",
@@ -6391,6 +6442,7 @@
           subtitleFileNameHint: "文件名中的语种码将自动匹配，例如 episode01.zh-CN.srt",
           subtitleFormatNote: "仅支持 .srt、.vtt、.ass、.ssa 格式",
           batchUploadSubtitles: "批量上传字幕",
+          batchUploadNamingHint: "系统根据命名规则自动识别对应语种，请规范命名",
           subtitleLanguage: "语种",
           subtitleFile: "字幕文件",
           fileSource: "文件来源",
@@ -6401,6 +6453,7 @@
           uploading: "上传中",
           invalidSubtitleFormat: "上传失败，仅支持 .srt、.vtt、.ass、.ssa 格式文件",
           uploadFailedRetry: "上传失败，请重试",
+          subtitleUploadEffectiveAfterPublish: "上传成功，发布后生效",
           saving: "保存中",
           deleteSubtitleTitle: "确认删除字幕？",
           deleteSubtitleDescription: "保存后将移除该字幕文件。",
@@ -6484,11 +6537,7 @@
         }
       };
 
-      const trigger = document.querySelector(".language-trigger");
-      const languageSwitch = document.querySelector(".language-switch");
       const themeSwitch = document.querySelector(".theme-switch");
-      const menu = document.querySelector(".language-menu");
-      const options = document.querySelectorAll(".language-option");
       const accountEntry = document.querySelector(".account-entry");
       const accountTrigger = document.querySelector(".account-trigger");
       const accountMenu = document.querySelector(".account-menu");
@@ -6517,7 +6566,7 @@
       const prevPageButton = document.querySelector("[data-page-prev]");
       const nextPageButton = document.querySelector("[data-page-next]");
       let currentContentView = "all";
-      let currentLanguage = "en";
+      let currentLanguage = "zh";
       let currentPage = 1;
       let pageSize = Number(pageSizeTrigger.dataset.pageSizeValue);
       const activeFilters = {
@@ -6545,7 +6594,7 @@
           episodes: 8,
           format: "1080x1920",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Offline",
           visibilityStatus: "Private",
           updated: "Aug 10, 2026"
         },
@@ -6569,7 +6618,7 @@
           episodes: 10,
           format: "1080x1920",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Offline",
           visibilityStatus: "Private",
           updated: "Aug 5, 2026"
         },
@@ -6581,7 +6630,7 @@
           episodes: 6,
           format: "",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Offline",
           visibilityStatus: "Private",
           updated: "Yesterday 18:40"
         },
@@ -6605,7 +6654,7 @@
           episodes: 10,
           format: "",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Offline",
           visibilityStatus: "Private",
           updated: "Aug 11, 2026"
         },
@@ -6641,7 +6690,7 @@
           episodes: 24,
           format: "",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Offline",
           visibilityStatus: "Private",
           updated: "Aug 7, 2026"
         },
@@ -6665,7 +6714,7 @@
           episodes: 20,
           format: "",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Offline",
           visibilityStatus: "Private",
           updated: "Aug 2, 2026"
         },
@@ -6677,7 +6726,7 @@
           episodes: 32,
           format: "",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Offline",
           visibilityStatus: "Private",
           updated: "Aug 11, 2026"
         },
@@ -6701,7 +6750,7 @@
           episodes: 36,
           format: "",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Offline",
           visibilityStatus: "Private",
           updated: "Aug 3, 2026"
         },
@@ -6735,7 +6784,7 @@
           duration: "02:08:16",
           format: "4K",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Offline",
           visibilityStatus: "Private",
           updated: "Aug 9, 2026"
         },
@@ -6757,7 +6806,7 @@
           duration: "02:14:05",
           format: "4K",
           freePaidStatus: "Paid",
-          publicationStatus: "Draft",
+          publicationStatus: "Offline",
           visibilityStatus: "Private",
           updated: "Aug 1, 2026"
         }
@@ -6815,8 +6864,12 @@
           Free: "free",
           Paid: "paid",
           Online: "online",
+          Publishing: "publishing",
           Offline: "offline",
-          Draft: "draft",
+          Draft: "offline",
+          ReviewPending: "reviewPending",
+          ReviewRejected: "reviewRejected",
+          ReviewApproved: "reviewApproved",
           Public: "public",
           Private: "private",
           免费: "free",
@@ -6826,7 +6879,7 @@
           在线: "online",
           已下线: "offline",
           下线: "offline",
-          草稿: "draft",
+          草稿: "offline",
           公开: "public",
           私密: "private"
         };
@@ -6839,24 +6892,19 @@
 
       function getPublicationClass(value) {
         const statusKey = getStatusKey(value);
-        return statusKey === "online" ? "publish" : statusKey === "offline" ? "offline" : "draft";
+        return statusKey === "online" ? "publish" : statusKey === "publishing" ? "publishing" : statusKey === "offline" ? "offline" : "draft";
       }
 
       function getPublicationIcon(value) {
         const statusKey = getStatusKey(value);
         if (statusKey === "online") {
-          return `
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="4" fill="currentColor" stroke="none" />
-            </svg>
-          `;
+          return "";
         }
         if (statusKey === "offline") {
-          return `
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M7 12h10" />
-            </svg>
-          `;
+          return "";
+        }
+        if (statusKey === "publishing") {
+          return "";
         }
         return `
           <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -6867,8 +6915,21 @@
         `;
       }
 
-      function renderPublicationStatus(value) {
-        return `<span class="status-pill ${getPublicationClass(value)}">${getPublicationIcon(value)}<span>${getStatusLabel(value)}</span></span>`;
+      function renderPublicationStatus(value, note) {
+        if (!note) {
+          return `<span class="status-pill ${getPublicationClass(value)}">${getPublicationIcon(value)}<span>${getStatusLabel(value)}</span></span>`;
+        }
+        const noteKey = note ? getStatusKey(note) : "";
+        const noteClass = noteKey ? noteKey.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`) : "";
+        const noteIcon = noteKey === "reviewPending"
+          ? '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>'
+          : noteKey === "reviewRejected"
+            ? '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6M15 9l-6 6"/></svg>'
+            : noteKey === "reviewApproved"
+              ? '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg>'
+              : "";
+        const noteMarkup = noteKey ? `<span class="publication-status-note ${noteClass}">${noteIcon}<span>${t(noteKey)}</span></span>` : "";
+        return `<span class="publication-status"><span class="status-pill ${getPublicationClass(value)}">${getPublicationIcon(value)}<span>${getStatusLabel(value)}</span></span>${noteMarkup}</span>`;
       }
 
       function syncPublicationNode(node, value) {
@@ -6883,10 +6944,10 @@
 
       function getUpdatedLabel(updated) {
         if (updated.startsWith("Today")) {
-          return updated.replace("Today", t("today"));
+          return t("today");
         }
         if (updated.startsWith("Yesterday")) {
-          return updated.replace("Yesterday", t("yesterday"));
+          return t("yesterday");
         }
         const timestamp = Date.parse(updated);
         if (Number.isNaN(timestamp)) {
@@ -6921,10 +6982,7 @@
       }
 
       function renderEpisodeDateTime(value) {
-        const label = getPreciseDateTimeLabel(value);
-        const match = label.match(/^(.*?)(?:,?\s+)(\d{2}:\d{2}:\d{2})$/);
-        if (!match) return `<p class="episode-time"><span>${label}</span></p>`;
-        return `<p class="episode-time"><span>${match[1]}</span><span>${match[2]}</span></p>`;
+        return `<p class="episode-time"><span>${getUpdatedLabel(value)}</span></p>`;
       }
 
       function syncFilterLabels() {
@@ -6978,16 +7036,12 @@
         document.querySelectorAll("[data-subtitle-preview]").forEach((node) => {
           node.setAttribute("aria-label", t("subtitlePreview"));
         });
-        options.forEach((option) => {
-          option.setAttribute("aria-selected", String(option.dataset.lang === nextLang));
-        });
         syncFilterLabels();
         syncFilterOptionLabels();
         syncPageSizeLabels();
         renderVideoList(currentContentView);
         syncThemePreference();
         window.dispatchEvent(new CustomEvent("studio:languagechange", { detail: { language: nextLang } }));
-        localStorage.setItem("studio-language", nextLang);
       }
 
       function suppressTooltipIfHidden(container, tooltipSelector) {
@@ -6998,7 +7052,7 @@
         }
       }
 
-      const tooltipContainers = [languageSwitch, themeSwitch, accountEntry].filter(Boolean);
+      const tooltipContainers = [themeSwitch, accountEntry].filter(Boolean);
 
       function setActiveTooltipContainer(activeContainer) {
         tooltipContainers.forEach((container) => {
@@ -7071,9 +7125,6 @@
           filterMenu.hidden = !shouldOpen;
           filterTrigger.setAttribute("aria-expanded", String(shouldOpen));
           closePageSizeMenu();
-          menu.hidden = true;
-          languageSwitch.classList.remove("is-open");
-          trigger.setAttribute("aria-expanded", "false");
           accountMenu.hidden = true;
           accountEntry.classList.remove("is-open");
           accountTrigger.setAttribute("aria-expanded", "false");
@@ -7099,41 +7150,7 @@
         });
       });
 
-      trigger.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const isOpen = !menu.hidden;
-        languageSwitch.classList.add("suppress-tooltip");
-        setActiveTooltipContainer(languageSwitch);
-        if (!isOpen) {
-          suppressTooltipIfHidden(languageSwitch, ".language-tooltip");
-        }
-        menu.hidden = isOpen;
-        languageSwitch.classList.toggle("is-open", !isOpen);
-        trigger.setAttribute("aria-expanded", String(!isOpen));
-        accountMenu.hidden = true;
-        accountEntry.classList.remove("is-open");
-        accountTrigger.setAttribute("aria-expanded", "false");
-        closeFilterMenus();
-      });
-
-      options.forEach((option) => {
-        option.addEventListener("click", () => {
-          languageSwitch.classList.add("suppress-tooltip");
-          setLanguage(option.dataset.lang);
-          menu.hidden = true;
-          languageSwitch.classList.remove("is-open");
-          trigger.setAttribute("aria-expanded", "false");
-          trigger.blur();
-          option.blur();
-        });
-      });
-
       document.addEventListener("click", (event) => {
-        if (!event.target.closest(".language-switch")) {
-          menu.hidden = true;
-          languageSwitch.classList.remove("is-open");
-          trigger.setAttribute("aria-expanded", "false");
-        }
         if (!event.target.closest(".account-entry")) {
           accountMenu.hidden = true;
           accountEntry.classList.remove("is-open");
@@ -7155,9 +7172,6 @@
         accountMenu.hidden = isOpen;
         accountEntry.classList.toggle("is-open", !isOpen);
         accountTrigger.setAttribute("aria-expanded", String(!isOpen));
-        menu.hidden = true;
-        languageSwitch.classList.remove("is-open");
-        trigger.setAttribute("aria-expanded", "false");
         closeFilterMenus();
       });
 
@@ -7434,7 +7448,7 @@
       syncSearchClear();
       setContentView("all");
       syncThemePreference();
-      setLanguage(localStorage.getItem("studio-language") || "en");
+      setLanguage("zh");
     </script>
     <script>
       (() => {
@@ -7540,7 +7554,6 @@
         let subtitleDrawerReturnFocus = null;
         let activeSubtitleEpisodeLabel = "";
         let subtitleDrawerDirty = false;
-        let subtitleDrawerSnapshot = "";
         let activeSubtitleUploadRow = null;
         const titleCount = document.querySelector("[data-title-count]");
         const titleError = document.querySelector("[data-title-error]");
@@ -8211,6 +8224,9 @@
             const expandedAnchor = episodeList?.querySelector(".is-expanded [data-edit-preview-anchor]");
             if (expandedAnchor) expandedAnchor.appendChild(previewCard);
           }
+          if (section === "episodes") {
+            renderEpisodeList();
+          }
           if (workspace) workspace.scrollTo({ top: 0, left: workspace.scrollLeft });
         }
 
@@ -8263,22 +8279,24 @@
             });
           });
         const publicationStatusKey = getStatusKey(item.publicationStatus);
-        const isPublished = publicationStatusKey === "online";
-        const hidesSaveAction = ["online", "offline"].includes(publicationStatusKey);
+        const hidesSaveAction = true;
         function syncActionLabels() {
-          resetActionLabel.textContent = t("undoChanges");
-          publishActionLabel.textContent = isPublished ? t("republish") : t("publish");
+          if (resetActionLabel) resetActionLabel.textContent = t("undoChanges");
+          publishActionLabel.textContent = t("republish");
         }
 
         syncActionLabels();
-        saveAction.hidden = hidesSaveAction;
-        saveAction.style.display = hidesSaveAction ? "none" : "";
+        if (saveAction) {
+          saveAction.hidden = true;
+          saveAction.style.display = "none";
+        }
 
         function renderEpisodeList() {
           if (isMovie || !episodeList) return;
           const count = item.episodes || 1;
+          const getEpisodePublicationStatus = () => "Online";
           const episodeIndices = Array.from({ length: count }, (_, index) => index).filter((index) => {
-            const publicationStatus = index === count - 1 ? "Draft" : index % 4 === 3 ? "Offline" : "Online";
+            const publicationStatus = getEpisodePublicationStatus(index);
             return (!episodeFilters.freePaidStatus || item.freePaidStatus === episodeFilters.freePaidStatus)
               && (!episodeFilters.publicationStatus || publicationStatus === episodeFilters.publicationStatus);
           });
@@ -8312,7 +8330,8 @@
           episodeList.innerHTML = visibleEpisodeIndices.map((index) => {
             const label = item.episodes ? t("episodeLabel", index + 1) : t("featureFilm");
             const episodeId = `${item.id}-E${String(index + 1).padStart(2, "0")}`;
-            const publicationStatus = index === count - 1 ? "Draft" : index % 4 === 3 ? "Offline" : "Online";
+            const publicationStatus = getEpisodePublicationStatus(index);
+            const publicationNote = "ReviewPending";
             const updated = index === 0 ? item.updated : `Aug ${Math.max(1, 14 - index)}, 2026 ${String(18 - (index % 8)).padStart(2, "0")}:20:00`;
             const firstPublished = `Aug ${Math.max(1, 8 - Math.floor(index / 2))}, 2026 10:${String((index * 7) % 60).padStart(2, "0")}:00`;
             return `
@@ -8329,7 +8348,7 @@
                   </div>
                 </div>
                 <span class="status-text">${getStatusLabel(item.freePaidStatus)}</span>
-                ${renderPublicationStatus(publicationStatus)}
+                ${renderPublicationStatus(publicationStatus, publicationNote)}
                 ${renderEpisodeDateTime(updated)}
                 ${renderEpisodeDateTime(firstPublished)}
                 <div class="row-actions"><button class="row-action" type="button" data-subtitle-drawer-open data-episode-label="${label}">${t("editSubtitles")}</button></div>
@@ -9267,7 +9286,6 @@
           if (!subtitleDrawerOverlay || !subtitleDrawer) return;
           subtitleDrawerReturnFocus = trigger;
           subtitleDrawerDirty = false;
-          subtitleDrawerSnapshot = subtitleTableBody?.innerHTML || "";
           const episodeLabel = trigger.dataset.episodeLabel || t("episodeLabel", 1);
           activeSubtitleEpisodeLabel = episodeLabel;
           if (subtitleDrawerDescription) subtitleDrawerDescription.textContent = `${item.title} · ${episodeLabel}`;
@@ -9325,24 +9343,18 @@
         subtitleConfirmClose?.addEventListener("click", hideSubtitleConfirm);
 
         function requestCloseSubtitleDrawer() {
-          if (!subtitleDrawerDirty) { closeSubtitleDrawer(); return; }
-          showSubtitleConfirm({
-            title: t("unsavedSubtitleTitle"),
-            description: t("unsavedSubtitleDescription"),
-            actions: [
-              { label: t("confirmExit"), className: "spec-btn secondary", action: () => { if (subtitleTableBody) subtitleTableBody.innerHTML = subtitleDrawerSnapshot; subtitleDrawerDirty = false; closeSubtitleDrawer(); } },
-              { label: t("saveAndClose"), className: "spec-btn primary", deferClose: true, action: (button) => saveSubtitleChanges(button, true) }
-            ]
-          });
+          closeSubtitleDrawer();
         }
 
         function manualSourceTag() {
           return `<span class="content-source-tag manual"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg><span>${t("manualLabel")}</span></span>`;
         }
 
+
         function escapeSubtitleText(value) {
           return String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
         }
+
 
         function setSubtitleRowUploaded(row, file) {
           const cells = row?.cells;
@@ -9350,7 +9362,7 @@
           cells[1].innerHTML = `<span class="subtitle-file-name">${escapeSubtitleText(file.name)}</span>`;
           cells[2].innerHTML = manualSourceTag();
           cells[3].innerHTML = `<span class="subtitle-upload-status">${t("uploaded")}</span>`;
-          cells[4].innerHTML = `<span class="subtitle-row-actions"><button class="row-action small" type="button" data-subtitle-upload-row>${t("modify")}</button><button class="row-action subtitle-preview-action" type="button" data-subtitle-preview aria-label="${t("subtitlePreview")}"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8.5 6.5 9.5 5.5-9.5 5.5v-11Z" /></svg></button><button class="spec-btn danger-secondary small" type="button" data-subtitle-delete-row>${t("delete")}</button></span>`;
+          cells[4].innerHTML = `<span class="subtitle-row-actions"><button class="row-action small" type="button" data-subtitle-upload-row>${t("modify")}</button><button class="row-action subtitle-preview-action" type="button" data-subtitle-preview aria-label="${t("subtitlePreview")}"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8.5 6.5 9.5 5.5-9.5 5.5v-11Z" /></svg></button></span>`;
           subtitleDrawerDirty = true;
         }
 
@@ -9376,6 +9388,7 @@
               return;
             }
             setSubtitleRowUploaded(row, file);
+            showSubtitleMessage(t("subtitleUploadEffectiveAfterPublish"), "success");
           }, 180);
         }
 
@@ -9386,11 +9399,37 @@
           return key ? subtitleTableBody?.querySelector(`td[data-i18n="${key}"]`)?.closest("tr") : null;
         }
 
+        function populateEmptySubtitleExamples() {
+          const fileCodes = {
+            traditionalChinese: "zh-TW",
+            indonesian: "id-ID",
+            vietnamese: "vi-VN",
+            korean: "ko-KR",
+            japanese: "ja-JP",
+            spanish: "es-ES"
+          };
+          const aiSourceMarkup = subtitleTableBody?.querySelector("tr")?.cells[2]?.innerHTML || "";
+          subtitleTableBody?.querySelectorAll("tr").forEach((row) => {
+            const languageKey = row.cells[0]?.dataset.i18n;
+            const fileCode = fileCodes[languageKey];
+            if (!fileCode || row.cells[1]?.textContent.trim() !== "—") return;
+            row.cells[1].innerHTML = `<span class="subtitle-file-name">episode01.${fileCode}.srt</span>`;
+            row.cells[2].innerHTML = aiSourceMarkup;
+            row.cells[3].innerHTML = `<span class="subtitle-upload-status">${t("uploaded")}</span>`;
+            row.cells[4].innerHTML = `<span class="subtitle-row-actions"><button class="row-action small" type="button" data-subtitle-upload-row>${t("modify")}</button><button class="row-action subtitle-preview-action" type="button" data-subtitle-preview aria-label="${t("subtitlePreview")}"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m8.5 6.5 9.5 5.5-9.5 5.5v-11Z" /></svg></button></span>`;
+          });
+        }
+
+        populateEmptySubtitleExamples();
+
         episodeList?.addEventListener("click", (event) => {
           const trigger = event.target.closest("[data-subtitle-drawer-open]");
           if (trigger) openSubtitleDrawer(trigger);
         });
         subtitleDrawerCloseButtons.forEach((button) => button.addEventListener("click", requestCloseSubtitleDrawer));
+        subtitleDrawerOverlay?.addEventListener("click", (event) => {
+          if (event.target === subtitleDrawerOverlay) requestCloseSubtitleDrawer();
+        });
         function saveSubtitleChanges(button, closeConfirm = false) {
           if (!button || button.disabled) return;
           const hadChanges = subtitleDrawerDirty;
@@ -9455,13 +9494,6 @@
           }
           const uploadButton = event.target.closest("[data-subtitle-upload-row]");
           if (uploadButton) { activeSubtitleUploadRow = uploadButton.closest("tr"); subtitleFileInput?.removeAttribute("multiple"); subtitleFileInput?.click(); return; }
-          const deleteButton = event.target.closest("[data-subtitle-delete-row]");
-          if (!deleteButton) return;
-          const row = deleteButton.closest("tr");
-          showSubtitleConfirm({ title: t("deleteSubtitleTitle"), description: t("deleteSubtitleDescription"), actions: [
-            { label: t("cancel"), className: "spec-btn secondary" },
-            { label: t("delete"), className: "spec-btn danger", action: () => { row.cells[1].textContent = "—"; row.cells[2].textContent = "—"; row.cells[3].textContent = "—"; row.cells[4].innerHTML = `<button class="row-action small" type="button" data-subtitle-upload-row>${t("upload")}</button>`; subtitleDrawerDirty = true; } }
-          ] });
         });
         subtitleFileInput?.addEventListener("change", () => {
           Array.from(subtitleFileInput.files || []).forEach((file) => {

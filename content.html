@@ -591,7 +591,7 @@
       .content-toolbar-frame {
         position: sticky;
         top: 0;
-        z-index: 30;
+        z-index: 40;
         display: grid;
         row-gap: 20px;
         column-gap: 20px;
@@ -706,6 +706,290 @@
         display: inline-flex;
       }
 
+      .date-range-picker {
+        position: relative;
+        display: inline-flex;
+      }
+
+      .date-range-trigger {
+        width: max-content;
+        min-width: 0;
+        min-height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 10px;
+        border: 1px solid var(--color-border-default);
+        border-radius: var(--radius-default);
+        background: var(--color-bg-container);
+        color: var(--color-text-default);
+        font-size: var(--text-body-size);
+        line-height: var(--text-body-line-height);
+        font-weight: var(--text-body-medium-weight);
+        cursor: pointer;
+      }
+
+      .date-range-trigger:hover,
+      .date-range-trigger[aria-expanded="true"] {
+        border-color: var(--color-action-primary);
+      }
+
+      .date-range-trigger:focus-visible,
+      .date-range-trigger[aria-expanded="true"] {
+        outline: none;
+        box-shadow: var(--shadow-focus);
+      }
+
+      .date-range-trigger .icon {
+        width: 16px;
+        height: 16px;
+        flex: 0 0 auto;
+        color: var(--color-text-secondary);
+      }
+
+      .date-range-placeholder {
+        color: var(--color-text-tertiary);
+        font-weight: var(--text-body-weight);
+      }
+
+      .date-range-dropdown {
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 0;
+        z-index: 60;
+        width: 560px;
+        border: 1px solid var(--color-border-default);
+        border-radius: var(--radius-xlarge);
+        background: var(--color-bg-elevated);
+        box-shadow: var(--shadow-overlay);
+      }
+
+      .date-range-dropdown[hidden] { display: none; }
+
+      .date-range-calendars {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .date-range-calendar { padding: 16px; }
+      .date-range-calendar + .date-range-calendar { border-left: 1px solid var(--color-border-subtle); }
+
+      .date-range-header {
+        min-height: 32px;
+        display: grid;
+        grid-template-columns: 32px 1fr 32px;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .date-range-title {
+        text-align: center;
+        font-weight: var(--text-body-medium-weight);
+      }
+
+      .date-range-nav {
+        width: 32px;
+        height: 32px;
+        display: inline-grid;
+        place-items: center;
+        border: 0;
+        border-radius: var(--radius-default);
+        background: transparent;
+        color: var(--color-text-secondary);
+        cursor: pointer;
+      }
+
+      .date-range-nav:hover { background: var(--color-bg-hover); color: var(--color-text-default); }
+      .date-range-nav .icon { width: 16px; height: 16px; }
+      .date-range-nav-spacer { width: 32px; height: 32px; }
+
+      .date-range-weekdays,
+      .date-range-days {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+      }
+
+      .date-range-weekdays span {
+        height: 28px;
+        display: grid;
+        place-items: center;
+        color: var(--color-text-tertiary);
+        font-size: var(--text-caption-size);
+      }
+
+      .date-range-day,
+      .date-range-day-spacer {
+        min-width: 0;
+        height: 32px;
+      }
+
+      .date-range-day {
+        position: relative;
+        border: 0;
+        border-radius: var(--radius-default);
+        background: transparent;
+        color: var(--color-text-default);
+        cursor: pointer;
+      }
+
+      .date-range-day:hover { background: var(--color-bg-hover); }
+      .date-range-day.in-range { border-radius: 0; background: var(--color-action-primary-bg-subtle, color-mix(in srgb, var(--color-action-primary) 12%, transparent)); }
+      .date-range-day.range-start,
+      .date-range-day.range-end {
+        border-radius: var(--radius-default);
+        background: var(--color-action-primary);
+        color: var(--color-text-inverse);
+        font-weight: var(--text-body-medium-weight);
+      }
+
+      .date-range-footer {
+        display: flex;
+        justify-content: flex-end;
+        padding: 8px 16px;
+        border-top: 1px solid var(--color-border-subtle);
+      }
+
+      .date-range-clear {
+        min-height: 30px;
+        padding: 0 10px;
+        border: 1px solid var(--color-border-default);
+        border-radius: var(--radius-default);
+        background: var(--color-bg-container);
+        color: var(--color-text-default);
+        cursor: pointer;
+      }
+
+      .date-range-clear:hover { border-color: var(--color-action-primary); color: var(--color-action-primary); }
+
+      /* Mirrors DesignSystem/dataentry/date-picker.html: date-dropdown range-panel. */
+      .date-dropdown.range-panel {
+        width: 584px;
+        max-width: calc(100vw - 40px);
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        z-index: 60;
+        padding: 12px;
+        border: 1px solid var(--color-border-default);
+        border-radius: var(--radius-xlarge);
+        background: var(--color-bg-elevated);
+        box-shadow: var(--shadow-overlay);
+        backdrop-filter: blur(12px);
+      }
+
+      .date-dropdown[hidden] { display: none; }
+      .date-dropdown .date-range-calendars { gap: 14px; }
+      .date-dropdown .date-calendar { min-width: 0; padding: 0; }
+      .date-dropdown .date-calendar + .date-calendar {
+        padding-left: 14px;
+        border-top: 0;
+        border-left: 1px solid var(--color-border-subtle);
+      }
+
+      .date-range-calendars [data-date-panel-offset="0"] .date-nav-btn.next,
+      .date-range-calendars [data-date-panel-offset="1"] .date-nav-btn.prev {
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .date-calendar-row {
+        display: grid;
+        grid-template-columns: 28px minmax(0, 1fr) 28px;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+
+      .date-panel-title {
+        margin: 0;
+        color: var(--color-text-default);
+        font-size: var(--text-body-size);
+        font-weight: 500;
+        line-height: 1.4;
+        text-align: center;
+      }
+
+      .date-nav-btn {
+        width: 28px;
+        height: 28px;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        border-radius: var(--radius-default);
+        background: transparent;
+        color: var(--color-text-tertiary);
+        cursor: pointer;
+      }
+
+      .date-nav-btn:hover { background: var(--color-bg-subtle); color: var(--color-text-primary); }
+      .date-nav-icon { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+      .date-weekdays,
+      .date-days {
+        display: grid;
+        grid-template-columns: repeat(7, 32px);
+        justify-content: center;
+        gap: 4px;
+      }
+
+      .date-weekday {
+        height: 24px;
+        display: grid;
+        place-items: center;
+        color: var(--color-text-disabled);
+        font-size: var(--text-caption-size);
+      }
+
+      .date-cell {
+        width: 32px;
+        height: 32px;
+        position: relative;
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        border-radius: var(--radius-large);
+        background: transparent;
+        color: var(--color-text-secondary);
+        cursor: pointer;
+        font-size: var(--text-body-size);
+      }
+
+      .date-cell:hover { background: var(--color-bg-subtle); }
+      .date-cell.muted { color: var(--color-text-secondary); }
+      .date-cell.today { color: var(--color-action-primary); }
+      .date-cell.range-edge { background: var(--color-action-primary); color: var(--color-text-inverse); }
+      .date-cell.in-range { background: var(--color-bg-subtle); color: var(--color-action-primary); }
+      .date-cell.range-preview { background: color-mix(in srgb, var(--color-action-primary) 10%, transparent); color: var(--color-action-primary); }
+      .date-cell.range-preview-edge { background: color-mix(in srgb, var(--color-action-primary) 16%, transparent); color: var(--color-action-primary); }
+      .date-cell.range-edge.range-preview-edge { background: var(--color-action-primary); color: var(--color-text-inverse); }
+      .date-cell.disabled {
+        color: var(--color-text-disabled);
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+      .date-cell.disabled:hover { background: transparent; }
+
+      .date-trigger-clear {
+        width: 24px;
+        height: 24px;
+        display: none;
+        place-items: center;
+        flex: 0 0 auto;
+        padding: 4px;
+        border: 0;
+        border-radius: var(--radius-default);
+        background: transparent;
+        color: var(--color-text-disabled);
+        cursor: pointer;
+      }
+
+      .date-range-trigger.has-value:hover > .icon { display: none; }
+      .date-range-trigger.has-value:hover .date-trigger-clear { display: grid; }
+      .date-trigger-clear:hover { background: var(--color-bg-hover); color: var(--color-text-tertiary); }
+
       .filter-control,
       .search-control {
         min-height: 36px;
@@ -770,7 +1054,7 @@
       .filter-label {
         flex: 0 0 auto;
         color: var(--color-text-tertiary);
-        font-weight: var(--text-body-medium-weight);
+        font-weight: var(--text-body-weight);
         white-space: nowrap;
       }
 
@@ -792,6 +1076,7 @@
       .filter-control[data-filter-field="publicationStatus"] .filter-value .status-pill {
         width: auto;
         color: var(--color-text-default);
+        font-weight: var(--text-body-medium-weight);
       }
 
       .filter-control[data-filter-field="publicationStatus"] .filter-value .status-pill .icon {
@@ -839,6 +1124,7 @@
       .filter-option[aria-selected="true"] {
         background: transparent;
         color: var(--color-action-primary);
+        font-weight: var(--text-body-medium-weight);
       }
 
       .filter-option[aria-selected="true"]:hover {
@@ -981,6 +1267,55 @@
         justify-self: center;
         text-align: center;
       }
+
+      .table-head-action {
+        min-width: 0;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        padding: 0 6px;
+        border: 0;
+        border-radius: var(--radius-small);
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+      }
+
+      .table-head-action:hover {
+        background: var(--color-bg-hover);
+        color: var(--color-text-primary);
+      }
+
+      .table-head-action.active {
+        background: color-mix(in srgb, var(--color-action-primary) 20%, transparent);
+        color: var(--color-action-primary);
+      }
+
+      .table-sort-mark {
+        width: 16px;
+        height: 16px;
+        flex: 0 0 auto;
+      }
+
+      .table-sort-mark svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        fill: currentColor;
+      }
+
+      .table-sort-mark .sort-up,
+      .table-sort-mark .sort-down {
+        color: var(--color-border-strong);
+      }
+
+      .table-sort-mark .sort-up { transform: translateY(-2px); }
+      .table-sort-mark .sort-down { transform: translateY(2px); }
+      .table-sort-mark.asc .sort-up,
+      .table-sort-mark.desc .sort-down { color: var(--color-action-primary); }
 
       .video-row > :nth-child(n + 2) {
         justify-self: stretch;
@@ -1184,9 +1519,8 @@
       }
 
       .video-copy {
-        width: 168px;
         min-width: 0;
-        flex: 0 1 168px;
+        flex: 1 1 0;
       }
 
       .video-title {
@@ -1194,10 +1528,55 @@
         overflow: hidden;
         color: var(--color-text-default);
         font-size: var(--text-body-size);
-        line-height: var(--text-body-line-height);
+        line-height: 20px;
         font-weight: var(--text-body-medium-weight);
+        display: block;
         text-overflow: ellipsis;
         white-space: nowrap;
+      }
+
+      .video-title-tooltip-wrap {
+        position: relative;
+        min-width: 0;
+        border-radius: var(--radius-small);
+      }
+
+      .video-title-tooltip-wrap.has-overflow {
+        cursor: help;
+      }
+
+      .video-title-tooltip-wrap.has-overflow:focus-visible {
+        outline: none;
+        box-shadow: var(--shadow-focus);
+      }
+
+      .video-title-tooltip {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 300;
+        width: max-content;
+        max-width: 320px;
+        padding: 6px 10px;
+        border-radius: var(--radius-small);
+        background: var(--color-bg-inverse);
+        color: var(--color-text-inverse);
+        box-shadow: var(--shadow-overlay);
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+        font-weight: var(--text-caption-weight);
+        overflow-wrap: anywhere;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(2px);
+        transition: opacity 120ms ease, transform 120ms ease;
+      }
+
+      .video-title-tooltip.is-visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
       }
 
       .video-subtitle {
@@ -1379,6 +1758,10 @@
         color: inherit;
       }
 
+      .filter-option[data-filter-field="publicationStatus"][aria-selected="true"] .status-pill {
+        font-weight: var(--text-body-medium-weight);
+      }
+
       .status-text,
       .updated-time {
         margin: 2px 0 0;
@@ -1389,8 +1772,7 @@
         text-align: center;
       }
 
-      .updated-time .date-line,
-      .updated-time .time-line {
+      .updated-time .date-line {
         display: block;
         white-space: nowrap;
       }
@@ -1438,6 +1820,38 @@
         border-color: var(--color-border-default);
         background: var(--color-bg-disabled);
         color: var(--color-text-disabled);
+      }
+
+      .row-action-tooltip-wrap {
+        position: relative;
+        display: inline-flex;
+      }
+
+      .row-action-tooltip {
+        position: absolute;
+        right: 0;
+        bottom: calc(100% + 8px);
+        z-index: 40;
+        width: max-content;
+        max-width: 220px;
+        padding: 5px 8px;
+        border-radius: var(--radius-small);
+        background: var(--color-bg-inverse);
+        color: var(--color-text-inverse);
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+        font-weight: var(--text-caption-weight);
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(2px);
+        transition: opacity 120ms ease, transform 120ms ease;
+      }
+
+      .row-action-tooltip-wrap:hover .row-action-tooltip,
+      .row-action-tooltip-wrap:focus-within .row-action-tooltip {
+        opacity: 1;
+        transform: translateY(0);
       }
 
       .row-action-spinner {
@@ -1921,7 +2335,7 @@
         }
 
         .content-filters {
-          flex-wrap: nowrap;
+          flex-wrap: wrap;
         }
 
         .filter-group {
@@ -1986,6 +2400,12 @@
           margin-left: auto;
         }
 
+        .date-range-dropdown,
+        .date-dropdown.range-panel {
+          left: auto;
+          right: 0;
+        }
+
         .video-list-card {
           overflow: visible;
         }
@@ -1995,7 +2415,7 @@
         }
       }
 
-      @media (max-width: 767px) {
+      @media (min-width: 768px) and (max-width: 767px) {
         body {
           overflow: auto;
         }
@@ -2047,7 +2467,7 @@
 
         .shell {
           height: auto;
-          padding: 272px 0 0;
+          padding: 212px 0 0;
         }
 
         .workspace {
@@ -2073,6 +2493,38 @@
 
         .filter-control {
           flex: 1 1 calc(50% - 8px);
+        }
+
+        .filter-group,
+        .date-range-picker {
+          flex: 1 1 calc(50% - 8px);
+        }
+
+        .filter-control,
+        .date-range-trigger {
+          width: 100%;
+          min-width: 0;
+        }
+
+        .date-range-dropdown,
+        .date-dropdown.range-panel {
+          position: fixed;
+          top: 220px;
+          right: 16px;
+          left: 16px;
+          width: auto;
+          max-height: calc(100vh - 236px);
+          overflow: auto;
+        }
+
+        .date-range-calendars {
+          grid-template-columns: 1fr;
+        }
+
+        .date-dropdown .date-calendar + .date-calendar {
+          padding-left: 0;
+          border-top: 1px solid var(--color-border-subtle);
+          border-left: 0;
         }
 
         .search-control {
@@ -2112,21 +2564,6 @@
         <span class="brand-title" data-i18n="studio">Studio</span>
       </a>
       <div class="topbar-actions">
-        <div class="language-switch">
-          <button class="icon-button language-trigger" type="button" aria-label="Switch language" data-i18n-aria-label="switchLanguage" aria-haspopup="listbox" aria-expanded="false">
-            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="12" cy="12" r="9" />
-              <path d="M3 12h18" />
-              <path d="M12 3c2.3 2.5 3.5 5.5 3.5 9S14.3 18.5 12 21" />
-              <path d="M12 3c-2.3 2.5-3.5 5.5-3.5 9s1.2 6.5 3.5 9" />
-            </svg>
-          </button>
-          <span class="language-tooltip" role="tooltip" data-i18n="languageTooltip">Language</span>
-          <div class="language-menu" role="listbox" aria-label="Language" data-i18n-aria-label="languageTooltip" hidden>
-            <button class="language-option" type="button" role="option" data-lang="en" aria-selected="true">English</button>
-            <button class="language-option" type="button" role="option" data-lang="zh" aria-selected="false">中文</button>
-          </div>
-        </div>
         <div class="theme-switch">
           <button class="icon-button theme-toggle" type="button" aria-label="Switch to light mode" data-theme-toggle>
             <svg class="icon theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true" data-theme-toggle-icon>
@@ -2230,7 +2667,7 @@
                 <rect x="3" y="5" width="18" height="14" rx="2" />
                 <path d="m10 9 6 3-6 3V9Z" />
               </svg>
-              <span data-i18n="content">Content</span>
+              <span data-i18n="content">Content Management</span>
             </a>
           </li>
           <li>
@@ -2269,22 +2706,20 @@
                 <li><button class="content-menu-link" type="button" role="tab" id="tab-all" data-content-tab="all" data-i18n="all" aria-selected="true" aria-controls="content-panel">All</button></li>
                 <li><button class="content-menu-link" type="button" role="tab" id="tab-short" data-content-tab="short" data-i18n="short" aria-selected="false" aria-controls="content-panel">Short</button></li>
                 <li><button class="content-menu-link" type="button" role="tab" id="tab-comic-drama" data-content-tab="comic-drama" data-i18n="comicDrama" aria-selected="false" aria-controls="content-panel">ComicDrama</button></li>
-                <li><button class="content-menu-link" type="button" role="tab" id="tab-drama" data-content-tab="drama" data-i18n="drama" aria-selected="false" aria-controls="content-panel">Drama</button></li>
-                <li><button class="content-menu-link" type="button" role="tab" id="tab-anime" data-content-tab="anime" data-i18n="anime" aria-selected="false" aria-controls="content-panel">Anime</button></li>
               </ul>
             </nav>
             <div class="content-filters" aria-label="Content filters" data-i18n-aria-label="contentFiltersAria">
               <div class="filter-group">
                 <button class="filter-control" type="button" aria-haspopup="listbox" aria-expanded="false" data-filter-trigger data-filter-field="freePaidStatus">
                   <span class="filter-label-frame">
-                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M4 7h16" />
-                      <path d="M7 12h10" />
-                      <path d="M10 17h4" />
-                    </svg>
                     <span class="filter-label" data-i18n="freePaid">Free/Paid</span>
                   </span>
                   <span class="filter-value" data-filter-value>All</span>
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 7h16" />
+                    <path d="M7 12h10" />
+                    <path d="M10 17h4" />
+                  </svg>
                 </button>
                 <div class="filter-menu" role="listbox" aria-label="Free/Paid" data-i18n-aria-label="freePaid" hidden>
                   <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="freePaidStatus" data-filter-value="" data-i18n="all" aria-selected="true">All</button>
@@ -2295,20 +2730,54 @@
               <div class="filter-group">
                 <button class="filter-control" type="button" aria-haspopup="listbox" aria-expanded="false" data-filter-trigger data-filter-field="publicationStatus">
                   <span class="filter-label-frame">
-                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
-                      <path d="M4 7h16" />
-                      <path d="M7 12h10" />
-                      <path d="M10 17h4" />
-                    </svg>
                     <span class="filter-label" data-i18n="publication">Publication</span>
                   </span>
                   <span class="filter-value" data-filter-value>All</span>
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 7h16" />
+                    <path d="M7 12h10" />
+                    <path d="M10 17h4" />
+                  </svg>
                 </button>
                 <div class="filter-menu" role="listbox" aria-label="Publication" data-i18n-aria-label="publication" hidden>
                   <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="" data-i18n="all" aria-selected="true">All</button>
                   <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="Online" data-i18n="online" aria-selected="false">Online</button>
                   <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="Publishing" data-i18n="publishing" aria-selected="false">Publishing</button>
                   <button class="filter-option" type="button" role="option" data-filter-option data-filter-field="publicationStatus" data-filter-value="Offline" data-i18n="offline" aria-selected="false">Offline</button>
+                </div>
+              </div>
+              <div class="date-range-picker" data-date-range-picker>
+                <button class="date-range-trigger" type="button" aria-haspopup="dialog" aria-expanded="false" data-date-range-trigger>
+                  <span class="date-range-placeholder" data-date-range-value data-i18n="dateRange">Date range</span>
+                  <svg class="icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="16" rx="2" />
+                    <path d="M16 3v4M8 3v4M3 10h18" />
+                  </svg>
+                  <span class="date-trigger-clear" role="button" tabindex="-1" aria-label="Clear date range" data-i18n-aria-label="clearDateRange" data-date-range-clear>
+                    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+                  </span>
+                </button>
+                <div class="date-dropdown range-panel" role="dialog" aria-label="Select date range" data-i18n-aria-label="selectDateRange" data-date-range-dropdown hidden>
+                  <div class="date-range-calendars" data-date-range-calendars>
+                    <div class="date-calendar" data-date-panel-offset="0">
+                      <div class="date-calendar-row">
+                        <button class="date-nav-btn prev" type="button" aria-label="Previous month"><svg class="date-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg></button>
+                        <h4 class="date-panel-title"></h4>
+                        <button class="date-nav-btn next" type="button" aria-label="Next month"><svg class="date-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg></button>
+                      </div>
+                      <div class="date-weekdays" aria-hidden="true"></div>
+                      <div class="date-days"></div>
+                    </div>
+                    <div class="date-calendar" data-date-panel-offset="1">
+                      <div class="date-calendar-row">
+                        <button class="date-nav-btn prev" type="button" aria-label="Previous month"><svg class="date-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg></button>
+                        <h4 class="date-panel-title"></h4>
+                        <button class="date-nav-btn next" type="button" aria-label="Next month"><svg class="date-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg></button>
+                      </div>
+                      <div class="date-weekdays" aria-hidden="true"></div>
+                      <div class="date-days"></div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="search-control">
@@ -2333,8 +2802,14 @@
                   <span data-i18n="video">Video</span>
                   <span data-i18n="freePaidStatus">Free/Paid Status</span>
                   <span data-i18n="publicationStatus">Publication Status</span>
-                  <span data-i18n="updated">Updated</span>
-                  <span data-i18n="firstOnline">First published</span>
+                  <button class="table-head-action" type="button" data-video-sort="updated" data-i18n-aria-label="sortUpdated">
+                    <span data-i18n="updated">Updated</span>
+                    <span class="table-sort-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path class="sort-up" d="M12 5.5c.28 0 .54.13.72.35l3.82 4.58c.43.52.06 1.31-.62 1.31H8.08c-.68 0-1.05-.79-.62-1.31l3.82-4.58c.18-.22.44-.35.72-.35Z"/><path class="sort-down" d="M12 18.5a.94.94 0 0 1-.72-.35l-3.82-4.58c-.43-.52-.06-1.31.62-1.31h7.84c.68 0 1.05.79.62 1.31l-3.82 4.58a.94.94 0 0 1-.72.35Z"/></svg></span>
+                  </button>
+                  <button class="table-head-action" type="button" data-video-sort="firstOnline" data-i18n-aria-label="sortFirstOnline">
+                    <span data-i18n="firstOnline">First published</span>
+                    <span class="table-sort-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path class="sort-up" d="M12 5.5c.28 0 .54.13.72.35l3.82 4.58c.43.52.06 1.31-.62 1.31H8.08c-.68 0-1.05-.79-.62-1.31l3.82-4.58c.18-.22.44-.35.72-.35Z"/><path class="sort-down" d="M12 18.5a.94.94 0 0 1-.72-.35l-3.82-4.58c-.43-.52-.06-1.31.62-1.31h7.84c.68 0 1.05.79.62 1.31l-3.82 4.58a.94.94 0 0 1-.72.35Z"/></svg></span>
+                  </button>
                   <span data-i18n="action">Action</span>
                 </div>
               </div>
@@ -2379,6 +2854,7 @@
       </section>
     </main>
     <div class="message-portal" aria-live="polite" aria-atomic="false" data-message-portal></div>
+    <div class="video-title-tooltip" role="tooltip" data-video-title-tooltip></div>
     <div class="feedback-modal-layer" data-offline-modal hidden>
       <div class="feedback-modal-mask" data-offline-modal-dismiss></div>
       <section class="feedback-modal" role="dialog" aria-modal="true" aria-labelledby="offline-modal-title" aria-describedby="offline-modal-description" tabindex="-1" data-offline-modal-dialog>
@@ -2418,7 +2894,7 @@
           iqId: "IQ ID: 1461926038",
           upload: "Upload",
           dashboard: "Home",
-          content: "Content",
+          content: "Content Management",
           analytics: "Analytics",
           subtitles: "Subtitles",
           settings: "Settings",
@@ -2432,6 +2908,9 @@
           anime: "Anime",
           freePaid: "Free/Paid",
           publication: "Publication",
+          dateRange: "Updated",
+          selectDateRange: "Select date range",
+          clearDateRange: "Clear",
           visibility: "Visibility",
           free: "Free",
           paid: "Paid",
@@ -2452,6 +2931,8 @@
           publicationStatus: "Publication Status",
           updated: "Updated",
           firstOnline: "First published",
+          sortUpdated: "Sort by updated date",
+          sortFirstOnline: "Sort by first published date",
           action: "Action",
           pagination: "Pagination",
           previousPage: "Previous page",
@@ -2464,6 +2945,7 @@
           edit: "Edit",
           requestOffline: "Offline",
           republish: "Republish",
+          republishUnavailable: "This content is offline on the main site",
           offlineSuccess: "Content taken offline successfully",
           republishSuccess: "Content republished successfully",
           offlineModalTitle: "Please confirm",
@@ -2488,7 +2970,7 @@
           iqId: "IQ ID：1461926038",
           upload: "上传",
           dashboard: "首页",
-          content: "内容",
+          content: "内容管理",
           analytics: "数据分析",
           subtitles: "字幕",
           settings: "设置",
@@ -2502,6 +2984,9 @@
           anime: "动漫",
           freePaid: "免费/付费",
           publication: "发布状态",
+          dateRange: "更新时间",
+          selectDateRange: "选择日期范围",
+          clearDateRange: "清除",
           visibility: "可见性",
           free: "免费",
           paid: "付费",
@@ -2522,6 +3007,8 @@
           publicationStatus: "发布状态",
           updated: "更新时间",
           firstOnline: "首次上线时间",
+          sortUpdated: "按更新时间排序",
+          sortFirstOnline: "按首次上线时间排序",
           action: "操作",
           pagination: "分页",
           previousPage: "上一页",
@@ -2534,6 +3021,7 @@
           edit: "编辑",
           requestOffline: "下线",
           republish: "重新上线",
+          republishUnavailable: "该内容在主站已下线",
           offlineSuccess: "内容已成功下线",
           republishSuccess: "内容已成功重新上线",
           offlineModalTitle: "请确认信息",
@@ -2547,11 +3035,7 @@
         }
       };
 
-      const trigger = document.querySelector(".language-trigger");
-      const languageSwitch = document.querySelector(".language-switch");
       const themeSwitch = document.querySelector(".theme-switch");
-      const menu = document.querySelector(".language-menu");
-      const options = document.querySelectorAll(".language-option");
       const accountEntry = document.querySelector(".account-entry");
       const accountTrigger = document.querySelector(".account-trigger");
       const accountMenu = document.querySelector(".account-menu");
@@ -2559,6 +3043,7 @@
       const themeTooltip = document.querySelector("[data-theme-tooltip]");
       const contentMenu = document.querySelector(".content-menu");
       const contentTabs = Array.from(document.querySelectorAll("[data-content-tab]"));
+      const videoSortButtons = Array.from(document.querySelectorAll("[data-video-sort]"));
       const workspace = document.querySelector(".workspace");
       const contentView = document.querySelector(".content-view");
       const contentToolbar = document.querySelector(".content-toolbar-frame");
@@ -2567,10 +3052,17 @@
       const videoListHeaderScroll = document.querySelector("[data-video-list-header-scroll]");
       const videoListScroll = document.querySelector("[data-video-list-scroll]");
       const contentList = document.querySelector("[data-video-list]");
+      const videoTitleTooltip = document.querySelector("[data-video-title-tooltip]");
       const searchInput = document.querySelector("[data-search-input]");
       const searchClear = document.querySelector("[data-search-clear]");
       const filterTriggers = Array.from(document.querySelectorAll("[data-filter-trigger]"));
       const filterOptions = Array.from(document.querySelectorAll("[data-filter-option]"));
+      const dateRangePicker = document.querySelector("[data-date-range-picker]");
+      const dateRangeTrigger = document.querySelector("[data-date-range-trigger]");
+      const dateRangeDropdown = document.querySelector("[data-date-range-dropdown]");
+      const dateRangeCalendars = document.querySelector("[data-date-range-calendars]");
+      const dateRangeValue = document.querySelector("[data-date-range-value]");
+      const dateRangeClear = document.querySelector("[data-date-range-clear]");
       const pageSizeSelect = document.querySelector("[data-page-size]");
       const pageSizeTrigger = document.querySelector("[data-page-size-trigger]");
       const pageSizeLabel = document.querySelector("[data-page-size-label]");
@@ -2591,10 +3083,18 @@
       let currentContentView = "all";
       let currentLanguage = "en";
       let currentPage = 1;
+      let currentSortKey = null;
+      let currentSortDirection = null;
       let pageSize = Number(pageSizeTrigger.dataset.pageSizeValue);
       let pendingOfflineItem = null;
       let pendingPublicationStatus = "Offline";
       let offlineModalTrigger = null;
+      let dateRangeView = new Date(2026, 7, 1);
+      let dateRangeStart = null;
+      let dateRangeEnd = null;
+      let dateRangeHover = null;
+      let committedDateRangeStart = null;
+      let committedDateRangeEnd = null;
       const loadingPublicationIds = new Set();
       const activeFilters = {
         freePaidStatus: "",
@@ -2603,7 +3103,7 @@
       const videoItems = [
         {
           type: "short",
-          title: "Launch Teaser",
+          title: "The Extraordinary Adventures of Our Summer Studio Launch",
           id: "VID-2408-0192",
           duration: "00:42",
           episodes: 12,
@@ -2667,7 +3167,7 @@
         },
         {
           type: "comic-drama",
-          title: "Roommate Contract",
+          title: "Roommate Contract: The Unexpected Rules of Living Together Under One Roof",
           id: "VID-2408-0179",
           duration: "02:44",
           episodes: 8,
@@ -2675,6 +3175,7 @@
           freePaidStatus: "Free",
           publicationStatus: "Offline",
           visibilityStatus: "Public",
+          republishDisabled: true,
           updated: "Aug 13, 2026 11:32:08"
         },
         {
@@ -2702,7 +3203,7 @@
           updated: "Aug 8, 2026 08:26:54"
         },
         {
-          type: "drama",
+          type: "short",
           title: "Character Moment",
           id: "VID-2408-0158",
           duration: "02:06",
@@ -2715,7 +3216,7 @@
           updated: "Aug 9, 2026 17:14:06"
         },
         {
-          type: "drama",
+          type: "short",
           title: "Second Chance",
           id: "VID-2408-0151",
           duration: "07:36",
@@ -2728,7 +3229,7 @@
           updated: "Aug 7, 2026 13:38:45"
         },
         {
-          type: "drama",
+          type: "short",
           title: "Evidence Board",
           id: "VID-2408-0136",
           duration: "09:12",
@@ -2740,7 +3241,7 @@
           updated: "Aug 4, 2026 19:03:12"
         },
         {
-          type: "drama",
+          type: "short",
           title: "Rainy Street",
           id: "VID-2408-0124",
           duration: "08:48",
@@ -2752,7 +3253,7 @@
           updated: "Aug 2, 2026 12:51:39"
         },
         {
-          type: "anime",
+          type: "comic-drama",
           title: "Harbor Lights",
           id: "VID-2408-0181",
           duration: "28:14",
@@ -2765,7 +3266,7 @@
           updated: "Aug 11, 2026 20:16:24"
         },
         {
-          type: "anime",
+          type: "comic-drama",
           title: "Silent Witness",
           id: "VID-2408-0162",
           duration: "31:08",
@@ -2777,7 +3278,7 @@
           updated: "Aug 6, 2026 14:29:51"
         },
         {
-          type: "anime",
+          type: "comic-drama",
           title: "Northern Promise",
           id: "VID-2408-0144",
           duration: "26:52",
@@ -2789,7 +3290,7 @@
           updated: "Aug 3, 2026 10:44:18"
         },
         {
-          type: "anime",
+          type: "comic-drama",
           title: "Glass City",
           id: "VID-2408-0121",
           duration: "33:19",
@@ -2819,6 +3320,25 @@
         "VID-2408-0162": "Aug 2, 2026 14:49:31",
         "VID-2408-0144": "Jul 30, 2026 08:57:44",
         "VID-2408-0121": "Jul 26, 2026 16:33:19"
+      };
+
+      const firstCreatedTimes = {
+        "VID-2408-0192": "Aug 14, 2026 08:40:00",
+        "VID-2408-0187": "Aug 12, 2026 09:20:00",
+        "VID-2408-0181": "Aug 10, 2026 16:10:00",
+        "VID-2408-0179": "Aug 9, 2026 07:55:00",
+        "VID-2408-0168": "Aug 7, 2026 13:40:00",
+        "VID-2408-0164": "Aug 7, 2026 10:25:00",
+        "VID-2408-0162": "Aug 6, 2026 18:05:00",
+        "VID-2408-0158": "Aug 5, 2026 08:12:00",
+        "VID-2408-0151": "Aug 3, 2026 16:45:00",
+        "VID-2408-0147": "Aug 3, 2026 11:30:00",
+        "VID-2408-0144": "Aug 2, 2026 15:20:00",
+        "VID-2408-0142": "Aug 2, 2026 09:10:00",
+        "VID-2408-0136": "Jul 31, 2026 11:05:00",
+        "VID-2408-0128": "Jul 30, 2026 17:40:00",
+        "VID-2408-0124": "Jul 28, 2026 14:15:00",
+        "VID-2408-0121": "Jul 25, 2026 12:50:00"
       };
 
       function t(key, ...args) {
@@ -2959,10 +3479,10 @@
 
       function getUpdatedLabel(updated) {
         if (updated.startsWith("Today")) {
-          return updated.replace("Today", t("today"));
+          return t("today");
         }
         if (updated.startsWith("Yesterday")) {
-          return updated.replace("Yesterday", t("yesterday"));
+          return t("yesterday");
         }
         const timestamp = Date.parse(updated);
         if (Number.isNaN(timestamp)) {
@@ -2974,13 +3494,7 @@
           month: currentLanguage === "zh" ? "numeric" : "short",
           day: "numeric"
         }).format(timestamp);
-        const timeLabel = new Intl.DateTimeFormat(locale, {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hourCycle: "h23"
-        }).format(timestamp);
-        return `<span class="date-line">${dateLabel}</span><span class="time-line">${timeLabel}</span>`;
+        return `<span class="date-line">${dateLabel}</span>`;
       }
 
       function syncFilterLabels() {
@@ -3031,11 +3545,10 @@
         document.querySelectorAll("[data-i18n-placeholder]").forEach((node) => {
           node.setAttribute("placeholder", t(node.dataset.i18nPlaceholder));
         });
-        options.forEach((option) => {
-          option.setAttribute("aria-selected", String(option.dataset.lang === nextLang));
-        });
         syncFilterLabels();
         syncFilterOptionLabels();
+        syncDateRangeValue();
+        renderDateRangeCalendars();
         syncPageSizeLabels();
         renderVideoList(currentContentView);
         syncContentMenuIndicator();
@@ -3053,7 +3566,7 @@
         }
       }
 
-      const tooltipContainers = [languageSwitch, themeSwitch, accountEntry].filter(Boolean);
+      const tooltipContainers = [themeSwitch, accountEntry].filter(Boolean);
 
       function setActiveTooltipContainer(activeContainer) {
         tooltipContainers.forEach((container) => {
@@ -3090,10 +3603,98 @@
         });
       });
 
-      function closeFilterMenus() {
+      function closeFilterMenus(options = {}) {
         filterTriggers.forEach((filterTrigger) => {
           filterTrigger.setAttribute("aria-expanded", "false");
           filterTrigger.closest(".filter-group").querySelector(".filter-menu").hidden = true;
+        });
+        if (options.restoreDateRange !== false && dateRangeStart && !dateRangeEnd) {
+          dateRangeStart = committedDateRangeStart ? new Date(committedDateRangeStart) : null;
+          dateRangeEnd = committedDateRangeEnd ? new Date(committedDateRangeEnd) : null;
+          dateRangeHover = null;
+          syncDateRangeValue();
+          renderDateRangeCalendars();
+        }
+        dateRangeTrigger.setAttribute("aria-expanded", "false");
+        dateRangeTrigger.classList.remove("open");
+        dateRangeDropdown.hidden = true;
+      }
+
+      function toDateKey(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      }
+
+      function fromDateKey(value) {
+        const [year, month, day] = value.split("-").map(Number);
+        return new Date(year, month - 1, day);
+      }
+
+      function syncDateRangeValue() {
+        if (!dateRangeStart) {
+          dateRangeValue.textContent = t("dateRange");
+          dateRangeValue.classList.add("date-range-placeholder");
+          dateRangeTrigger.classList.remove("has-value");
+          return;
+        }
+        dateRangeValue.textContent = dateRangeEnd
+          ? `${toDateKey(dateRangeStart)} ~ ${toDateKey(dateRangeEnd)}`
+          : `${toDateKey(dateRangeStart)} ~`;
+        dateRangeValue.classList.remove("date-range-placeholder");
+        dateRangeTrigger.classList.toggle("has-value", Boolean(dateRangeEnd));
+      }
+
+      function renderDateRangeCalendars() {
+        const locale = currentLanguage === "zh" ? "zh-CN" : "en-US";
+        const weekdays = currentLanguage === "zh"
+          ? ["日", "一", "二", "三", "四", "五", "六"]
+          : ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+        const previewStart = dateRangeStart && !dateRangeEnd && dateRangeHover
+          ? (dateRangeStart <= dateRangeHover ? dateRangeStart : dateRangeHover)
+          : null;
+        const previewEnd = dateRangeStart && !dateRangeEnd && dateRangeHover
+          ? (dateRangeStart <= dateRangeHover ? dateRangeHover : dateRangeStart)
+          : null;
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        Array.from(dateRangeCalendars.querySelectorAll(".date-calendar")).forEach((calendar) => {
+          const offset = Number(calendar.dataset.datePanelOffset || 0);
+          const monthDate = new Date(dateRangeView.getFullYear(), dateRangeView.getMonth() + offset, 1);
+          const year = monthDate.getFullYear();
+          const month = monthDate.getMonth();
+          const leading = monthDate.getDay();
+          const daysInMonth = new Date(year, month + 1, 0).getDate();
+          const previousMonthDays = new Date(year, month, 0).getDate();
+          const totalCells = Math.ceil((leading + daysInMonth) / 7) * 7;
+          calendar.querySelector(".date-panel-title").textContent = currentLanguage === "zh"
+            ? `${year} 年 ${month + 1} 月`
+            : new Intl.DateTimeFormat(locale, { year: "numeric", month: "long" }).format(monthDate);
+          calendar.querySelector(".date-weekdays").innerHTML = weekdays.map((day) => `<span class="date-weekday">${day}</span>`).join("");
+          calendar.querySelector(".date-days").innerHTML = Array.from({ length: totalCells }, (_, index) => {
+            const dayIndex = index - leading + 1;
+            const date = dayIndex < 1
+              ? new Date(year, month - 1, previousMonthDays + dayIndex)
+              : dayIndex > daysInMonth
+                ? new Date(year, month + 1, dayIndex - daysInMonth)
+                : new Date(year, month, dayIndex);
+            const isCurrentMonth = date.getMonth() === month;
+            const isEdge = (dateRangeStart && toDateKey(date) === toDateKey(dateRangeStart)) || (dateRangeEnd && toDateKey(date) === toDateKey(dateRangeEnd));
+            const inRange = dateRangeStart && dateRangeEnd && date > dateRangeStart && date < dateRangeEnd;
+            const isPreviewEdge = dateRangeStart && !dateRangeEnd && dateRangeHover && (toDateKey(date) === toDateKey(dateRangeStart) || toDateKey(date) === toDateKey(dateRangeHover));
+            const inPreview = previewStart && previewEnd && date > previewStart && date < previewEnd;
+            const isFuture = date > today;
+            const classes = ["date-cell"];
+            if (!isCurrentMonth) classes.push("muted");
+            if (toDateKey(date) === toDateKey(today)) classes.push("today");
+            if (isEdge) classes.push("range-edge");
+            if (inRange) classes.push("in-range");
+            if (isPreviewEdge) classes.push("range-preview-edge");
+            if (inPreview) classes.push("range-preview");
+            if (isFuture) classes.push("disabled");
+            return `<button class="${classes.join(" ")}" type="button" data-date-value="${toDateKey(date)}" aria-label="${new Intl.DateTimeFormat(locale, { dateStyle: "long" }).format(date)}"${isFuture ? ' disabled aria-disabled="true"' : ""}>${date.getDate()}</button>`;
+          }).join("");
         });
       }
 
@@ -3126,13 +3727,86 @@
           filterMenu.hidden = !shouldOpen;
           filterTrigger.setAttribute("aria-expanded", String(shouldOpen));
           closePageSizeMenu();
-          menu.hidden = true;
-          languageSwitch.classList.remove("is-open");
-          trigger.setAttribute("aria-expanded", "false");
           accountMenu.hidden = true;
           accountEntry.classList.remove("is-open");
           accountTrigger.setAttribute("aria-expanded", "false");
         });
+      });
+
+      dateRangeTrigger.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const shouldOpen = dateRangeDropdown.hidden;
+        closeFilterMenus();
+        if (shouldOpen) {
+          renderDateRangeCalendars();
+          dateRangeDropdown.hidden = false;
+          dateRangeTrigger.setAttribute("aria-expanded", "true");
+          dateRangeTrigger.classList.add("open");
+        }
+        closePageSizeMenu();
+      });
+
+      dateRangeCalendars.addEventListener("click", (event) => {
+        event.stopPropagation();
+        const previous = event.target.closest(".date-nav-btn.prev");
+        const next = event.target.closest(".date-nav-btn.next");
+        if (previous || next) {
+          dateRangeView = new Date(dateRangeView.getFullYear(), dateRangeView.getMonth() + (next ? 1 : -1), 1);
+          renderDateRangeCalendars();
+          return;
+        }
+        const day = event.target.closest("[data-date-value]");
+        if (!day || day.disabled || day.classList.contains("disabled")) return;
+        const selectedDate = fromDateKey(day.dataset.dateValue);
+        if (!dateRangeStart || dateRangeEnd) {
+          dateRangeStart = selectedDate;
+          dateRangeEnd = null;
+          dateRangeHover = null;
+          syncDateRangeValue();
+          renderDateRangeCalendars();
+          return;
+        } else if (selectedDate < dateRangeStart) {
+          dateRangeEnd = dateRangeStart;
+          dateRangeStart = selectedDate;
+        } else {
+          dateRangeEnd = selectedDate;
+        }
+        dateRangeHover = null;
+        committedDateRangeStart = new Date(dateRangeStart);
+        committedDateRangeEnd = new Date(dateRangeEnd);
+        syncDateRangeValue();
+        renderDateRangeCalendars();
+        closeFilterMenus({ restoreDateRange: false });
+        currentPage = 1;
+        renderVideoList(currentContentView);
+      });
+
+      dateRangeCalendars.addEventListener("mouseover", (event) => {
+        if (!dateRangeStart || dateRangeEnd) return;
+        const day = event.target.closest("[data-date-value]");
+        if (!day || day.disabled || day.classList.contains("disabled") || dateRangeHover && toDateKey(dateRangeHover) === day.dataset.dateValue) return;
+        dateRangeHover = fromDateKey(day.dataset.dateValue);
+        renderDateRangeCalendars();
+      });
+
+      dateRangeCalendars.addEventListener("mouseleave", () => {
+        if (!dateRangeHover || dateRangeEnd) return;
+        dateRangeHover = null;
+        renderDateRangeCalendars();
+      });
+
+      dateRangeClear.addEventListener("click", (event) => {
+        event.stopPropagation();
+        dateRangeStart = null;
+        dateRangeEnd = null;
+        dateRangeHover = null;
+        committedDateRangeStart = null;
+        committedDateRangeEnd = null;
+        syncDateRangeValue();
+        renderDateRangeCalendars();
+        closeFilterMenus({ restoreDateRange: false });
+        currentPage = 1;
+        renderVideoList(currentContentView);
       });
 
       filterOptions.forEach((filterOption) => {
@@ -3154,47 +3828,15 @@
         });
       });
 
-      trigger.addEventListener("click", (event) => {
-        event.stopPropagation();
-        const isOpen = !menu.hidden;
-        languageSwitch.classList.add("suppress-tooltip");
-        setActiveTooltipContainer(languageSwitch);
-        if (!isOpen) {
-          suppressTooltipIfHidden(languageSwitch, ".language-tooltip");
-        }
-        menu.hidden = isOpen;
-        languageSwitch.classList.toggle("is-open", !isOpen);
-        trigger.setAttribute("aria-expanded", String(!isOpen));
-        accountMenu.hidden = true;
-        accountEntry.classList.remove("is-open");
-        accountTrigger.setAttribute("aria-expanded", "false");
-        closeFilterMenus();
-      });
-
-      options.forEach((option) => {
-        option.addEventListener("click", () => {
-          languageSwitch.classList.add("suppress-tooltip");
-          setLanguage(option.dataset.lang);
-          menu.hidden = true;
-          languageSwitch.classList.remove("is-open");
-          trigger.setAttribute("aria-expanded", "false");
-          trigger.blur();
-          option.blur();
-        });
-      });
-
       document.addEventListener("click", (event) => {
-        if (!event.target.closest(".language-switch")) {
-          menu.hidden = true;
-          languageSwitch.classList.remove("is-open");
-          trigger.setAttribute("aria-expanded", "false");
-        }
         if (!event.target.closest(".account-entry")) {
           accountMenu.hidden = true;
           accountEntry.classList.remove("is-open");
           accountTrigger.setAttribute("aria-expanded", "false");
         }
         if (!event.target.closest(".content-filters")) {
+          closeFilterMenus();
+        } else if (!event.target.closest("[data-date-range-picker]") && !dateRangeDropdown.hidden) {
           closeFilterMenus();
         }
       });
@@ -3210,9 +3852,6 @@
         accountMenu.hidden = isOpen;
         accountEntry.classList.toggle("is-open", !isOpen);
         accountTrigger.setAttribute("aria-expanded", String(!isOpen));
-        menu.hidden = true;
-        languageSwitch.classList.remove("is-open");
-        trigger.setAttribute("aria-expanded", "false");
         closeFilterMenus();
       });
 
@@ -3226,12 +3865,24 @@
         return Date.parse(updated);
       }
 
+      function getCreatedOrderValue(item) {
+        return Date.parse(firstCreatedTimes[item.id]) || 0;
+      }
+
+      function syncVideoSortControls() {
+        videoSortButtons.forEach((button) => {
+          const direction = button.dataset.videoSort === currentSortKey ? currentSortDirection : null;
+          const mark = button.querySelector(".table-sort-mark");
+          button.classList.toggle("active", Boolean(direction));
+          button.setAttribute("aria-pressed", String(Boolean(direction)));
+          mark.classList.toggle("asc", direction === "asc");
+          mark.classList.toggle("desc", direction === "desc");
+        });
+      }
+
       function getVideoRows(view) {
-        return (
-          view === "all"
-            ? [...videoItems].sort((a, b) => getUpdatedTimeValue(b.updated) - getUpdatedTimeValue(a.updated))
-            : videoItems.filter((item) => item.type === view)
-        ).filter((item) =>
+        const rows = (view === "all" ? [...videoItems] : videoItems.filter((item) => item.type === view))
+          .filter((item) =>
           Object.entries(activeFilters).every(([field, value]) => {
             if (!value) return true;
             if (["freePaidStatus", "publicationStatus", "visibilityStatus"].includes(field)) {
@@ -3239,7 +3890,20 @@
             }
             return item[field] === value;
           })
-        );
+        ).filter((item) => {
+          if (!dateRangeStart || !dateRangeEnd) return true;
+          const updatedTime = getUpdatedTimeValue(item.updated);
+          const startTime = new Date(dateRangeStart.getFullYear(), dateRangeStart.getMonth(), dateRangeStart.getDate()).getTime();
+          const endTime = new Date(dateRangeEnd.getFullYear(), dateRangeEnd.getMonth(), dateRangeEnd.getDate(), 23, 59, 59, 999).getTime();
+          return updatedTime >= startTime && updatedTime <= endTime;
+        });
+        const getSortValue = currentSortKey === "updated"
+          ? (item) => getUpdatedTimeValue(item.updated)
+          : currentSortKey === "firstOnline"
+            ? (item) => getUpdatedTimeValue(firstOnlineTimes[item.id])
+            : getCreatedOrderValue;
+        const direction = currentSortDirection === "asc" ? 1 : -1;
+        return rows.sort((a, b) => (getSortValue(a) - getSortValue(b)) * direction);
       }
 
       function updatePagination(totalRows) {
@@ -3261,6 +3925,7 @@
       }
 
       function renderVideoList(view) {
+        syncVideoSortControls();
         const rows = getVideoRows(view);
         updatePagination(rows.length);
         const visibleRows = rows.slice((currentPage - 1) * pageSize, currentPage * pageSize);
@@ -3288,7 +3953,12 @@
             const isDraft = getStatusKey(item.publicationStatus) === "draft";
             const isOffline = getStatusKey(item.publicationStatus) === "offline";
             const isLoading = loadingPublicationIds.has(item.id);
+            const isRepublishDisabled = isOffline && item.republishDisabled;
             const publicationActionLabel = t(isOffline ? "republish" : "requestOffline");
+            const publicationAction = isRepublishDisabled
+              ? `<span class="row-action-tooltip-wrap" tabindex="0"><button class="row-action" type="button" disabled>${publicationActionLabel}</button><span class="row-action-tooltip" role="tooltip">${t("republishUnavailable")}</span></span>`
+              : `<button class="row-action" type="button" data-toggle-publication="${item.id}"${isLoading ? " disabled aria-busy=\"true\"" : ""}>${isLoading ? '<span class="row-action-spinner" aria-hidden="true"></span>' : ""}${publicationActionLabel}</button>`;
+            const videoTitle = `<div class="video-title-tooltip-wrap"><p class="video-title">${item.title}</p></div>`;
             return `
               <article class="video-row${isDraft ? " is-draft" : ""}">
                 <div class="video-main">
@@ -3298,7 +3968,7 @@
                     </div>
                   </div>
                   <div class="video-copy">
-                    <p class="video-title">${item.title}</p>
+                    ${videoTitle}
                     <p class="video-subtitle">${item.id}</p>
                     <div class="video-tags">
                       <span class="type-tag ${item.type}">${getTypeLabel(item.type)}</span>
@@ -3315,12 +3985,51 @@
                 </div>
                 <div class="row-actions">
                   <a class="row-action" href="edit.html?contentId=${encodeURIComponent(item.id)}&type=${encodeURIComponent(item.type)}&tab=details">${t("edit")}</a>
-                  <button class="row-action" type="button" data-toggle-publication="${item.id}"${isLoading ? " disabled aria-busy=\"true\"" : ""}>${isLoading ? '<span class="row-action-spinner" aria-hidden="true"></span>' : ""}${publicationActionLabel}</button>
+                  ${publicationAction}
                 </div>
               </article>
             `;
           })
           .join("");
+        window.requestAnimationFrame(syncVideoTitleOverflow);
+      }
+
+      function syncVideoTitleOverflow() {
+        contentList.querySelectorAll(".video-title-tooltip-wrap").forEach((wrapper) => {
+          const title = wrapper.querySelector(".video-title");
+          const hasOverflow = title.scrollWidth > title.clientWidth;
+          wrapper.classList.toggle("has-overflow", hasOverflow);
+          wrapper.tabIndex = hasOverflow ? 0 : -1;
+          if (hasOverflow) {
+            wrapper.setAttribute("aria-label", title.textContent);
+          } else {
+            wrapper.removeAttribute("aria-label");
+          }
+          if (!wrapper.dataset.tooltipBound) {
+            wrapper.dataset.tooltipBound = "true";
+            wrapper.addEventListener("pointerenter", () => showVideoTitleTooltip(wrapper));
+            wrapper.addEventListener("pointerleave", hideVideoTitleTooltip);
+            wrapper.addEventListener("focusin", () => showVideoTitleTooltip(wrapper));
+            wrapper.addEventListener("focusout", hideVideoTitleTooltip);
+          }
+        });
+      }
+
+      function showVideoTitleTooltip(wrapper) {
+        if (!wrapper.classList.contains("has-overflow")) return;
+        const title = wrapper.querySelector(".video-title");
+        const anchorRect = title.getBoundingClientRect();
+        videoTitleTooltip.textContent = title.textContent;
+        videoTitleTooltip.classList.add("is-visible");
+        const tooltipRect = videoTitleTooltip.getBoundingClientRect();
+        const left = Math.min(Math.max(8, anchorRect.left), window.innerWidth - tooltipRect.width - 8);
+        const top = Math.max(8, anchorRect.top - tooltipRect.height - 8);
+        videoTitleTooltip.style.left = `${left}px`;
+        videoTitleTooltip.style.top = `${top}px`;
+      }
+
+      function hideVideoTitleTooltip() {
+        videoTitleTooltip.classList.remove("is-visible");
       }
 
       function syncOfflineModalText() {
@@ -3505,6 +4214,7 @@
       }
 
       function handleResponsiveResize() {
+        hideVideoTitleTooltip();
         document.documentElement.classList.add("is-resizing");
         window.clearTimeout(resizeSettledTimer);
         resizeSettledTimer = window.setTimeout(() => {
@@ -3512,6 +4222,7 @@
         }, 140);
         syncContentMenuIndicator();
         scheduleStickyDividerSync();
+        window.requestAnimationFrame(syncVideoTitleOverflow);
       }
 
       function scrollContentListToTop() {
@@ -3530,9 +4241,18 @@
         });
       }
 
-      videoListScroll.addEventListener("scroll", scheduleStickyDividerSync, { passive: true });
-      workspace?.addEventListener("scroll", scheduleStickyDividerSync, { passive: true });
-      window.addEventListener("scroll", scheduleStickyDividerSync, { passive: true });
+      videoListScroll.addEventListener("scroll", () => {
+        hideVideoTitleTooltip();
+        scheduleStickyDividerSync();
+      }, { passive: true });
+      workspace?.addEventListener("scroll", () => {
+        hideVideoTitleTooltip();
+        scheduleStickyDividerSync();
+      }, { passive: true });
+      window.addEventListener("scroll", () => {
+        hideVideoTitleTooltip();
+        scheduleStickyDividerSync();
+      }, { passive: true });
       window.addEventListener("resize", handleResponsiveResize);
 
       pageSizeTrigger.addEventListener("click", (event) => {
@@ -3626,6 +4346,24 @@
           const nextIndex = (index + offset + contentTabs.length) % contentTabs.length;
           contentTabs[nextIndex].focus();
           setContentView(contentTabs[nextIndex].dataset.contentTab);
+        });
+      });
+
+      videoSortButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          const nextKey = button.dataset.videoSort;
+          if (currentSortKey !== nextKey) {
+            currentSortKey = nextKey;
+            currentSortDirection = "asc";
+          } else if (currentSortDirection === "asc") {
+            currentSortDirection = "desc";
+          } else {
+            currentSortKey = null;
+            currentSortDirection = null;
+          }
+          currentPage = 1;
+          renderVideoList(currentContentView);
+          syncStickyDivider();
         });
       });
 

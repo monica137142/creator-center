@@ -117,6 +117,10 @@
         display: inline-flex;
       }
 
+      .topbar-actions > .language-switch {
+        display: none;
+      }
+
       .icon-button {
         width: 36px;
         height: 36px;
@@ -612,11 +616,11 @@
         font-weight: var(--text-caption-medium-weight);
       }
 
-      @media (max-width: 900px) {
+      @media (min-width: 768px) and (max-width: 900px) {
         .analytics-grid { grid-template-columns: 1fr; }
       }
 
-      @media (max-width: 720px) {
+      @media (min-width: 768px) and (max-width: 720px) {
         body {
           overflow: auto;
         }
@@ -803,7 +807,7 @@
                 <rect x="3" y="5" width="18" height="14" rx="2" />
                 <path d="m10 9 6 3-6 3V9Z" />
               </svg>
-              <span data-i18n="content">Content</span>
+              <span data-i18n="content">Content Management</span>
             </a>
           </li>
           <li>
@@ -875,7 +879,7 @@
           iqId: "IQ ID: 1461926038",
           upload: "Upload",
           dashboard: "Home",
-          content: "Content",
+          content: "Content Management",
           analytics: "Analytics",
           subtitles: "Subtitles",
           settings: "Settings",
@@ -896,7 +900,7 @@
           iqId: "IQ ID：1461926038",
           upload: "上传",
           dashboard: "首页",
-          content: "内容",
+          content: "内容管理",
           analytics: "数据分析",
           subtitles: "字幕",
           settings: "设置",
