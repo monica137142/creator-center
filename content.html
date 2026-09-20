@@ -3713,12 +3713,20 @@
         searchClear.hidden = !searchInput.value;
       }
 
-      searchInput.addEventListener("input", syncSearchClear);
+      searchInput.addEventListener("input", () => {
+        syncSearchClear();
+        currentPage = 1;
+        renderVideoList(currentContentView);
+        syncStickyDivider();
+      });
 
       searchClear.addEventListener("click", (event) => {
         event.preventDefault();
         searchInput.value = "";
         syncSearchClear();
+        currentPage = 1;
+        renderVideoList(currentContentView);
+        syncStickyDivider();
         searchInput.focus();
       });
 
@@ -3886,7 +3894,12 @@
       }
 
       function getVideoRows(view) {
+        const searchQuery = searchInput.value.trim().toLocaleLowerCase();
         const rows = (view === "all" ? [...videoItems] : videoItems.filter((item) => item.type === view))
+          .filter((item) => {
+            if (!searchQuery) return true;
+            return [item.title, item.id].some((value) => String(value).toLocaleLowerCase().includes(searchQuery));
+          })
           .filter((item) =>
           Object.entries(activeFilters).every(([field, value]) => {
             if (!value) return true;
