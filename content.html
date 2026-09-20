@@ -1338,7 +1338,7 @@
       }
 
       .video-empty-state {
-        min-height: 240px;
+        min-height: 360px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -2121,6 +2121,10 @@
         font-size: var(--text-body-size);
         line-height: var(--text-body-line-height);
         font-weight: var(--text-body-weight);
+      }
+
+      .pagination[hidden] {
+        display: none;
       }
 
       .pagination-range {
@@ -3069,6 +3073,7 @@
       const pageSizeMenu = document.querySelector("[data-page-size-menu]");
       const pageSizeOptions = Array.from(document.querySelectorAll("[data-page-size-option]"));
       const paginationRange = document.querySelector("[data-pagination-range]");
+      const pagination = paginationRange.closest(".pagination");
       const pageNumbers = document.querySelector("[data-page-numbers]");
       const prevPageButton = document.querySelector("[data-page-prev]");
       const nextPageButton = document.querySelector("[data-page-next]");
@@ -3909,6 +3914,7 @@
       function updatePagination(totalRows) {
         const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
         currentPage = Math.min(currentPage, totalPages);
+        pagination.hidden = totalRows === 0;
         paginationRange.textContent = t("rowsTotal", totalRows);
         if (!totalRows) {
           pageNumbers.innerHTML = "";

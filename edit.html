@@ -1060,7 +1060,7 @@
       }
 
       .video-empty-state {
-        min-height: 240px;
+        min-height: 360px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -1620,8 +1620,55 @@
         margin-top: 8px;
       }
 
-      .edit-heading-row + .edit-layout {
+      .edit-heading-row + .edit-layout,
+      .publishing-warning + .edit-layout {
         margin-top: 24px;
+      }
+
+      .publishing-warning {
+        --alert-accent: var(--color-status-warning);
+        width: 100%;
+        min-height: 44px;
+        display: grid;
+        grid-template-columns: 18px minmax(0, 1fr);
+        align-items: start;
+        gap: 12px;
+        margin-top: 16px;
+        padding: 11px 14px;
+        border: 1px solid color-mix(in srgb, var(--color-status-warning) 28%, transparent);
+        border-radius: var(--radius-default);
+        background: color-mix(in srgb, var(--color-status-warning) 10%, transparent);
+        color: var(--color-text-default);
+      }
+
+      .publishing-warning[hidden] { display: none; }
+
+      .publishing-warning-icon {
+        width: 18px;
+        height: 18px;
+        display: grid;
+        place-items: center;
+        margin-top: 1px;
+        border-radius: var(--radius-full);
+        background: var(--alert-accent);
+        color: var(--neutral-0);
+      }
+
+      .publishing-warning-icon svg {
+        width: 14px;
+        height: 14px;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2;
+      }
+
+      .publishing-warning-title {
+        color: var(--color-text-primary);
+        font-size: var(--text-body-size);
+        line-height: 22px;
+        font-weight: var(--text-body-weight);
       }
 
       .edit-page .sidebar {
@@ -2074,6 +2121,35 @@
         color: var(--color-text-disabled);
       }
 
+      .field-control:disabled,
+      .textarea-control:disabled,
+      .select-control:disabled {
+        border-color: var(--color-border-disabled);
+        background: var(--color-bg-disabled);
+        color: var(--color-text-disabled);
+        cursor: not-allowed;
+        resize: none;
+      }
+
+      .row-action:disabled,
+      .row-action:disabled:hover {
+        border-color: var(--color-border-disabled);
+        background: var(--color-bg-disabled);
+        color: var(--color-text-disabled);
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      .cover-hover-action:disabled,
+      .cover-hover-action:disabled:hover {
+        border-color: color-mix(in srgb, var(--color-action-primary) 50%, transparent);
+        background: transparent;
+        color: var(--color-action-primary-hover);
+        cursor: not-allowed;
+        opacity: 0.6;
+        box-shadow: none;
+      }
+
       .edit-action.secondary {
         border-color: transparent;
         background: color-mix(in srgb, var(--color-text-primary) 10%, transparent);
@@ -2315,6 +2391,10 @@
         font-weight: var(--text-body-weight);
       }
 
+      .pagination[hidden] {
+        display: none;
+      }
+
       .field-control.is-invalid,
       .textarea-control.is-invalid,
       .translation-input.is-invalid,
@@ -2551,6 +2631,11 @@
       }
 
       .cover-label {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
         color: var(--color-text-tertiary);
         font-size: var(--text-caption-medium-size);
         line-height: var(--text-caption-medium-line-height);
@@ -2559,40 +2644,144 @@
         white-space: nowrap;
       }
 
+      .cover-info {
+        position: static;
+        width: 16px;
+        height: 16px;
+        display: inline-grid;
+        flex: 0 0 auto;
+        place-items: center;
+        border-radius: var(--radius-full);
+        color: var(--color-text-tertiary);
+        cursor: help;
+      }
+
+      .cover-info:hover {
+        color: var(--color-text-default);
+      }
+
+      .cover-info:focus-visible {
+        outline: none;
+        box-shadow: var(--shadow-focus);
+      }
+
+      .cover-info > svg {
+        width: 14px;
+        height: 14px;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 1.8;
+      }
+
+      .cover-info-tooltip {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 50%;
+        z-index: 60;
+        width: max-content;
+        max-width: 320px;
+        padding: 6px 10px;
+        border-radius: var(--radius-small);
+        background: var(--color-bg-inverse);
+        color: var(--color-text-inverse);
+        box-shadow: var(--shadow-overlay);
+        font-size: var(--text-caption-size);
+        line-height: var(--text-caption-line-height);
+        font-weight: var(--text-caption-weight);
+        white-space: normal;
+        opacity: 0;
+        pointer-events: none;
+        transform: translate(-50%, 2px);
+        transition: opacity 120ms ease, transform 120ms ease;
+      }
+
+      .cover-info:hover .cover-info-tooltip,
+      .cover-info:focus-visible .cover-info-tooltip {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+
       .cover-file-input {
         display: none;
       }
 
-      .page-message {
+      .message-portal {
         position: fixed;
-        top: 76px;
+        top: max(36px, env(safe-area-inset-top));
         left: 50%;
-        z-index: 110;
-        width: max-content;
-        max-width: calc(100vw - 48px);
-        min-height: 34px;
+        z-index: 1000;
         display: flex;
+        flex-direction: column;
         align-items: center;
-        padding: 0 12px;
-        border: 1px solid var(--color-status-success-border);
-        border-radius: var(--radius-default);
-        background: var(--color-status-success-bg);
-        color: var(--color-action-primary-hover);
-        font-size: var(--text-caption-medium-size);
-        line-height: var(--text-caption-medium-line-height);
-        font-weight: var(--text-caption-medium-weight);
-        box-shadow: var(--shadow-overlay);
+        gap: 12px;
+        width: max-content;
+        max-width: calc(100vw - 32px);
+        pointer-events: none;
         transform: translateX(-50%);
       }
 
-      .page-message.danger {
-        border-color: var(--color-status-error-border);
-        background: var(--color-status-error-bg);
-        color: var(--color-status-error);
+      .feedback-message {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: max-content;
+        max-width: 100%;
+        min-height: 40px;
+        padding: 9px 16px;
+        border: 1px solid var(--color-border-subtle);
+        border-radius: var(--radius-xlarge);
+        background: var(--color-bg-elevated);
+        color: var(--color-text-primary);
+        box-shadow: var(--shadow-overlay);
+        font-size: var(--text-body-size);
+        line-height: 22px;
+        pointer-events: auto;
+        animation: message-enter 200ms ease-out;
       }
 
-      .page-message[hidden] {
+      .feedback-message .message-icon {
+        width: 18px;
+        height: 18px;
+        display: grid;
+        flex: 0 0 auto;
+        place-items: center;
+        border-radius: var(--radius-full);
+        background: var(--color-status-info);
+        color: var(--neutral-0);
+        line-height: 0;
+      }
+
+      .feedback-message.success .message-icon {
+        background: var(--color-status-success);
+      }
+
+      .feedback-message.error .message-icon {
+        background: var(--color-status-error);
+      }
+
+      .feedback-message .message-icon svg {
+        width: 18px;
+        height: 18px;
+        display: block;
+        fill: none;
+        stroke: currentColor;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-width: 2;
+      }
+
+      .feedback-message[hidden] {
         display: none;
+      }
+
+      @keyframes message-enter {
+        from {
+          opacity: 0;
+          transform: translateY(-8px);
+        }
       }
 
       .cover-title-panel[hidden] {
@@ -5557,7 +5746,12 @@
     </style>
   </head>
   <body class="edit-page" data-edit-section="details">
-    <div class="page-message" hidden data-cover-message role="status" aria-live="polite">修改成功</div>
+    <div class="message-portal" aria-live="polite" aria-atomic="false">
+      <div class="feedback-message success" hidden data-cover-message role="status">
+        <span class="message-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 12.5l2.5 2.5L16.5 9" /></svg></span>
+        <span data-cover-message-text>修改成功</span>
+      </div>
+    </div>
     <header class="topbar">
       <a class="brand" href="index.html" aria-label="IQ Studio home">
         <img class="brand-logo" src="logo.png" alt="iQIYI" />
@@ -5683,6 +5877,11 @@
             </div>
           </div>
 
+          <div class="publishing-warning" data-publishing-warning role="alert" hidden>
+            <span class="publishing-warning-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 7v7" /><path d="M12 17h.01" /></svg></span>
+            <strong class="publishing-warning-title" data-i18n="publishingEditDisabled">当前内容正在发布中，暂不支持编辑</strong>
+          </div>
+
           <div class="edit-layout">
             <form class="edit-form" id="edit-details-panel" role="tabpanel" aria-labelledby="edit-details-tab" aria-label="Edit content details" data-i18n-aria-label="editContentDetails">
               <section class="form-section" aria-labelledby="basic-info-title">
@@ -5762,7 +5961,7 @@
                             </div>
                             <input class="cover-file-input" type="file" accept="image/*" data-cover-file />
                           </div>
-                          <span class="cover-label" data-i18n="coverLandscape">16:9 Landscape</span>
+                          <span class="cover-label"><span class="cover-label-text" data-i18n="coverLandscape">16:9 Landscape</span><span class="cover-info" tabindex="0" role="img" aria-label="Landscape cover upload requirements" data-i18n-aria-label="coverLandscapeInfo"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v6" /><path d="M12 7h.01" /></svg><span class="cover-info-tooltip" role="tooltip" data-i18n="coverLandscapeTooltip">PNG only, up to 500 KB, maximum dimensions 1920 × 1080 px</span></span></span>
                         </div>
                         <div class="cover-slot" data-cover-slot>
                           <div class="cover-preview portrait" aria-label="3:4 portrait cover preview">
@@ -5773,7 +5972,7 @@
                             </div>
                             <input class="cover-file-input" type="file" accept="image/*" data-cover-file />
                           </div>
-                          <span class="cover-label" data-i18n="coverPortrait">3:4 Portrait</span>
+                          <span class="cover-label"><span class="cover-label-text" data-i18n="coverPortrait">3:4 Portrait</span><span class="cover-info" tabindex="0" role="img" aria-label="Portrait cover upload requirements" data-i18n-aria-label="coverPortraitInfo"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v6" /><path d="M12 7h.01" /></svg><span class="cover-info-tooltip" role="tooltip" data-i18n="coverPortraitTooltip">PNG only, up to 500 KB, maximum dimensions 1920 × 2560 px</span></span></span>
                         </div>
                       </div>
                     </div>
@@ -6314,6 +6513,11 @@
           titleWrap: "Title wrap",
           coverLandscape: "16:9 Landscape",
           coverPortrait: "3:4 Portrait",
+          coverLandscapeInfo: "Landscape cover upload requirements",
+          coverPortraitInfo: "Portrait cover upload requirements",
+          coverLandscapeTooltip: "PNG only, up to 500 KB, maximum dimensions 1920 × 1080 px",
+          coverPortraitTooltip: "PNG only, up to 500 KB, maximum dimensions 1920 × 2560 px",
+          publishingEditDisabled: "This content is currently being published and cannot be edited.",
           coverSquare: "1:1 Square",
           cancel: "Cancel",
           restoreDefault: "Restore default",
@@ -6497,6 +6701,11 @@
           titleWrap: "标题折行",
           coverLandscape: "16:9 横版",
           coverPortrait: "3:4 竖版",
+          coverLandscapeInfo: "横版封面上传要求",
+          coverPortraitInfo: "竖版封面上传要求",
+          coverLandscapeTooltip: "支持PNG格式，大小不得超过500kb，尺寸不得超过1920*1080px",
+          coverPortraitTooltip: "支持PNG格式，大小不得超过500kb，尺寸不得超过1920*2560px",
+          publishingEditDisabled: "当前内容正在发布中，暂不支持编辑",
           coverSquare: "1:1 方图",
           cancel: "取消",
           restoreDefault: "恢复默认",
@@ -6562,6 +6771,7 @@
       const pageSizeMenu = document.querySelector("[data-page-size-menu]");
       const pageSizeOptions = Array.from(document.querySelectorAll("[data-page-size-option]"));
       const paginationRange = document.querySelector("[data-pagination-range]");
+      const pagination = paginationRange.closest(".pagination");
       const pageNumbers = document.querySelector("[data-page-numbers]");
       const prevPageButton = document.querySelector("[data-page-prev]");
       const nextPageButton = document.querySelector("[data-page-next]");
@@ -6582,7 +6792,7 @@
           episodes: 12,
           format: "1080x1920",
           freePaidStatus: "Free",
-          publicationStatus: "Online",
+          publicationStatus: "Publishing",
           visibilityStatus: "Public",
           updated: "Today 14:26"
         },
@@ -6630,7 +6840,7 @@
           episodes: 6,
           format: "",
           freePaidStatus: "Paid",
-          publicationStatus: "Offline",
+          publicationStatus: "Publishing",
           visibilityStatus: "Private",
           updated: "Yesterday 18:40"
         },
@@ -7204,6 +7414,7 @@
       function updatePagination(totalRows) {
         const totalPages = Math.max(1, Math.ceil(totalRows / pageSize));
         currentPage = Math.min(currentPage, totalPages);
+        pagination.hidden = totalRows === 0;
         paginationRange.textContent = t("rowsTotal", totalRows);
         if (!totalRows) {
           pageNumbers.innerHTML = "";
@@ -7458,8 +7669,10 @@
         const initialEditTab = params.get("tab");
         const item = videoItems.find((video) => video.id === contentId) || videoItems.find((video) => video.type === urlType) || videoItems[4];
         if (!item) return;
+        const isPublishing = getStatusKey(item.publicationStatus) === "publishing";
 
         const editPageTitleNodes = document.querySelectorAll("[data-edit-page-title]");
+        const publishingWarning = document.querySelector("[data-publishing-warning]");
         const editTitleTabs = document.querySelector(".edit-title-tabs");
         const titleInput = document.querySelector("[data-edit-title-input]");
         const taglineInput = document.querySelector("[data-edit-tagline-input]");
@@ -7492,6 +7705,7 @@
         const episodeCard = document.querySelector("[data-edit-episode-card]");
         const episodeList = document.querySelector("[data-edit-episode-list]");
         const episodeTableScroll = document.querySelector(".episode-table-scroll");
+        const episodePagination = document.querySelector("[data-edit-episode-pagination]");
         const episodePaginationRange = document.querySelector("[data-episode-pagination-range]");
         const episodePageNumbers = document.querySelector("[data-episode-page-numbers]");
         const episodePrevPageButton = document.querySelector("[data-episode-page-prev]");
@@ -7577,6 +7791,7 @@
         const coverError = document.querySelector("[data-cover-error]");
         const coverSlots = Array.from(document.querySelectorAll("[data-cover-slot]"));
         const coverMessage = document.querySelector("[data-cover-message]");
+        const coverMessageText = document.querySelector("[data-cover-message-text]");
         const coverTitlePanel = document.querySelector("[data-cover-title-panel]");
         const coverTitlePanelTitle = document.querySelector("[data-cover-title-panel-title]");
         const coverTitlePanelInput = document.querySelector("[data-cover-title-panel-input]");
@@ -7674,10 +7889,24 @@
           const isDirty = isFormDirty();
           [resetAction, saveAction, publishAction].forEach((button) => {
             if (button) {
-              button.disabled = !isDirty;
+              button.disabled = isPublishing || !isDirty;
             }
           });
-          publishAction?.classList.toggle("is-highlighted", isDirty);
+          publishAction?.classList.toggle("is-highlighted", isDirty && !isPublishing);
+        }
+
+        function applyPublishingLock() {
+          if (publishingWarning) publishingWarning.hidden = !isPublishing;
+          if (!isPublishing) return;
+          document.body.classList.add("is-publishing-locked");
+          document.querySelectorAll(".edit-form input, .edit-form textarea, .edit-form select, .edit-form button").forEach((control) => {
+            if (control.closest("[data-content-language-filter]")) return;
+            control.disabled = true;
+          });
+          document.querySelectorAll("[data-cover-upload], [data-cover-file]").forEach((control) => {
+            control.disabled = true;
+          });
+          if (publishAction) publishAction.disabled = true;
         }
 
         function markDynamicDirty() {
@@ -7770,14 +7999,19 @@
 
         function showPageMessage(message = t("changeSuccess"), tone = "success") {
           if (!coverMessage) return;
-          coverMessage.textContent = message;
-          coverMessage.classList.toggle("danger", tone === "danger");
+          const messageType = tone === "danger" ? "error" : tone;
+          coverMessage.className = `feedback-message ${messageType}`;
+          coverMessage.setAttribute("role", messageType === "error" ? "alert" : "status");
+          coverMessageText.textContent = message;
+          const icon = coverMessage.querySelector(".message-icon");
+          icon.innerHTML = messageType === "error"
+            ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9l6 6"></path><path d="M15 9l-6 6"></path></svg>'
+            : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12.5l2.5 2.5L16.5 9"></path></svg>';
           coverMessage.hidden = false;
           window.clearTimeout(coverMessageTimer);
           coverMessageTimer = window.setTimeout(() => {
             coverMessage.hidden = true;
-            coverMessage.classList.remove("danger");
-          }, 2200);
+          }, 3000);
         }
 
         function showCoverMessage() {
@@ -7875,7 +8109,7 @@
           }
           activeCoverSlot = slot;
           slot.classList.add("is-title-editing");
-          const label = slot.querySelector(".cover-label")?.textContent || t("cover");
+          const label = slot.querySelector(".cover-label-text")?.textContent || t("cover");
           coverTitlePanelTitle.textContent = t("coverTitlePanelTitle", label);
           coverTitlePanelInput.value = slot.dataset.coverTitleValue || titleInput.value || item.title;
           coverTitleSnapshot = coverTitlePanelInput.value;
@@ -8266,7 +8500,7 @@
             renderCoverTranslationList();
           }
           if (!coverTitlePanel.hidden && activeCoverSlot) {
-            const label = activeCoverSlot.querySelector(".cover-label")?.textContent || t("cover");
+            const label = activeCoverSlot.querySelector(".cover-label-text")?.textContent || t("cover");
             coverTitlePanelTitle.textContent = t("coverTitlePanelTitle", label);
           }
         });
@@ -8305,19 +8539,20 @@
           episodeCurrentPage = Math.min(episodeCurrentPage, totalPages);
           const startIndex = (episodeCurrentPage - 1) * episodePageSize;
           const visibleEpisodeIndices = episodeIndices.slice(startIndex, startIndex + episodePageSize);
+          if (episodePagination) episodePagination.hidden = totalRows === 0;
           if (episodePaginationRange) episodePaginationRange.textContent = t("rowsTotal", totalRows);
           if (episodePageSizeLabel) episodePageSizeLabel.textContent = t("rowsPerPageLabel", episodePageSize);
           episodePageSizeOptions.forEach((option) => {
             option.textContent = t("rowsPerPageLabel", Number(option.dataset.episodePageSizeOption));
           });
           if (episodePageNumbers) {
-            episodePageNumbers.innerHTML = Array.from({ length: totalPages }, (_, index) => {
+            episodePageNumbers.innerHTML = totalRows ? Array.from({ length: totalPages }, (_, index) => {
               const page = index + 1;
               return `<button class="pagination-button${page === episodeCurrentPage ? " current" : ""}" type="button" aria-label="${t("pageLabel", page)}"${page === episodeCurrentPage ? ' aria-current="page"' : ""} data-episode-page-number="${page}">${page}</button>`;
-            }).join("");
+            }).join("") : "";
           }
-          if (episodePrevPageButton) episodePrevPageButton.disabled = episodeCurrentPage <= 1;
-          if (episodeNextPageButton) episodeNextPageButton.disabled = episodeCurrentPage >= totalPages;
+          if (episodePrevPageButton) episodePrevPageButton.disabled = !totalRows || episodeCurrentPage <= 1;
+          if (episodeNextPageButton) episodeNextPageButton.disabled = !totalRows || episodeCurrentPage >= totalPages;
           episodeFilterTriggers.forEach((trigger) => {
             const field = trigger.dataset.episodeFilterTrigger;
             const value = episodeFilters[field];
@@ -8327,6 +8562,26 @@
               else label.textContent = value ? getStatusLabel(value) : t("all");
             }
           });
+          if (!visibleEpisodeIndices.length) {
+            episodeList.innerHTML = `
+              <div class="video-empty-state" role="status">
+                <div class="video-empty-visual" aria-hidden="true">
+                  <svg viewBox="0 0 80 80" focusable="false">
+                    <circle cx="40" cy="40" r="32" fill="currentColor" opacity="0.09"></circle>
+                    <rect x="21" y="18" width="38" height="44" rx="4" fill="currentColor" opacity="0.64"></rect>
+                    <rect x="29" y="28" width="22" height="4" rx="1" fill="var(--color-bg-container)"></rect>
+                    <rect x="29" y="38" width="16" height="4" rx="1" fill="var(--color-bg-container)"></rect>
+                    <circle cx="58" cy="57" r="10" fill="currentColor"></circle>
+                    <rect x="53" y="55.5" width="10" height="3" rx="1" fill="var(--color-bg-container)"></rect>
+                  </svg>
+                </div>
+                <div class="video-empty-copy">
+                  <span class="video-empty-title">${t("noContentYet")}</span>
+                </div>
+              </div>`;
+            window.requestAnimationFrame(syncEpisodeStickyColumns);
+            return;
+          }
           episodeList.innerHTML = visibleEpisodeIndices.map((index) => {
             const label = item.episodes ? t("episodeLabel", index + 1) : t("featureFilm");
             const episodeId = `${item.id}-E${String(index + 1).padStart(2, "0")}`;
@@ -8351,7 +8606,7 @@
                 ${renderPublicationStatus(publicationStatus, publicationNote)}
                 ${renderEpisodeDateTime(updated)}
                 ${renderEpisodeDateTime(firstPublished)}
-                <div class="row-actions"><button class="row-action" type="button" data-subtitle-drawer-open data-episode-label="${label}">${t("editSubtitles")}</button></div>
+                <div class="row-actions"><button class="row-action" type="button" data-subtitle-drawer-open data-episode-label="${label}"${isPublishing ? " disabled" : ""}>${t("editSubtitles")}</button></div>
               </article>
             `;
           }).join("");
@@ -9588,6 +9843,7 @@
           }
         });
         commitFormState();
+        applyPublishingLock();
       })();
     </script>
     <script>
